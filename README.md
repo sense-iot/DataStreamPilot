@@ -146,7 +146,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Dilan Fernando - [![LinkedIn][linkedin-shield][linked-url-dilan]]
+Dilan Fernando - [![LinkedIn][linkedin-shield][linkedin-url-dilan]]
 
 Nipun Waas - [MyPage](https://waasnipun.github.io/#contact)
 
@@ -185,5 +185,5 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=plastic&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=plastic&logo=linkedin&colorB=555
 [linkedin-url-dilan]: https://www.linkedin.com/in/dilan-fernando-78a875155/

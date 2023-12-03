@@ -117,9 +117,13 @@ What can we do
 ## Documentation
 
 [docs/](docs/README.md)
-[docs/SENSOR](docs/SENSOR.md)
+
+[doas/SENSOR](docs/SENSOR.md)
+
 [docs/NETWORK](docs/NETWORK.md)
+
 [docs/SERVER](docs/SERVER.md)
+
 [docs/COMPRESSION](docs/COMPRESSION.md)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -135,8 +139,10 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Dilan Fernando - [LinkedIn](https://www.linkedin.com/in/dilan-fernando-78a875155/)
+Dilan Fernando - [![LinkedIn][linkedin-shield][https://www.linkedin.com/in/dilan-fernando-78a875155/]]
+
 Nipun Waas - [MyPage](https://waasnipun.github.io/#contact)
+
 Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 
 
@@ -172,3 +178,5 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=plastic&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/othneildrew

@@ -2,6 +2,7 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="../README.md">About The Project</a></li>
     <li><a href="#sensor-layer">Sensor Layer</a></li>
     <li><a href="#network-layer">Network Layer</a></li>
     <li><a href="#data-layer">Data Layer</a></li>
@@ -18,4 +19,4 @@
 
 ## Data Layer
 
-[docs/Server](Server.md) explains our network layer
+[docs/Server](NETWORK.md) explains our network layer

@@ -33,3 +33,24 @@ What can we do
 ### Compression
 
 [docs/COMPRESSION](docs/COMPRESSION.md)
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/sense-iot/DataStreamPilot.svg?style=for-the-badge
+[contributors-url]: https://github.com/sense-iot/DataStreamPilot/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/sense-iot/DataStreamPilot.svg?style=for-the-badge
+[forks-url]: https://github.com/sense-iot/DataStreamPilot/network/members
+[stars-shield]: https://img.shields.io/github/stars/sense-iot/DataStreamPilot.svg?style=for-the-badge
+[stars-url]: https://github.com/sense-iot/DataStreamPilot/stargazers
+[issues-shield]: https://img.shields.io/github/issues/sense-iot/DataStreamPilot.svg?style=for-the-badge
+[issues-url]: https://github.com/sense-iot/DataStreamPilot/issues
+[license-shield]: https://img.shields.io/github/license/sense-iot/DataStreamPilot.svg?style=for-the-badge
+[license-url]: https://github.com/sense-iot/DataStreamPilot/blob/master/LICENSE.txt
+[product-screenshot]: images/screenshot.png
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Next-url]: https://nextjs.org/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Vue-url]: https://vuejs.org/

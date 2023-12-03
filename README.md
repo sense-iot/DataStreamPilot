@@ -8,7 +8,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/sense-iot/DataStreamPilot/blob/main/README.md">
-    <img src="images/logo.png" alt="Logo" width="200">
+    <img src="images/logo.png" alt="Logo" width="300">
   </a>
 
   <h3 align="center">Data Stream Pilot</h3>

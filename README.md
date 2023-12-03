@@ -58,12 +58,19 @@
 ### Built With
 
 * [RIOT - Real Time operating system](https://www.riot-os.org/)
+
 * [IoT-LAB M3 · FIT IoT-LAB](https://www.iot-lab.info/docs/boards/iot-lab-m3/) MCU boards
+
 * [I2C Protocol](https://en.wikipedia.org/wiki/I%C2%B2C)
+
 * [CoAP - Constrained Application Protocol](https://en.wikipedia.org/wiki/Constrained_Application_Protocol) - Constrained Application Protocol
+
 * [Grafana](https://grafana.com/)
+
 * [InfluxDB](https://www.influxdata.com/glossary/nosql-database/)
+
 * [Amazon EC2](https://aws.amazon.com/ec2/)
+
 * [Docker](https://www.docker.com/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -139,7 +146,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Dilan Fernando - [![LinkedIn][linkedin-shield][https://www.linkedin.com/in/dilan-fernando-78a875155/]]
+Dilan Fernando - [![LinkedIn][linkedin-shield][linked-url-dilan]]
 
 Nipun Waas - [MyPage](https://waasnipun.github.io/#contact)
 
@@ -179,4 +186,4 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=plastic&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
+[linkedin-url-dilan]: https://www.linkedin.com/in/dilan-fernando-78a875155/

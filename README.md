@@ -161,6 +161,7 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 ## Acknowledgments
 
 * [Choose an Open Source License](https://choosealicense.com)
+* [Awesome Badges](https://dev.to/envoy_/150-badges-for-github-pnk)
 * [Best README Template](https://github.com/othneildrew/Best-README-Template)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -185,5 +186,5 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=plastic&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
-[linkedin-shield]: https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+[linkedin-shield]: https://img.shields.io/badge/LinkedIn-0077B5?style=plastic&logo=linkedin&logoColor=white
 [linkedin-url-dilan]: https://www.linkedin.com/in/dilan-fernando-78a875155/

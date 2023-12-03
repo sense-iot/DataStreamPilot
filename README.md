@@ -3,6 +3,30 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/sense-iot/DataStreamPilot/blob/main/README.md">
+    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Data Stream Pilot</h3>
+
+  <p align="center">
+    Data preparation pipeline on IoT Test Bed!
+    <br />
+    <a href="https://github.com/sense-iot/DataStreamPilot"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://www.youtube.com/watch?v=Y-Kq7G6Sz5Q">View Demo</a>
+    ·
+    <a href="https://github.com/sense-iot/DataStreamPilot/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/sense-iot/DataStreamPilot/issues">Request Feature</a>
+  </p>
+</div>
+
 # DataStreamPilot
 
 <a href="https://lucid.app/documents/embedded/a633abe1-4224-4045-9147-177685a1603f?invitationId=inv_e597e54b-fb08-4f05-bf6e-cfac77241e66#"> Chart </a>

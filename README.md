@@ -146,7 +146,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Dilan Fernando - [![LinkedIn][linkedin-shield][linkedin-url-dilan]]
+Dilan Fernando - [![LinkedIn][linkedin-shield]][linkedin-url-dilan]
 
 Nipun Waas - [MyPage](https://waasnipun.github.io/#contact)
 

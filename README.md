@@ -44,7 +44,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#Documentation">Documentation</a></li>
     <li><a href="#license">License</a></li>
@@ -54,6 +53,38 @@
 </details>
 
 ## About The Project
+
+
+### Built With
+
+* [RIOT - Real Time operating system](https://www.riot-os.org/)
+* [IoT-LAB M3 · FIT IoT-LAB](https://www.iot-lab.info/docs/boards/iot-lab-m3/) MCU boards
+* [I2C Protocol](https://en.wikipedia.org/wiki/I%C2%B2C)
+* [CoAP - Constrained Application Protocol](https://en.wikipedia.org/wiki/Constrained_Application_Protocol) - Constrained Application Protocol
+* [Grafana](https://grafana.com/)
+* [InfluxDB](https://www.influxdata.com/glossary/nosql-database/)
+* [Amazon EC2](https://aws.amazon.com/ec2/)
+* [Docker](https://www.docker.com/)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Getting started
+
+### Prerequisites
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Installation
+
+#### IoT Test Bed setup
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+#### Server setup
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Roadmap
 <a href="https://lucid.app/documents/embedded/a633abe1-4224-4045-9147-177685a1603f?invitationId=inv_e597e54b-fb08-4f05-bf6e-cfac77241e66#"> Chart </a>

@@ -27,8 +27,35 @@
   </p>
 </div>
 
-# DataStreamPilot
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#Documentation">Documentation</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
+## About The Project
+
+## Roadmap
 <a href="https://lucid.app/documents/embedded/a633abe1-4224-4045-9147-177685a1603f?invitationId=inv_e597e54b-fb08-4f05-bf6e-cfac77241e66#"> Chart </a>
 
 - More than one sensor 
@@ -50,13 +77,49 @@ What can we do
 
 - Data rejection 
 
-- Error correction codes 
+ Error correction codes 
 
 - Can we reset the sensor?? 
 
-### Compression
 
+<!-- DOCUMENTATION -->
+## Documentation
+
+[docs/](docs/README.md)
+[docs/SENSOR](docs/SENSOR.md)
+[docs/NETWORK](docs/NETWORK.md)
+[docs/SERVER](docs/SERVER.md)
 [docs/COMPRESSION](docs/COMPRESSION.md)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- CONTACT -->
+## Contact
+
+Dilan Fernando - [LinkedIn](https://www.linkedin.com/in/dilan-fernando-78a875155/)
+Nipun Waas - [MyPage](https://waasnipun.github.io/#contact)
+Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+* [Choose an Open Source License](https://choosealicense.com)
+* [Best README Template](https://github.com/othneildrew/Best-README-Template)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

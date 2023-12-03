@@ -185,5 +185,5 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=plastic&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=plastic&logo=linkedin&colorB=555
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat&logo=linkedin
 [linkedin-url-dilan]: https://www.linkedin.com/in/dilan-fernando-78a875155/

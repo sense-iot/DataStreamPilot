@@ -11,16 +11,16 @@ current_hostname=$(hostname)
 
 # Compare the current hostname with the expected one
 if [ "$current_hostname" != "$SENSE_SITE" ]; then
-	error_message="ERROR: You are running this script on site '$current_hostname', not on '$SENSE_SITE'."
+	error_message="ERROR: You are on site '$current_hostname', not on '$SENSE_SITE'"
 	# Displaying the Error Message in a Box
-	echo "***********************************************************************"
-	echo "*                                                                     *"
+	echo "****************************************************"
+	echo "*                                                  *"
 	printf "* %-36s*\n" "$error_message"
-	printf "* %-68s*\n" $0 
-	printf "* %s %-56s*\n" "SENSE_SITE:" "$SENSE_SITE"
-	echo "* Change SENSE_SITE variable in setup_env.sh                          *"
-	echo "*                                                                     *"
-	echo "***********************************************************************"
+	printf "* %-49s*\n" $0 
+	printf "* %s %-37s*\n" "SENSE_SITE:" "$SENSE_SITE"
+	echo "* Change SENSE_SITE variable in setup_env.sh       *"
+	echo "*                                                  *"
+	echo "****************************************************"
 	export ERROR_WRONG_SITE=1
 	exit $ERROR_WRONG_SITE
 fi

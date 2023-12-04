@@ -87,13 +87,15 @@ export ARCH=iotlab-m3
 
 # values are from 11-26
 export DEFAULT_CHANNEL=22
-# export DEFAULT_CHANNEL=13
+#export DEFAULT_CHANNEL=23 - dilan
+#export DEFAULT_CHANNEL=24 - waas
+#export DEFAULT_CHANNEL=25 - rukshan
 
 export ETHOS_BAUDRATE=500000
 export TAP_INTERFACE=tap7
-# export TAP_INTERFACE=tap4
-# export TAP_INTERFACE=tap5
-# export TAP_INTERFACE=tap6
+# export TAP_INTERFACE=tap4 - dilan
+# export TAP_INTERFACE=tap5 - waas
+# export TAP_INTERFACE=tap6 - rukshan
 
 # this is seconds
 export JOB_WAIT_TIMEOUT=60

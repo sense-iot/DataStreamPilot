@@ -69,7 +69,7 @@ const char* resource_paths[NUM_RESOURCES] = {
 };
 
 int resource_paths_len[NUM_RESOURCES] = {
-    [TEMP] = 6,
+    [TEMP] = 13,
     [TIME] = 6,
     [CORE] = 18,
     [BOARD] = 12,  // returns the name of the board running the server. It works only with GET requests.

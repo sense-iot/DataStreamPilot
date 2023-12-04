@@ -27,6 +27,9 @@ ping_to_google:
 gnrc_border_router:
 	./scripts/gnrc_border_router.sh
 
+sensor2:
+	./scripts/sensor2.sh
+
 # run border router and coap server in the same network
 coap_server:
 	./scripts/coap_server.sh

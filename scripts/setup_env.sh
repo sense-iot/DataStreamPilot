@@ -2,7 +2,7 @@
 
 source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 # grenoble, paris, lille, saclay, strasbourg
-export SENSE_SITE=paris
+export SENSE_SITE=grenoble
 
 printf "%-25s %s\n" "SENSE_SITE:" "$SENSE_SITE"
 
@@ -36,6 +36,7 @@ export COAP_CLIENT_NODE=$((BORDER_ROUTER_NODE + 4))
 export SENSOR_NODE=$((BORDER_ROUTER_NODE + 5))
 export COAP_CLIENT_TEST_NODE=$((BORDER_ROUTER_NODE + 6))
 export HELLO_NODE=$((BORDER_ROUTER_NODE + 7))
+export SENSOR_2=45
 
 printf "%-25s %s\n" "BORDER_ROUTER_NODE:" "$BORDER_ROUTER_NODE"
 printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
@@ -50,7 +51,7 @@ printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
     # If not set, then export it with the specified value
-    export COAP_SERVER_IP="[2001:660:4403:497:a417:1216:7ea7:9acb]:5683"
+    export COAP_SERVER_IP="[2001:660:5307:3108:ec1b:fa40:6a45:de4d]:5683"
 fi
 export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 
@@ -125,6 +126,10 @@ export SENSOR_READ_HOME=${SENSE_HOME}/src/sensor/${SENSOR_READ_FOLDER_NAME}
 export SENSOR_CONNECTED_FOLDER_NAME=sensor-connected
 export SENSOR_CONNECTED_EXE_NAME=${SENSOR_CONNECTED_FOLDER_NAME}_gp12
 export SENSOR_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_CONNECTED_FOLDER_NAME}
+
+export SENSOR_2_CONNECTED_FOLDER_NAME=sensor2
+export SENSOR_2_CONNECTED_EXE_NAME=${SENSOR_2_CONNECTED_FOLDER_NAME}_gp12
+export SENSOR_2_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_2_CONNECTED_FOLDER_NAME}
 
 #SENSE_SCRIPTS_HOME="${SENSE_HOME}/${SCRIPTS}"
 #SENSE_STOPPERS_HOME="${SENSE_SCRIPTS_HOME}/stoppers"

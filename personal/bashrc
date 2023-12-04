@@ -132,6 +132,8 @@ alias gco="git checkout"
 alias gconn="git checkout feat-node-to-node"
 alias gcom="git checkout feat-merge-temp-coap"
 alias home="cd ~/sense"
+alias gcm="git commit -m"
+alias gcma="git commit -am"
 
 
 

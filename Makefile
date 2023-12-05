@@ -50,5 +50,5 @@ clean_all: clean
 	./scripts/clean_all.sh
 
 clean:
-	rm ~/shared/firmware/*.elf
 	find ./src -type d -name bin -exec rm -rf {} +
+	rm -Rf bin

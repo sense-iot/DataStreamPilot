@@ -66,7 +66,7 @@ export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 
 if [ "$SENSE_SITE" = "grenoble" ]; then
     # 2001:660:5307:3100::/64	2001:660:5307:317f::/64
-    export BORDER_ROUTER_IP=2001:660:5307:3108::1/64
+    export BORDER_ROUTER_IP=2001:660:5307:313f::1/64
 elif [ "$SENSE_SITE" = "paris" ]; then
     # 2001:660:330f:a280::/64   2001:660:330f:a2ff::/64
     export BORDER_ROUTER_IP=2001:660:330f:a293::1/64

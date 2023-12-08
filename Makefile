@@ -1,6 +1,9 @@
 hello:
 	./scripts/hello_world_experiment.sh
 
+broker:
+	./scripts/mqtt_broker_setup.sh
+
 run_mini_project_1:
 	./scripts/mini_project1.sh
 

@@ -155,6 +155,7 @@ build_wireless_firmware_cached() {
 
     local firmware_source_folder="$1"
     local exe_name="$2"
+    local ARCH="${3:-$ARCH}"
 
     if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
         echo "No need to build"
@@ -243,7 +244,7 @@ are_files_new() {
     local newer_found=0
 
     # Iterate over .c and .h files in the directory
-    for file in "$directory"/*.{c,h} "$directory/Makefile" "${SENSE_SCRIPTS_HOME}/setup_env.sh" ; do
+    for file in "$directory"/*.{c,h} "$directory/Makefile" "${SENSE_SCRIPTS_HOME}/setup_env.sh"; do
         if [[ -e $file ]]; then
             local file_mod_time=$(stat -c %Y "$file")
             if [[ $first_file_mod_time -le $file_mod_time ]]; then

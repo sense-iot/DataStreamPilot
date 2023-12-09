@@ -11,31 +11,31 @@ current_hostname=$(hostname)
 
 # Compare the current hostname with the expected one
 if [ "$current_hostname" != "$SENSE_SITE" ]; then
-	error_message="ERROR: You are on site '$current_hostname', not on '$SENSE_SITE'"
-	# Displaying the Error Message in a Box
-	echo "****************************************************"
-	echo "*                                                  *"
-	printf "* %-36s*\n" "$error_message"
-	printf "* %-49s*\n" $0 
-	printf "* %s %-37s*\n" "SENSE_SITE:" "$SENSE_SITE"
-	echo "* Change SENSE_SITE variable in setup_env.sh       *"
-	echo "*                                                  *"
-	echo "****************************************************"
-	export ERROR_WRONG_SITE=1
-	exit $ERROR_WRONG_SITE
+    error_message="ERROR: You are on site '$current_hostname', not on '$SENSE_SITE'"
+    # Displaying the Error Message in a Box
+    echo "****************************************************"
+    echo "*                                                  *"
+    printf "* %-36s*\n" "$error_message"
+    printf "* %-49s*\n" $0
+    printf "* %s %-37s*\n" "SENSE_SITE:" "$SENSE_SITE"
+    echo "* Change SENSE_SITE variable in setup_env.sh       *"
+    echo "*                                                  *"
+    echo "****************************************************"
+    export ERROR_WRONG_SITE=1
+    exit $ERROR_WRONG_SITE
 fi
 
-
-export BORDER_ROUTER_NODE=60 # Border router
+export BORDER_ROUTER_NODE=229   # Border router m3 node
+export GNRC_NETWORKING_NODE=107 # mqtt broker a8 node
+export MQTT_CLIENT_NODE=108     # mqtt client a8 node
 
 # Incrementally set other variables based on BORDER_ROUTER_NODE
 export COAP_SERVER_NODE=$((BORDER_ROUTER_NODE + 1))
 export SENSOR_CONNECTED_NODE=$((BORDER_ROUTER_NODE + 2))
-export GNRC_NETWORKING_NODE=$((BORDER_ROUTER_NODE + 3))
-export COAP_CLIENT_NODE=$((BORDER_ROUTER_NODE + 4))
-export SENSOR_NODE=$((BORDER_ROUTER_NODE + 5))
-export COAP_CLIENT_TEST_NODE=$((BORDER_ROUTER_NODE + 6))
-export HELLO_NODE=$((BORDER_ROUTER_NODE + 7))
+export COAP_CLIENT_NODE=$((BORDER_ROUTER_NODE + 3))
+export SENSOR_NODE=$((BORDER_ROUTER_NODE + 4))
+export COAP_CLIENT_TEST_NODE=$((BORDER_ROUTER_NODE + 5))
+export HELLO_NODE=$((BORDER_ROUTER_NODE + 6))
 export SENSOR_2=45
 
 printf "%-25s %s\n" "BORDER_ROUTER_NODE:" "$BORDER_ROUTER_NODE"
@@ -98,7 +98,7 @@ export TAP_INTERFACE=tap7
 # export TAP_INTERFACE=tap6 - rukshan
 
 # this is seconds
-export JOB_WAIT_TIMEOUT=60
+export JOB_WAIT_TIMEOUT=120
 export EXPERIMENT_TIME=120
 
 export BORDER_ROUTER_FOLDER_NAME=gnrc_border_router

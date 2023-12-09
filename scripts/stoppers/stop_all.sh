@@ -1,10 +1,28 @@
 #!/usr/bin/env bash
 
-echo "------------------------------------"
-echo "INFO : You can say : make stop all"
-echo "------------------------------------"
-echo " "
-echo "Starting experiment stopper"
+show_usage() {
+    local script_name=$(basename $0)
+    echo "----------------------------------------------------------------"
+    echo "                    IoT Lab Experiment Stopper                  "
+    echo "----------------------------------------------------------------"
+    echo "Usage: $script_name [option]"
+    echo
+    echo "This script stops running IoT Lab experiments."
+    echo
+    echo "Options:"
+    echo "  all           Stop all running experiments."
+    echo "  [no option]   Prompt user before stopping each experiment."
+    echo
+    echo "Examples:"
+    echo "  make stop        # Run in interactive mode."
+    echo "  make stop all    # Stop all experiments without prompts."
+}
+
+if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "help" ]]; then
+    show_usage
+    exit 0
+fi
+
 experiment_output=$(iotlab-experiment get -e)
 
 stop_all_mode=${1:-interactive}
@@ -38,9 +56,7 @@ if [ "$experiment_output" != "{}" ]; then
                 ;;
             esac
         fi
-
-        iotlab-experiment get -i ${job_id} -p
-        #iotlab-experiment stop -i ${job_id}
+        iotlab-experiment stop -i ${job_id}
         echo "Stopped job with ID: $job_id"
     done
 else

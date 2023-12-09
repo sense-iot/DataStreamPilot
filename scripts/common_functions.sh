@@ -7,6 +7,27 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     fi
 fi
 
+get_running_experiment_id() {
+    local experiment_name_to_check="$1"
+    local experiment_output=$(iotlab-experiment get -e)
+
+    if [ "$experiment_output" != "{}" ]; then
+        local running_experiments=$(echo "$experiment_output" | jq -r '.Running[]')
+        for job_id in $running_experiments; do
+            local experiment_info=$(iotlab-experiment get -i ${job_id} -p)
+            local experiment_name=$(echo "$experiment_info" | jq -r '.name')
+
+            if [ "$experiment_name" == "$experiment_name_to_check" ]; then
+                echo $job_id
+                return 0 # Experiment found, returning its job ID
+            fi
+        done
+    fi
+
+    echo "No running experiment found with the name $experiment_name_to_check"
+    return 1 # No experiment found with the given name
+}
+
 is_experiment_running() {
     local experiment_name_to_check="$1"
     local experiment_output=$(iotlab-experiment get -e)

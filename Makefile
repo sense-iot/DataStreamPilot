@@ -13,6 +13,12 @@ run_mini_project_1:
 run_sensor:
 	./scripts/sensor_read_experiment.sh
 
+
+.PHONY: border_router
+
+border_router:
+	./scripts/gnrc_border_router.sh
+
 sense:
 	./scripts/sensor-connected.sh
 

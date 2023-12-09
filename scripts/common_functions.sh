@@ -7,6 +7,25 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     fi
 fi
 
+is_experiment_running() {
+    local experiment_name_to_check="$1"
+    local experiment_output=$(iotlab-experiment get -e)
+
+    if [ "$experiment_output" != "{}" ]; then
+        local running_experiments=$(echo "$experiment_output" | jq -r '.Running[]')
+        for job_id in $running_experiments; do
+            local experiment_info=$(iotlab-experiment get -i ${job_id} -p)
+            local experiment_name=$(echo "$experiment_info" | jq -r '.name')
+
+            if [ "$experiment_name" == "$experiment_name_to_check" ]; then
+                return 0 # True, experiment with the given name is running
+            fi
+        done
+    fi
+
+    return 1 # False, no experiment with the given name is running
+}
+
 create_stopper_script() {
     local script_name=$(basename "$0")
     local stopper_name="${script_name}_stopper.sh"

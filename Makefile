@@ -1,6 +1,9 @@
 hello:
 	./scripts/hello_world_experiment.sh
 
+run_mini_project_2:
+	./scripts/mini_project2.sh
+
 broker:
 	./scripts/mqtt_broker_setup.sh
 
@@ -13,8 +16,10 @@ run_sensor:
 sense:
 	./scripts/sensor-connected.sh
 
+.PHONY: stop
+
 stop:
-	./scripts/stoppers/stop_all.sh
+	./scripts/stoppers/stop_all.sh $(filter-out $@,$(MAKECMDGOALS))
 
 stop_one:
 	iotlab-experiment stop
@@ -55,3 +60,6 @@ clean_all: clean
 clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
+
+%:
+	@:

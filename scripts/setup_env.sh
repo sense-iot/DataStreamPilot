@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# script has already run once for the current shell
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    if [ -n "$SENSE_SETUP_ENV_UP" ]; then
+        return 0
+    fi
+fi
+
 source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 # grenoble, paris, lille, saclay, strasbourg
 export SENSE_SITE=grenoble
@@ -136,3 +144,5 @@ export SENSOR_2_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_2_CONNECTED_FOL
 #SENSE_SCRIPTS_HOME="${SENSE_HOME}/${SCRIPTS}"
 #SENSE_STOPPERS_HOME="${SENSE_SCRIPTS_HOME}/stoppers"
 #SENSE_FIRMWARE_HOME="${HOME}/bin"
+
+export SENSE_SETUP_ENV_UP=1

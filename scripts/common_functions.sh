@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    if [ -n "$SENSE_FUNCTONS_ENV_UP" ]; then
+        echo "Environment already set"
+        return 0
+    fi
+fi
+
 create_stopper_script() {
     local script_name=$(basename "$0")
     local stopper_name="${script_name}_stopper.sh"
@@ -267,3 +274,5 @@ extract_ip() {
     ip="${server_ip:1:${#server_ip}-7}"
     echo "$ip"
 }
+
+export SENSE_FUNCTONS_ENV_UP=1

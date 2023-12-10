@@ -34,7 +34,7 @@ if [ "$current_hostname" != "$SENSE_SITE" ]; then
 fi
 
 export BORDER_ROUTER_NODE=229   # Border router m3 node
-export GNRC_NETWORKING_NODE=107 # mqtt broker a8 node
+export GNRC_NETWORKING_NODE=130 # mqtt broker a8 node
 export MQTT_CLIENT_NODE=108     # mqtt client a8 node
 
 # Incrementally set other variables based on BORDER_ROUTER_NODE

@@ -4,6 +4,9 @@ hello:
 run_mini_project_2:
 	./scripts/mini_project2.sh
 
+status:
+	./scripts/status.sh
+
 broker:
 	./scripts/mqtt_broker_setup.sh
 

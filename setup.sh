@@ -11,7 +11,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 fi
 
 export SENSE_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-printf "%-25s %s\n" "SENSE_HOME:" "$SENSE_HOME"
+printf "%-50s %s\n" "DataStereamPilot: SENSE_HOME:" "$SENSE_HOME"
 
 SCRIPTS=scripts
 

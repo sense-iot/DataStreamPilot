@@ -3,7 +3,7 @@ CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security 
 #CFLAGS += -Werror -Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common
 
 # name of your application
-APPLICATION = gcoap_test_gp12
+APPLICATION = gcoap_test
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3

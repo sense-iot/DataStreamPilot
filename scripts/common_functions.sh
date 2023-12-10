@@ -7,6 +7,85 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     fi
 fi
 
+
+declare -a a8_nodes
+declare -a m3_nodes
+
+extract_and_categorize_nodes() {
+    local json=$1
+    a8_nodes=()
+    m3_nodes=()
+
+    # Extract the number of nodes
+    local num_nodes=$(echo "$json" | jq '.nb_nodes')
+
+    # Loop through each node and categorize
+    for (( i=0; i<num_nodes; i++ )); do
+        local node=$(echo "$json" | jq -r ".nodes[$i]")
+        if [[ $node == "a8-"* ]]; then
+            # Extract the number part for a8 nodes
+            local number=$(echo "$node" | cut -d'-' -f2 | cut -d'.' -f1)
+            a8_nodes+=( "$number" )
+        elif [[ $node == "m3-"* ]]; then
+            # Extract the number part for m3 nodes
+            local number=$(echo "$node" | cut -d'-' -f2 | cut -d'.' -f1)
+            m3_nodes+=( "$number" )
+        fi
+    done
+}
+
+# Function to write a variable to a file
+write_variable_to_file() {
+    local variable_name=$1
+    local variable_value=$2
+    local file_path=~/shared/logs/"${variable_name}.txt"
+
+    # Create directory if it doesn't exist
+    mkdir -p "$(dirname "$file_path")"
+
+    # Write the variable value to the file
+    echo "$variable_value" > "$file_path"
+}
+
+# Function to read a variable from a file
+read_variable_from_file() {
+    local variable_name=$1
+    local file_path=~/shared/logs/"${variable_name}.txt"
+
+    # Check if the file exists
+    if [ -f "$file_path" ]; then
+        cat "$file_path"
+    else
+        echo "Error: File not found."
+        return 1  # Return a non-zero status to indicate failure
+    fi
+}
+
+# Function to write the experiment ID to a file
+write_experiment_id() {
+    local experiment_id=$1
+    local file_path=~/shared/logs/experiment_id.txt
+
+    # Create directory if it doesn't exist
+    mkdir -p "$(dirname "$file_path")"
+
+    # Write the experiment ID to the file
+    echo "$experiment_id" > "$file_path"
+}
+
+# Function to read the experiment ID from a file
+read_experiment_id() {
+    local file_path=~/shared/logs/experiment_id.txt
+
+    # Check if the file exists
+    if [ -f "$file_path" ]; then
+        cat "$file_path"
+    else
+        echo "Error: File not found."
+        return 1  # Return a non-zero status to indicate failure
+    fi
+}
+
 get_running_experiment_id() {
     local experiment_name_to_check="$1"
     local experiment_output=$(iotlab-experiment get -e)
@@ -104,7 +183,7 @@ submit_sensor_node_job() {
 wait_for_job() {
     local n_node_job_id="$1"
 
-    echo "iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
+    echo "DataStereamPilot: iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
     iotlab-experiment wait --timeout "${JOB_WAIT_TIMEOUT}" --cancel-on-timeout -i "${n_node_job_id}" --state Running
 }
 

@@ -48,7 +48,7 @@ if [ "$experiment_output" != "{}" ]; then
                 continue
                 ;;
             all)
-                stop_all_without_prompt=true
+                stop_all_mode=true
                 ;;
             *)
                 echo "Skipping Job ID ${job_id}"

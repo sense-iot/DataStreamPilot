@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = gnrc_networking_gp12
+APPLICATION = gnrc_networking
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-a8-m3

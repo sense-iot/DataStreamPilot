@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = gnrc_border_router_gp12
+APPLICATION = gnrc_border_router
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3

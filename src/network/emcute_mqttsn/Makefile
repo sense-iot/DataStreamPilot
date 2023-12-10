@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = emcute_mqttsn_g12
+APPLICATION = emcute_mqttsn
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3

@@ -3,7 +3,6 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
 
 cp ${SENSE_HOME}/src/network/mqtt_broker/broker_config.conf ~/A8
 

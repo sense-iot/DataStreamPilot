@@ -265,11 +265,6 @@ build_wireless_firmware() {
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
 
-    if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
-        echo "No need to build"
-        return 0 # Exit the function successfully
-    fi
-
     echo "Build firmware ${firmware_source_folder}"
     echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
     make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" -C "${firmware_source_folder}"

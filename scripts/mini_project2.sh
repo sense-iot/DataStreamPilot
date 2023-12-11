@@ -33,7 +33,7 @@ fi
 export GNRC_NETWORKING_NODE=${a8_nodes[1]}
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
-export MQTT_CLIENT_NODE=${m3_nodes[1]}
+export MQTT_CLIENT_NODE=${m3_nodes[2]}
 
 write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"

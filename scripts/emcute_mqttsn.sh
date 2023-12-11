@@ -8,7 +8,15 @@ fi
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-build_wireless_firmware_cached ${EMCUTE_MQTSSN_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${ARCH}
+if [ "$PREV_BROKER_IP" != "$BROKER_IP" ]; then
+    echo "DataStereamPilot: The broker IP has changed."
+    export PREV_BROKER_IP=${BROKER_IP}
+    build_wireless_firmware ${EMCUTE_MQTSSN_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${ARCH}
+else
+    echo "DataStereamPilot: The broker IP has not changed."
+    export PREV_BROKER_IP=${BROKER_IP}
+    build_wireless_firmware_cached ${EMCUTE_MQTSSN_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${ARCH}
+fi
 build_status=$?
 if [ $build_status -ne 0 ]; then
   exit $build_status

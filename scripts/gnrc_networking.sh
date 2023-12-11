@@ -22,4 +22,6 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   echo "Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"
   ssh root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/border.sh
+
+  export SENSE_GNRC_NETWORKING_NODE_UP=1
 fi

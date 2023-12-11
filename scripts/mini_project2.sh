@@ -54,3 +54,5 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh

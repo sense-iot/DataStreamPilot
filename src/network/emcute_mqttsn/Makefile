@@ -2,7 +2,7 @@
 APPLICATION = emcute_mqttsn
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= iotlab-m3
+BOARD ?= iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT

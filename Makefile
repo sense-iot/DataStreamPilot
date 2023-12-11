@@ -16,7 +16,6 @@ run_mini_project_1:
 run_sensor:
 	./scripts/sensor_read_experiment.sh
 
-
 .PHONY: border_router
 
 border_router:
@@ -69,6 +68,12 @@ clean_all: clean
 clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
+
+broker_sub:
+	./scripts/broker_sub.sh
+
+broker_pub:
+	./scripts/broker_pub.sh $(filter-out $@,$(MAKECMDGOALS))
 
 %:
 	@:

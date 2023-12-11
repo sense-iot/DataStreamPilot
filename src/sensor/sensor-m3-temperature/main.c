@@ -160,13 +160,15 @@ int main(void)
     
     int16_t temp = 0;
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
-      DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
-
+      // DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
+      
+      int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
+      DEBUG_PRINT("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       if (array_length < 4) {
-        data.tempList[array_length++] = temp + add_noise(789.2);
+        data.tempList[array_length++] = temp_n_noise;
       }
       else {
-        data.tempList[array_length++] = temp + add_noise(789.2);
+        data.tempList[array_length++] = temp_n_noise;
         int32_t sum = 0;
         int numElements = array_length;
         // printf("No of ele: %i\n", numElements);

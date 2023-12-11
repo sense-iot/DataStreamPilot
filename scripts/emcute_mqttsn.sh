@@ -17,10 +17,9 @@ fi
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   cp ${EMCUTE_MQTSSN_HOME}/bin/${ARCH}/${EMCUTE_MQTSSN_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
-  cp ${EMCUTE_MQTSSN_HOME}/bin/${ARCH}/${EMCUTE_MQTSSN_EXE_NAME}.elf ~/A8
 
-  echo "Flashing new firmware for iotlab-a8-m3 node : ${MQTT_CLIENT_NODE}"
-  ssh root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn/mqute_client.sh
+  echo "Flashing new firmware for ${ARCH} node : ${MQTT_CLIENT_NODE}"
+  flash_firmware ${EMCUTE_MQTSSN_EXE_NAME} ${MQTT_CLIENT_NODE}
 
   export EMCUTE_MQTTSN_NODE_UP=1
 fi

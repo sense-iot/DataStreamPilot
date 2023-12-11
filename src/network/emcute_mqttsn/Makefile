@@ -24,6 +24,12 @@ USEMODULE += gnrc_icmpv6_echo
 # Optimize network stack to for use with a single network interface
 USEMODULE += gnrc_netif_single
 
+USEMODULE += ztimer_usec
+USEMODULE += ztimer_msec
+USEMODULE += ztimer_sec
+USEMODULE += ztimer_no_periph_rtt
+
+
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)
 ifneq (,$(EMCUTE_ID))
   CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"

@@ -52,7 +52,12 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 # printf "%-25s %s\n" "HELLO_NODE:" "$HELLO_NODE"
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
+echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+echo "======================================================== $ARCH"

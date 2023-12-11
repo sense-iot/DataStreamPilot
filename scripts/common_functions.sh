@@ -39,13 +39,12 @@ extract_and_categorize_nodes() {
 flash_firmware() {
     local firmware_name=$1
     local node=$2
-    local ARCHI=$3
     local firmware_path="${SENSE_FIRMWARE_HOME}/${firmware_name}.elf"
     local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
 
     # Execute the command
-    echo "iotlab-node --flash "$firmware_path" -l "${site},$ARCHI,$node""
-    iotlab-node --flash "$firmware_path" -l "${site},$ARCHI,$node"
+    echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node""
+    iotlab-node --flash "$firmware_path" -l "${site},m3,$node"
 }
 
 # Function to write a variable to a file
@@ -244,6 +243,7 @@ build_wireless_firmware() {
 
     local firmware_source_folder="$1"
     local exe_name="$2"
+    local ARCH="${3:-$ARCH}"
 
     if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
         echo "No need to build"
@@ -272,6 +272,7 @@ build_wireless_firmware_forced() {
 
     local firmware_source_folder="$1"
     local exe_name="$2"
+    local ARCH="${3:-$ARCH}"
 
     echo "Build firmware ${firmware_source_folder}"
     echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"

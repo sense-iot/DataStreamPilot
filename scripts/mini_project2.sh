@@ -8,11 +8,6 @@ M3_NODE_COUNT=2
 A8_NODE_COUNT=2
 EXPERIMENT_ID=0;
 
-
-EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
-echo "DataStereamPilot: Checking if there is an experiment already running with old name."
-wait_for_job "${EXPERIMENT_ID}"
-
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     echo "DataStereamPilot: submitting a new experiment"
     experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d 120 -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
@@ -57,5 +52,5 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 # printf "%-25s %s\n" "HELLO_NODE:" "$HELLO_NODE"
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
-#source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh

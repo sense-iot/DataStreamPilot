@@ -163,10 +163,10 @@ int main(void)
       DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
 
       if (array_length < 4) {
-        data.tempList[array_length++] = temp;
+        data.tempList[array_length++] = temp + add_noise(789.2);
       }
       else {
-        data.tempList[array_length++] = temp;
+        data.tempList[array_length++] = temp + add_noise(789.2);
         int32_t sum = 0;
         int numElements = array_length;
         // printf("No of ele: %i\n", numElements);
@@ -191,10 +191,10 @@ int main(void)
         // printf("Temp Str: %s°C\n", temp_str);
         strcat(data.buffer, temp_str);
 
-        // parity = calculate_odd_parity(rounded_avg_temp);
-        // sprintf(parity_bit, "%i,", parity);
+        parity = calculate_odd_parity(rounded_avg_temp);
+        sprintf(parity_bit, "%i,", parity);
         // printf("Temp Str: %s°C\n", temp_str);
-        // strcat(data.buffer, parity_bit);
+        strcat(data.buffer, parity_bit);
 
         for (int i = 0; i < array_length - 1; ++i) {
             data.tempList[i] = data.tempList[i + 1];

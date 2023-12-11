@@ -15,6 +15,9 @@
 #define ENABLE_DEBUG 1
 #include "debug.h"
 
+#include <math.h>
+
+
 typedef struct {
   char buffer[128];
   int16_t tempList[5];
@@ -118,6 +121,29 @@ int calculate_odd_parity(int num) {
     return parityBit;
 }
 
+float generate_normal_random(float stddev) {
+    float M_PI = 3.1415926535;
+
+    // Box-Muller transform to generate random numbers with normal distribution
+    float u1 = rand() / (float)RAND_MAX;
+    float u2 = rand() / (float)RAND_MAX;
+    float z = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
+    
+    return stddev * z;
+}
+
+float add_noise(float stddev) {
+    int num;
+    float noise_val = 0;
+    
+    num = rand() % 100 + 1; // use rand() function to get the random number
+    if (num >= 50) {
+        // Generate a random number with normal distribution based on a stddev
+        noise_val = generate_normal_random(stddev);
+    }
+    return noise_val;
+}
+
 int main(void)
 {
   if (temp_sensor_reset() == 0) {
@@ -165,10 +191,10 @@ int main(void)
         // printf("Temp Str: %s°C\n", temp_str);
         strcat(data.buffer, temp_str);
 
-        parity = calculate_odd_parity(rounded_avg_temp);
-        sprintf(parity_bit, "%i,", parity);
+        // parity = calculate_odd_parity(rounded_avg_temp);
+        // sprintf(parity_bit, "%i,", parity);
         // printf("Temp Str: %s°C\n", temp_str);
-        strcat(data.buffer, parity_bit);
+        // strcat(data.buffer, parity_bit);
 
         for (int i = 0; i < array_length - 1; ++i) {
             data.tempList[i] = data.tempList[i + 1];

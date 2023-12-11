@@ -33,3 +33,6 @@ echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
 echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}"
 echo "nc m3-${BORDER_ROUTER_NODE} 20000"
 echo "nc m3-${SENSOR_CONNECTED_NODE} 20000"
+
+echo "Broker IP : "
+extract_local_ipv6

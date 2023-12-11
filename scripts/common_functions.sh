@@ -74,6 +74,26 @@ read_variable_from_file() {
     fi
 }
 
+extract_local_ipv6() {
+    local file_path="$HOME/shared/mqtt_broker_details.txt"
+    
+    # Check if the file exists
+    if [ ! -f "$file_path" ]; then
+        echo "File does not exist: $file_path"
+        return 1
+    fi
+
+    # Extract the local IPv6 address
+    local ipv6_addr=$(grep -o 'inet6 addr: fe80:[^ ]*' "$file_path" | awk '{print $3}')
+    
+    if [ -z "$ipv6_addr" ]; then
+        echo "Local IPv6 address not found in the file."
+        return 1
+    fi
+
+    echo "Local IPv6 address: $ipv6_addr"
+}
+
 # Function to write the experiment ID to a file
 write_experiment_id() {
     local experiment_id=$1

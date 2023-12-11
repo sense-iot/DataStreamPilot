@@ -25,6 +25,6 @@ GNRC_NETWORKING_NODE=$(read_variable_from_file "GNRC_NETWORKING_NODE")
 SENSOR_CONNECTED_NODE=$(read_variable_from_file "SENSOR_CONNECTED_NODE")
 
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE:" "a8 - $MQTT_CLIENT_NODE"
+printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
-printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "m3 - $GNRC_NETWORKING_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"

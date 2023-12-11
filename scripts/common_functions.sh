@@ -34,6 +34,20 @@ extract_and_categorize_nodes() {
     done
 }
 
+
+# Function to execute the iotlab-node command with given parameters
+flash_firmware() {
+    local firmware_name=$1
+    local node=$2
+    local ARCHI=$3
+    local firmware_path="${SENSE_FIRMWARE_HOME}/${firmware_name}.elf"
+    local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
+
+    # Execute the command
+    echo "iotlab-node --flash "$firmware_path" -l "${site},$ARCHI,$node""
+    iotlab-node --flash "$firmware_path" -l "${site},$ARCHI,$node"
+}
+
 # Function to write a variable to a file
 write_variable_to_file() {
     local variable_name=$1
@@ -160,7 +174,7 @@ submit_border_router_job() {
 submit_coap_server_job() {
     local coap_server_node="$1"
 
-    local coap_server_job_json=$(iotlab-experiment submit -n ${COAP_SERVER_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${coap_server_node},${SENSE_FIRMWARE_HOME}/${COAP_SERVER_EXE_NAME}.elf)
+    local coap_server_job_json=$(iotlab-experiment submit -n ${COAP_SERVER_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE}${SENSE_SITE},m3,${coap_server_node},${SENSE_FIRMWARE_HOME}/${COAP_SERVER_EXE_NAME}.elf)
 
     # Extract job ID from JSON output
     local coap_server_job_id=$(echo $coap_server_job_json | jq -r '.id')

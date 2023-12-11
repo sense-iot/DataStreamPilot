@@ -28,5 +28,11 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   #   echo "An experiment with the name ${BORDER_ROUTER_EXE_NAME} is already running."
   # fi
 
+  # iotlab-node --flash ${SENSE_FIRMWARE_HOME}/${BORDER_ROUTER_EXE_NAME}.elf -l ${SENSE_SITE},m3,${BORDER_ROUTER_NODE}
+  
+  flash_firmware ${BORDER_ROUTER_EXE_NAME} ${BORDER_ROUTER_NODE} m3
+  
+  #create_tap_interface "${BORDER_ROUTER_NODE}" &
+  
   export SENSE_BORDER_ROUTER_UP=1
 fi

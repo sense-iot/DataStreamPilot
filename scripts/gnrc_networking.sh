@@ -18,19 +18,22 @@ fi
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   cp ${GNRC_NETWORKING_HOME}/bin/${ARCH}/${GNRC_NETWORKING_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
+  cp ${GNRC_NETWORKING_HOME}/bin/${ARCH}/${GNRC_NETWORKING_EXE_NAME}.elf ~/A8
 
-  if ! is_experiment_running "${GNRC_NETWORKING_EXE_NAME}"; then
-    n_json=$(iotlab-experiment submit -n ${GNRC_NETWORKING_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},a8,${GNRC_NETWORKING_NODE})
-    n_node_job_id=$(echo $n_json | jq '.id')
-    wait_for_job "${n_node_job_id}"
-  else
-    n_node_job_id=$(get_running_experiment_id "${GNRC_NETWORKING_EXE_NAME}")
-    echo "An experiment with the name ${GNRC_NETWORKING_EXE_NAME} is already running on ${n_node_job_id}."
-  fi
+  # if ! is_experiment_running "${GNRC_NETWORKING_EXE_NAME}"; then
+  #   n_json=$(iotlab-experiment submit -n ${GNRC_NETWORKING_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},a8,${GNRC_NETWORKING_NODE})
+  #   n_node_job_id=$(echo $n_json | jq '.id')
+  #   wait_for_job "${n_node_job_id}"
+  # else
+  #   n_node_job_id=$(get_running_experiment_id "${GNRC_NETWORKING_EXE_NAME}")
+  #   echo "An experiment with the name ${GNRC_NETWORKING_EXE_NAME} is already running on ${n_node_job_id}."
+  # fi
 
   echo "Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"
-  echo "iotlab-ssh flash-m3 ${SENSE_FIRMWARE_HOME}/${GNRC_NETWORKING_EXE_NAME}.elf -l ${SENSE_SITE},a8,${GNRC_NETWORKING_NODE}"
-  iotlab-ssh -i ${n_node_job_id} flash ${SENSE_FIRMWARE_HOME}/${GNRC_NETWORKING_EXE_NAME}.elf -l ${SENSE_SITE},a8,${GNRC_NETWORKING_NODE}
+  # echo "iotlab-ssh flash-m3 ${SENSE_FIRMWARE_HOME}/${GNRC_NETWORKING_EXE_NAME}.elf -l ${SENSE_SITE},a8,${GNRC_NETWORKING_NODE}"
+  # iotlab-ssh -i ${n_node_job_id} flash ${SENSE_FIRMWARE_HOME}/${GNRC_NETWORKING_EXE_NAME}.elf -l ${SENSE_SITE},a8,${GNRC_NETWORKING_NODE}
+
+  ssh root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/border.sh
 
   echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}"
   echo "ping 2001:4860:4860::8888"

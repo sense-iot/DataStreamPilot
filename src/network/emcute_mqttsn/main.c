@@ -38,18 +38,18 @@
 #define NUMOFSUBS           (16U)
 #define TOPIC_MAXLEN        (64U)
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
+// static char stack[THREAD_STACKSIZE_DEFAULT];
 static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
 static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
-static void *emcute_thread(void *arg)
-{
-    (void)arg;
-    emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
-    return NULL;    /* should never be reached */
-}
+// static void *emcute_thread(void *arg)
+// {
+//     (void)arg;
+//     emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
+//     return NULL;    /* should never be reached */
+// }
 
 static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
 {
@@ -74,7 +74,7 @@ static unsigned get_qos(const char *str)
     }
 }
 
-static unsigned get_qos(int qos)
+static unsigned get_qos_i(int qos)
 {
     switch (qos)
     {
@@ -87,7 +87,7 @@ static unsigned get_qos(int qos)
     }
 }
 
-static int cmd_con(int port, char *topic, char *message, char* ipv6_addr)
+static int cmd_con_i(int port, char *topic, char *message, char* ipv6_addr)
 {
     sock_udp_ep_t gw = {.family = AF_INET6, .port = CONFIG_EMCUTE_DEFAULT_PORT};
 
@@ -106,11 +106,11 @@ static int cmd_con(int port, char *topic, char *message, char* ipv6_addr)
 
     if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
     {
-        printf("error: unable to connect to [%s]:%i\n", argv[1], (int)gw.port);
+        printf("error: unable to connect to [%s]:%i\n", ipv6_addr, (int)gw.port);
         return 1;
     }
     printf("Successfully connected to gateway at [%s]:%i\n",
-           argv[1], (int)gw.port);
+           ipv6_addr, (int)gw.port);
 
     return 0;
 }
@@ -208,12 +208,12 @@ static int cmd_pub(int argc, char **argv)
     return 0;
 }
 
-static int cmd_pub(int qos, char *name, char *topic)
+static int cmd_pub_i(int qos, char *name, char *topic)
 {
     emcute_topic_t t;
     unsigned flags = EMCUTE_QOS_0;
 
-    flags |= get_qos(qos);
+    flags |= get_qos_i(qos);
 
     printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, name, (int)flags);
 
@@ -226,7 +226,7 @@ static int cmd_pub(int qos, char *name, char *topic)
     }
 
     /* step 2: publish data */
-    if (emcute_pub(&t, av strlen(name), flags) != EMCUTE_OK)
+    if (emcute_pub(&t, name, strlen(name), flags) != EMCUTE_OK)
     {
         printf("error: unable to publish data to topic '%s [%i]'\n",
                t.name, (int)t.id);
@@ -322,15 +322,15 @@ static int cmd_will(int argc, char **argv)
     return 0;
 }
 
-static const shell_command_t shell_commands[] = {
-    { "con", "connect to MQTT broker", cmd_con },
-    { "discon", "disconnect from the current broker", cmd_discon },
-    { "pub", "publish something", cmd_pub },
-    { "sub", "subscribe topic", cmd_sub },
-    { "unsub", "unsubscribe from topic", cmd_unsub },
-    { "will", "register a last will", cmd_will },
-    { NULL, NULL, NULL }
-};
+// static const shell_command_t shell_commands[] = {
+//     { "con", "connect to MQTT broker", cmd_con },
+//     { "discon", "disconnect from the current broker", cmd_discon },
+//     { "pub", "publish something", cmd_pub },
+//     { "sub", "subscribe topic", cmd_sub },
+//     { "unsub", "unsubscribe from topic", cmd_unsub },
+//     { "will", "register a last will", cmd_will },
+//     { NULL, NULL, NULL }
+// };
 
 
 int main(void)
@@ -342,7 +342,7 @@ int main(void)
     /* initialize our subscription buffers */
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
 
-    if (cmd_con(1885, "", "", ""))
+    if (cmd_con_i(1885, "", "", ""))
     {
         puts("connection to broker is invalid\n");
         return 1;
@@ -359,7 +359,7 @@ int main(void)
             return 0;
         }
 
-        cmd_pub(0, "temp0", "temperature");
+        cmd_pub_i(0, "temp0", "temperature");
     }
     
     

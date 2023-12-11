@@ -10,6 +10,9 @@ status:
 broker:
 	./scripts/mqtt_broker_setup.sh
 
+mqtt:
+	./scripts/emcute_mqttsn.sh
+
 run_mini_project_1:
 	./scripts/mini_project1.sh
 
@@ -68,6 +71,7 @@ clean_all: clean
 clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
+	rm -Rf ~/shared/logs
 
 broker_sub:
 	./scripts/broker_sub.sh

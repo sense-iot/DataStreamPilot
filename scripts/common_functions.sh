@@ -91,7 +91,7 @@ extract_local_ipv6() {
         return 1
     fi
 
-    echo "Local IPv6 address: $ipv6_addr"
+    echo "$ipv6_addr"
 }
 
 # Function to write the experiment ID to a file

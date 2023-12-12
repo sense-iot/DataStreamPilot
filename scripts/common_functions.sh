@@ -91,6 +91,7 @@ extract_local_ipv6() {
         return 1
     fi
 
+    ipv6_addr=${ipv6_addr%???}
     echo "$ipv6_addr"
 }
 

@@ -13,9 +13,6 @@ broker:
 mqtt:
 	./scripts/emcute_mqttsn.sh
 
-run_mini_project_1:
-	./scripts/mini_project1.sh
-
 run_sensor:
 	./scripts/sensor_read_experiment.sh
 

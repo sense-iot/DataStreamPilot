@@ -1,6 +1,3 @@
-hello:
-	./scripts/hello_world_experiment.sh
-
 run_mini_project_2:
 	./scripts/mini_project2.sh
 

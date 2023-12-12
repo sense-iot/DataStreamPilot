@@ -38,12 +38,34 @@
 #define TOPIC_MAXLEN (64U)
 
 // static char stack[THREAD_STACKSIZE_DEFAULT];
-static msg_t queue[8];
+// static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
 static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
+
+void puts_append(const char *data)
+{
+    // File path
+    const char *filepath = "mqtt_client.log";
+
+    // Open the file in append mode
+    FILE *file = fopen(filepath, "a");
+    if (file == NULL)
+    {
+        return;
+    }
+
+    // Write data to the file
+    if (fputs(data, file) == EOF)
+    {
+        perror("Error writing to file");
+    }
+
+    // Close the file
+    fclose(file);
+}
 
 char *readFirstLine(void)
 {
@@ -132,11 +154,11 @@ static int cmd_con_i(int port, char *topic, char *message, char *ipv6_addr)
 {
     sock_udp_ep_t gw = {.family = AF_INET6, .port = CONFIG_EMCUTE_DEFAULT_PORT};
 
-    puts(ipv6_addr);
+    puts_append(ipv6_addr);
     // puts("error: unable to obtain topic ID");
     if (ipv6_addr_from_str((ipv6_addr_t *)&gw.addr.ipv6, ipv6_addr) == NULL)
     {
-        printf("error parsing IPv6 address\n");
+        puts_append("error parsing IPv6 address\n");
         return 1;
     }
 
@@ -262,17 +284,17 @@ static int cmd_pub(int argc, char **argv)
     return 0;
 }
 
-static int cmd_pub_i(int qos, char *name, char *topic)
+static int cmd_pub_i(int qos, char *data, char *topic)
 {
     emcute_topic_t t;
     unsigned flags = EMCUTE_QOS_0;
 
     flags |= get_qos_i(qos);
 
-    printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, name, (int)flags);
+    // printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, data, (int)flags);
 
     /* step 1: get topic id */
-    t.name = name;
+    t.name = topic;
     if (emcute_reg(&t) != EMCUTE_OK)
     {
         puts("error: unable to obtain topic ID");
@@ -280,15 +302,14 @@ static int cmd_pub_i(int qos, char *name, char *topic)
     }
 
     /* step 2: publish data */
-    if (emcute_pub(&t, name, strlen(name), flags) != EMCUTE_OK)
+    if (emcute_pub(&t, data, strlen(data), flags) != EMCUTE_OK)
     {
         printf("error: unable to publish data to topic '%s [%i]'\n",
                t.name, (int)t.id);
         return 1;
     }
 
-    printf("Published %i bytes to topic '%s [%i]'\n",
-           (int)strlen(name), t.name, t.id);
+    // printf("Published %i bytes to topic '%s [%i]'\n", data(int) strlen(data), t.name, t.id);
 
     return 0;
 }
@@ -403,39 +424,39 @@ static int cmd_will(int argc, char **argv)
 
 int main(void)
 {
-    puts("Publish subscriber example - Group 12 MQTT\n");
-    char *server_ip = readFirstLine();
-    if (server_ip == NULL)
-    {
-        puts("broker ip cannot read\n");
-        return -1;
-    }
-    puts(server_ip);
-    msg_init_queue(queue, ARRAY_SIZE(queue));
+    puts_append("Publish subscriber example - Group 12 MQTT\n");
+    // char *server_ip = readFirstLine();
+    // if (server_ip == NULL)
+    // {
+    //     puts("broker ip cannot read\n");
+    //     return -1;
+    // }
+    // puts_append(server_ip);
+    // msg_init_queue(queue, ARRAY_SIZE(queue));
 
-    /* initialize our subscription buffers */
-    memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
+    // // /* initialize our subscription buffers */
+    // memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
 
-    puts("Publish subscriber example for MQTT\n");
-    if (cmd_con_i(1885, "temp", "hi", server_ip))
-    {
-        puts("connection to broker is invalid\n");
-        return 1;
-    }
+    // puts_append("Publish subscriber example for MQTT\n");
+    // if (cmd_con_i(1886, "temperature", "hi", server_ip))
+    // {
+    //     puts_append("connection to broker is invalid\n");
+    //     return 1;
+    // }
 
-    int counter = 1000;
+    // int counter = 1000;
     while (1)
     {
         ztimer_sleep(ZTIMER_MSEC, 1000);
 
-        counter -= 1;
+        // counter -= 1;
 
-        if (counter <= 0)
-        {
-            return 0;
-        }
+        // if (counter <= 0)
+        // {
+        //     return 0;
+        // }
 
-        cmd_pub_i(0, "temp0", "temperature");
+        // cmd_pub_i(1, "temp0", "temperature");
     }
 
     /* start the emcute thread */

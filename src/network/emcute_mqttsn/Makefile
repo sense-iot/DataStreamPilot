@@ -37,10 +37,10 @@ USEMODULE += ztimer_no_periph_rtt
 
 USEMODULE += shell
 USEMODULE += shell_cmds_default
-SEMODULE += ps
-USEMODULE += netstats_l2
-USEMODULE += netstats_ipv6
-USEMODULE += netstats_rpl
+# SEMODULE += ps
+# USEMODULE += netstats_l2
+# USEMODULE += netstats_ipv6
+# USEMODULE += netstats_rpl
 
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)
 ifneq (,$(EMCUTE_ID))

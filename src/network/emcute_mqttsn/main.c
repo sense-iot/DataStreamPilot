@@ -423,20 +423,20 @@ int main(void)
         return 1;
     }
 
-    // int counter = 1000;
-    // while (1)
-    // {
-    //     ztimer_sleep(ZTIMER_MSEC, 1000);
+    int counter = 1000;
+    while (1)
+    {
+        ztimer_sleep(ZTIMER_MSEC, 1000);
 
-    //     counter -= 1;
+        counter -= 1;
 
-    //     if (counter <= 0)
-    //     {
-    //         return 0;
-    //     }
+        if (counter <= 0)
+        {
+            return 0;
+        }
 
-    //     cmd_pub_i(0, "temp0", "temperature");
-    // }
+        cmd_pub_i(0, "temp0", "temperature");
+    }
 
     /* start the emcute thread */
     // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,

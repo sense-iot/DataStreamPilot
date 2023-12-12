@@ -136,7 +136,7 @@ int main(void)
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
       DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
 
-      if (array_length < 4) {
+      if (array_length < 7) {
         data.tempList[array_length++] = temp;
       }
       else {

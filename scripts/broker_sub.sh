@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-mosquitto_sub -h 2001:660:5307:3000::67 -p 1886 -t test/riot
+mosquitto_sub -h fe80::fadc:7aff:fe01:95f8 -p 1886 -t test/riot

@@ -74,6 +74,27 @@ read_variable_from_file() {
     fi
 }
 
+extract_global_ipv6() {
+    local file_path="$HOME/shared/mqtt_broker_details.txt"
+    
+    # Check if the file exists
+    if [ ! -f "$file_path" ]; then
+        echo "File does not exist: $file_path"
+        return 1
+    fi
+
+    # Extract the global IPv6 address
+    local ipv6_addr=$(grep -o 'inet6 addr: 2001:[^ ]*' "$file_path" | awk '{print $3}')
+    
+    if [ -z "$ipv6_addr" ]; then
+        echo "Global IPv6 address not found in the file."
+        return 1
+    fi
+
+    ipv6_addr=${ipv6_addr%???}
+    echo "$ipv6_addr"
+}
+
 extract_local_ipv6() {
     local file_path="$HOME/shared/mqtt_broker_details.txt"
     

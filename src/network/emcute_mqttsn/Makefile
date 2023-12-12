@@ -2,7 +2,7 @@
 APPLICATION = emcute_mqttsn
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= iotlab-m3
+BOARD ?= iotlab-a8-m3
 
 CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common -Wno-unused-function
 

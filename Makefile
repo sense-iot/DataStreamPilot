@@ -1,6 +1,9 @@
 run_mini_project_2:
 	./scripts/mini_project2.sh
 
+run_aws_server:
+	./src/server/deploy.sh --mode all
+	
 status:
 	./scripts/status.sh
 

@@ -30,7 +30,7 @@ def sendInfluxdb(decodedValues):
     for data in decodedValues:
         fields      = { "value" : data }
         save(db_client, TEMPERATURE, fields, tags=tags)    
-        time.sleep(0.1)
+        time.sleep(1)
 
 
 def save(db_client, measurement, fields, tags=None):

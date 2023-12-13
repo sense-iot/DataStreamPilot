@@ -167,9 +167,7 @@ float add_noise(float stddev) {
 int main(void)
 {
   srand(evtimer_now_msec());
-  
-  const char *site = getenv("SENSE_SITE");
-
+  static char *site_name = SITE_NAME;
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
     return 1;
@@ -205,7 +203,7 @@ int main(void)
 
     if (counter == 10) {
       DEBUG_PRINT("Data: %s\n", data.buffer);
-      DEBUG_PRINT("site: %s\n", site);
+      DEBUG_PRINT("site: %s\n", site_name);
       ztimer_sleep(ZTIMER_MSEC, 1000);
 
       // Create a JSON-like string manually

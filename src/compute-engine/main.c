@@ -210,7 +210,7 @@ int main(void)
       char json_payload[MAX_JSON_PAYLOAD_SIZE];
       int snprintf_result = snprintf(json_payload, sizeof(json_payload),
                                    "{\"site\": \"%s\", \"temperature\": \"%s\"}",
-                                   site, data.buffer);
+                                   site_name, data.buffer);
 
       // Check if snprintf was successful
       if (snprintf_result < 0 || snprintf_result >= (int) sizeof(json_payload)) {

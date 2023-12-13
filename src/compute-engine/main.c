@@ -169,7 +169,6 @@ int main(void)
   srand(evtimer_now_msec());
   
   const char *site = getenv("SENSE_SITE");
-  printf("Site: %s\n", site);
 
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
@@ -206,6 +205,7 @@ int main(void)
 
     if (counter == 10) {
       DEBUG_PRINT("Data: %s\n", data.buffer);
+      DEBUG_PRINT("site: %s\n", site);
       ztimer_sleep(ZTIMER_MSEC, 1000);
 
       // Create a JSON-like string manually

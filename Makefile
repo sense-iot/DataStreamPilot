@@ -44,7 +44,7 @@ sensor2:
 	./scripts/sensor2.sh
 
 compute_engine:
-	./scripts/compute-engine.sh
+	./scripts/compute_engine.sh
 
 # run border router and coap server in the same network
 coap_server:

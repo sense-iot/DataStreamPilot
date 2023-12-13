@@ -1,4 +1,4 @@
-APPLICATION = sensor-connected
+APPLICATION = compute-engine
 
 BOARD ?= iotlab-m3
 

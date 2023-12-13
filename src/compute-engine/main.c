@@ -166,7 +166,7 @@ float add_noise(float stddev) {
 
 int main(void)
 {
-  srand(time(NULL));
+  srand(time(ZTIMER_MSEC));
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
     return 1;

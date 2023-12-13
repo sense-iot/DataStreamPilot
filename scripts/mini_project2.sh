@@ -30,7 +30,7 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
 fi
 
 
-export GNRC_NETWORKING_NODE=${a8_nodes[0]}
+# export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 # export MQTT_CLIENT_NODE=${a8_nodes[1]}
 
 export BORDER_ROUTER_NODE=${m3_nodes[0]}

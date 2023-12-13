@@ -43,6 +43,7 @@ static lpsxxx_t lpsxxx;
 #define DEV_I2C (dev->params.i2c)
 #define DEV_ADDR (dev->params.addr)
 #define DEV_RATE (dev->params.rate)
+#define MAX_JSON_PAYLOAD_SIZE 256
 
 int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
 {
@@ -165,8 +166,11 @@ float add_noise(float stddev) {
 
 int main(void)
 {
-  uint64_t current_time = evtimer_now_msec();
-  srand(current_time);
+  uint64_t current_time = ;
+  srand(evtimer_now_msec());
+  
+  const char *site = getenv("SENSE_SITE");
+
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
     return 1;
@@ -188,7 +192,6 @@ int main(void)
       temp += (int) add_noise(789.2);
 
       sprintf(temp_str, "%i,", temp);
-      printf("Temp Str: %s°C\n", temp_str);
       strcat(data.buffer, temp_str);
 
       parity = calculate_odd_parity(temp);
@@ -204,7 +207,24 @@ int main(void)
     if (counter == 10) {
       DEBUG_PRINT("Data: %s\n", data.buffer);
       ztimer_sleep(ZTIMER_MSEC, 1000);
-      gcoap_post(data.buffer, TEMP);
+
+      // Create a JSON-like string manually
+      char json_payload[MAX_JSON_PAYLOAD_SIZE];
+      int snprintf_result = snprintf(json_payload, sizeof(json_payload),
+                                   "{\"site\": \"%s\", \"temperature\": \"%s\"}",
+                                   site, data.buffer);
+
+      // Check if snprintf was successful
+      if (snprintf_result < 0 || snprintf_result >= sizeof(json_payload)) {
+          fprintf(stderr, "Error creating JSON payload\n");
+          return 1;
+      }
+
+      // Use the JSON payload string as needed
+      printf("JSON Payload:\n%s\n", json_payload);
+
+
+      gcoap_post(json_payload, TEMP);
       memset(data.buffer, 0, sizeof(data.buffer));
       counter = 0;
     }

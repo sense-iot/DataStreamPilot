@@ -43,7 +43,7 @@ gnrc_border_router:
 sensor2:
 	./scripts/sensor2.sh
 
-compute-engine:
+compute_engine:
 	./scripts/compute-engine.sh
 
 # run border router and coap server in the same network

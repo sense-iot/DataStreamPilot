@@ -173,9 +173,7 @@ int main(void)
     return 1;
   }
 
-  // int16_t avg_temp = 0; 
   int counter = 0;
-  int array_length = 0;
   int parity;
   int16_t base_value = 0;
 
@@ -194,7 +192,6 @@ int main(void)
         base_value = temp;
         sprintf(temp_str, "%i,", temp);
         strcat(data.buffer, temp_str);
-        DEBUG_PRINT("base_value test: %i\n", base_value);
       }
       else {
         temp -= base_value;
@@ -202,14 +199,14 @@ int main(void)
         strcat(data.buffer, temp_str);
       }
 
+      // threshold = 128
+      temp = (temp < -128) ? -128 : (temp > 128) ? 128 : temp;
       DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
-      
-      parity = calculate_odd_parity(temp);
-      sprintf(parity_bit, "%i,", parity);
 
-      strcat(data.buffer, parity_bit);
+      // parity = calculate_odd_parity(temp);
+      // sprintf(parity_bit, "%i,", parity);
+      // strcat(data.buffer, parity_bit);
 
-      array_length--;
       counter++;
 
     }

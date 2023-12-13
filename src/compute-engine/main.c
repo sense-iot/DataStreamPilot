@@ -163,7 +163,7 @@ int main(void)
       // printf("Temp Str: %s°C\n", temp_str);
       strcat(data.buffer, temp_str);
 
-      parity = calculate_odd_parity(rounded_avg_temp);
+      parity = calculate_odd_parity(temp);
       sprintf(parity_bit, "%i,", parity);
       // printf("Temp Str: %s°C\n", temp_str);
       strcat(data.buffer, parity_bit);
@@ -175,7 +175,7 @@ int main(void)
       counter++;
 
     }
-    
+
     if (counter == 10) {
       DEBUG_PRINT("Data: %s\n", data.buffer);
       ztimer_sleep(ZTIMER_MSEC, 1000);

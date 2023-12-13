@@ -2,7 +2,7 @@ APPLICATION = sensor-connected
 
 BOARD ?= iotlab-m3
 
-RIOTBASE ?= $(CURDIR)/../../../external/RIOT
+RIOTBASE ?= $(CURDIR)/../../external/RIOT
 
 USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec

@@ -139,6 +139,30 @@ void setup_coap_client(void) {
     ztimer_sleep(ZTIMER_MSEC, 1000);
 }
 
+float generate_normal_random(float stddev) {
+    float M_PI = 3.1415926535;
+
+    // Box-Muller transform to generate random numbers with normal distribution
+    float u1 = rand() / (float)RAND_MAX;
+    float u2 = rand() / (float)RAND_MAX;
+    float z = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
+    
+    return stddev * z;
+}
+
+float add_noise(float stddev) {
+    int num;
+    float noise_val = 0;
+    
+    num = rand() % 100 + 1; // use rand() function to get the random number
+    if (num >= 50) {
+        // Generate a random number with normal distribution based on a stddev
+        noise_val = generate_normal_random(stddev);
+    }
+    return noise_val;
+}
+
+
 int main(void)
 {
   if (temp_sensor_reset() == 0) {
@@ -159,7 +183,7 @@ int main(void)
       char temp_str[10];
       char parity_bit[4];
 
-      sprintf(temp_str, "%i,", temp);
+      sprintf(temp_str, "%i,", temp + add_noise(789.2));
       printf("Temp Str: %s°C\n", temp_str);
       strcat(data.buffer, temp_str);
 

@@ -27,7 +27,7 @@ class TimeResource(resource.ObservableResource):
 class temperature(resource.Resource):
     async def render_post(self, request):
         payload = json.loads(request.payload.decode('utf8'))
-        logger.debug(f"Received message: {payload}")
+        logger.debug(f"Received message: {payload['temperature']}")
         decodedValues = decodeTemperature(payload['temperature'])
         logger.debug(f"Decoded values: {decodedValues}")
         sendInfluxdb(decodedValues)

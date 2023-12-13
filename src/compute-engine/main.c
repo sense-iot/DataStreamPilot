@@ -160,17 +160,14 @@ int main(void)
       char parity_bit[4];
 
       sprintf(temp_str, "%i,", temp);
-      // printf("Temp Str: %s°C\n", temp_str);
+      printf("Temp Str: %s°C\n", temp_str);
       strcat(data.buffer, temp_str);
 
       parity = calculate_odd_parity(temp);
       sprintf(parity_bit, "%i,", parity);
-      // printf("Temp Str: %s°C\n", temp_str);
+
       strcat(data.buffer, parity_bit);
 
-      for (int i = 0; i < array_length - 1; ++i) {
-          data.tempList[i] = data.tempList[i + 1];
-      }
       array_length--;
       counter++;
 

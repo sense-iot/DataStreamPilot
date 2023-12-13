@@ -189,12 +189,13 @@ int main(void)
 
       temp += (int) add_noise(789.2);
 
-      DEBUG_PRINT("temp: %i %i\n", temp, base_value);
+      DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
 
       if (counter == 0) {
         base_value = temp;
         sprintf(temp_str, "%i,", temp);
         strcat(data.buffer, temp_str);
+        DEBUG_PRINT("base_value test: %i\n", base_value);
       }
       else {
         temp -= base_value;

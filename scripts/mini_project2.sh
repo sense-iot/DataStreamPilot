@@ -5,7 +5,7 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
 M3_NODE_COUNT=2
-A8_NODE_COUNT=0
+A8_NODE_COUNT=1
 EXPERIMENT_ID=0;
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
@@ -30,7 +30,7 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
 fi
 
 
-# export GNRC_NETWORKING_NODE=${a8_nodes[0]}
+export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 # export MQTT_CLIENT_NODE=${a8_nodes[1]}
 
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
@@ -62,7 +62,7 @@ printf "%-50s %s\n" "DataStereamPilot: COMPUTE_ENGINE_NODE:" "m3 - $COMPUTE_ENGI
 echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 # echo "======================================================== $ARCH"
-# source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
 # echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 # echo "======================================================== $ARCH"

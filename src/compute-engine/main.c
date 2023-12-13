@@ -165,7 +165,7 @@ float add_noise(float stddev) {
 
 int main(void)
 {
-  uint64_t current_time = xtimer_now_usec();
+  uint64_t current_time = evtimer_now_msec();
   srand(current_time);
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");

@@ -188,6 +188,8 @@ int main(void)
 
       temp += (int) add_noise(789.2);
 
+      DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
+
       if (counter == 0) {
         base_value = temp;
         sprintf(temp_str, "%i,", temp);
@@ -195,13 +197,12 @@ int main(void)
       }
       else {
         temp -= base_value;
+        // threshold = 128
+        temp = (temp < -128) ? -128 : (temp > 128) ? 128 : temp;
         sprintf(temp_str, "%i,", temp);
         strcat(data.buffer, temp_str);
       }
 
-      // threshold = 128
-      temp = (temp < -128) ? -128 : (temp > 128) ? 128 : temp;
-      DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
 
       // parity = calculate_odd_parity(temp);
       // sprintf(parity_bit, "%i,", parity);

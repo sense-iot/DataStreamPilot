@@ -10,7 +10,7 @@ fi
 
 source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 # grenoble, paris, lille, saclay, strasbourg
-export SENSE_SITE=grenoble
+export SENSE_SITE=paris
 
 printf "%-50s %s\n" "DataStereamPilot: SENSE_SITE:" "$SENSE_SITE"
 
@@ -71,15 +71,15 @@ fi
 export ARCH=iotlab-m3
 
 # values are from 11-26
-export DEFAULT_CHANNEL=22
+# export DEFAULT_CHANNEL=22
 #export DEFAULT_CHANNEL=23 - dilan
-#export DEFAULT_CHANNEL=24 - waas
+export DEFAULT_CHANNEL=24 #- waas
 #export DEFAULT_CHANNEL=25 - rukshan
 
 export ETHOS_BAUDRATE=500000
-export TAP_INTERFACE=tap7
+# export TAP_INTERFACE=tap7
 # export TAP_INTERFACE=tap4 - dilan
-# export TAP_INTERFACE=tap5 - waas
+export TAP_INTERFACE=tap5 #- waas
 # export TAP_INTERFACE=tap6 - rukshan
 
 # this is seconds
@@ -121,6 +121,10 @@ export SENSOR_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_CONNECTED_FOLDER_
 export SENSOR_2_CONNECTED_FOLDER_NAME=sensor2
 export SENSOR_2_CONNECTED_EXE_NAME=${SENSOR_2_CONNECTED_FOLDER_NAME}
 export SENSOR_2_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_2_CONNECTED_FOLDER_NAME}
+
+export COMPUTE_ENGINE_FOLDER_NAME=computer-engine
+export COMPUTE_ENGINE_EXE_NAME=${COMPUTE_ENGINE_FOLDER_NAME}
+export COMPUTE_ENGINE_HOME=${SENSE_HOME}/src/sensor/${COMPUTE_ENGINE_FOLDER_NAME}
 
 #SENSE_SCRIPTS_HOME="${SENSE_HOME}/${SCRIPTS}"
 #SENSE_STOPPERS_HOME="${SENSE_SCRIPTS_HOME}/stoppers"

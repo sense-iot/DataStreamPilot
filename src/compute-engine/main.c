@@ -166,7 +166,6 @@ float add_noise(float stddev) {
 
 int main(void)
 {
-  uint64_t current_time = ;
   srand(evtimer_now_msec());
   
   const char *site = getenv("SENSE_SITE");
@@ -215,7 +214,7 @@ int main(void)
                                    site, data.buffer);
 
       // Check if snprintf was successful
-      if (snprintf_result < 0 || snprintf_result >= sizeof(json_payload)) {
+      if (snprintf_result < 0 || snprintf_result >= (int) sizeof(json_payload)) {
           fprintf(stderr, "Error creating JSON payload\n");
           return 1;
       }

@@ -10,17 +10,14 @@ if [ $build_status -ne 0 ]; then
 fi
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
+  # cp ${SENSOR_CONNECTED_HOME}/bin/${ARCH}/${SENSOR_CONNECTED_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
+
+  # iotlab-profile del -n group12
+  # iotlab-profile addm3 -n group12 -voltage -current -power -period 8244 -avg 4
+
   cp ${SENSOR_CONNECTED_HOME}/bin/${ARCH}/${SENSOR_CONNECTED_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
 
-  iotlab-profile del -n group12
-  iotlab-profile addm3 -n group12 -voltage -current -power -period 8244 -avg 4
-
-  n_json=$(iotlab-experiment submit -n ${SENSOR_CONNECTED_EXE_NAME} -d 20 -l ${SENSE_SITE},m3,${SENSOR_CONNECTED_NODE},${SENSE_FIRMWARE_HOME}/${SENSOR_CONNECTED_EXE_NAME}.elf,group12)
-  n_node_job_id=$(echo $n_json | jq '.id')
-
-  create_stopper_script $n_node_job_id
-
-  wait_for_job "${n_node_job_id}"
+  flash_firmware ${SENSOR_CONNECTED_EXE_NAME} ${SENSOR_CONNECTED_NODE}
 
   echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"
   echo "coap info"
@@ -31,7 +28,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /temperature"
 
   echo "nc m3-${SENSOR_CONNECTED_NODE} 20000"
-  nc m3-${SENSOR_CONNECTED_NODE} 20000
+  # nc m3-${SENSOR_CONNECTED_NODE} 20000
 
-  stop_jobs "${n_node_job_id}"
+  # stop_jobs "${n_node_job_id}"
 fi

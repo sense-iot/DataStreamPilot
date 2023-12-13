@@ -185,8 +185,10 @@ int main(void)
       char temp_str[10];
       char parity_bit[4];
 
-      sprintf(temp_str, "%i,", temp + (int) add_noise(789.2));
-      printf("Temp Str: %s°Cn", temp_str);
+      temp += (int) add_noise(789.2);
+
+      sprintf(temp_str, "%i,", temp);
+      printf("Temp Str: %s°C\n", temp_str);
       strcat(data.buffer, temp_str);
 
       parity = calculate_odd_parity(temp);

@@ -189,6 +189,8 @@ int main(void)
 
       temp += (int) add_noise(789.2);
 
+      DEBUG_PRINT("temp: %i\n", temp);
+
       if (counter == 0) {
         base_value = temp;
         sprintf(temp_str, "%i,", temp);
@@ -228,14 +230,16 @@ int main(void)
       }
 
       // Use the JSON payload string as needed
-      printf("JSON Payload:\n%s\n", json_payload);
+      printf("JSON Payload: %s\n", json_payload);
 
 
       gcoap_post(json_payload, TEMP);
       memset(data.buffer, 0, sizeof(data.buffer));
       counter = 0;
     }
+
     ztimer_sleep(ZTIMER_MSEC, 1000);
+
   }
 
   return 0;

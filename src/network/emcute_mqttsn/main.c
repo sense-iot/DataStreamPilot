@@ -38,7 +38,7 @@
 #define TOPIC_MAXLEN (64U)
 
 // static char stack[THREAD_STACKSIZE_DEFAULT];
-// static msg_t queue[8];
+static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
 static char topics[NUMOFSUBS][TOPIC_MAXLEN];
@@ -422,41 +422,37 @@ static int cmd_will(int argc, char **argv)
 //     { NULL, NULL, NULL }
 // };
 
+static char *server_ip = MQTT_BROKER_IP;
+
 int main(void)
 {
     puts_append("Publish subscriber example - Group 12 MQTT\n");
     // char *server_ip = readFirstLine();
-    // if (server_ip == NULL)
-    // {
-    //     puts("broker ip cannot read\n");
-    //     return -1;
-    // }
-    // puts_append(server_ip);
-    // msg_init_queue(queue, ARRAY_SIZE(queue));
+    if (server_ip == NULL)
+    {
+        puts("broker ip cannot read\n");
+        return -1;
+    }
+    puts_append(server_ip);
+    msg_init_queue(queue, ARRAY_SIZE(queue));
 
-    // // /* initialize our subscription buffers */
-    // memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
+    // /* initialize our subscription buffers */
+    memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
 
-    // puts_append("Publish subscriber example for MQTT\n");
-    // if (cmd_con_i(1886, "temperature", "hi", server_ip))
-    // {
-    //     puts_append("connection to broker is invalid\n");
-    //     return 1;
-    // }
+    puts_append("Publish subscriber example for MQTT\n");
+    if (cmd_con_i(1886, "temperature", "hi", server_ip))
+    {
+        puts_append("connection to broker is invalid\n");
+        return 1;
+    }
 
     // int counter = 1000;
     while (1)
     {
         ztimer_sleep(ZTIMER_MSEC, 1000);
 
-        // counter -= 1;
 
-        // if (counter <= 0)
-        // {
-        //     return 0;
-        // }
-
-        // cmd_pub_i(1, "temp0", "temperature");
+        cmd_pub_i(1, "temp0", "temperature");
     }
 
     /* start the emcute thread */

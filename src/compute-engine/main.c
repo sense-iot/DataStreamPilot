@@ -189,7 +189,7 @@ int main(void)
 
       temp += (int) add_noise(789.2);
 
-      DEBUG_PRINT("temp: %i\n", temp);
+      DEBUG_PRINT("temp: %i %i\n", temp, base_value);
 
       if (counter == 0) {
         base_value = temp;

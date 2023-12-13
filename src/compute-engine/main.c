@@ -177,19 +177,18 @@ int main(void)
   int counter = 0;
   int array_length = 0;
   int parity;
+  int16_t base_value = 0;
 
   while (1) {
     
     int16_t temp = 0;
-    int16_t base_value = 0;
+    
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
       char temp_str[10];
       char parity_bit[4];
 
       temp += (int) add_noise(789.2);
-
-      DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
 
       if (counter == 0) {
         base_value = temp;
@@ -203,6 +202,8 @@ int main(void)
         strcat(data.buffer, temp_str);
       }
 
+      DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
+      
       parity = calculate_odd_parity(temp);
       sprintf(parity_bit, "%i,", parity);
 

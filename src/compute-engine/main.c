@@ -174,7 +174,7 @@ int main(void)
   }
 
   int counter = 0;
-  int parity;
+  // int parity;
   int16_t base_value = 0;
 
   while (1) {
@@ -184,7 +184,7 @@ int main(void)
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
       char temp_str[10];
-      char parity_bit[4];
+      // char parity_bit[4];
 
       temp += (int) add_noise(789.2);
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "thread.h"
 #include "ztimer.h"
@@ -155,7 +156,7 @@ float add_noise(float stddev) {
     float noise_val = 0;
     
     num = rand() % 100 + 1; // use rand() function to get the random number
-    if (num >= 50) {
+    if (num >= 30) {
         // Generate a random number with normal distribution based on a stddev
         noise_val = generate_normal_random(stddev);
     }
@@ -165,6 +166,7 @@ float add_noise(float stddev) {
 
 int main(void)
 {
+  srand(time(NULL));
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
     return 1;
@@ -184,9 +186,8 @@ int main(void)
       char noise[10];
       char parity_bit[4];
 
-      sprintf(temp_str, "%i,", temp);
-      sprintf(noise, "%f,", add_noise(789.2));
-      printf("Temp Str: %s°C | Noise: %s°C\n", temp_str, noise);
+      sprintf(temp_str, "%i,", temp + (int) add_noise(789.2));
+      printf("Temp Str: %s°Cn", temp_str);
       strcat(data.buffer, temp_str);
 
       parity = calculate_odd_parity(temp);

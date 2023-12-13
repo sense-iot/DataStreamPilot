@@ -24,9 +24,9 @@ def getInfluxDB(query, measurement=TEMPERATURE):
     return output
 
 
-def sendInfluxdb(decodedValues):
+def sendInfluxdb(decodedValues, site):
     db_client = client()
-    tags        = { "place": "set" + str(random.randint(1, 100))}
+    tags        = {"place": site}
     for data in decodedValues:
         fields      = { "value" : data }
         save(db_client, TEMPERATURE, fields, tags=tags)    

@@ -36,7 +36,7 @@ fi
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
     # If not set, then export it with the specified value
-    export COAP_SERVER_IP="[2001:660:5307:3108:ec1b:fa40:6a45:de4d]:5683"
+    export COAP_SERVER_IP="[2a05:d016:1bb:3e00:2fbe:1fb4:63f9:eb4b]:5683"
 fi
 export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 

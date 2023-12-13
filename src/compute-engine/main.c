@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <time.h>
 
 #include "thread.h"
 #include "ztimer.h"
@@ -166,7 +165,8 @@ float add_noise(float stddev) {
 
 int main(void)
 {
-  srand(time(ZTIMER_MSEC));
+  uint64_t current_time = xtimer_now_usec();
+  srand(current_time);
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
     return 1;

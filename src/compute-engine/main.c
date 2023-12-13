@@ -156,47 +156,26 @@ int main(void)
     int16_t temp = 0;
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
-      if (array_length < 4) {
-        data.tempList[array_length++] = temp;
+      char temp_str[10];
+      char parity_bit[4];
+
+      sprintf(temp_str, "%i,", temp);
+      // printf("Temp Str: %s°C\n", temp_str);
+      strcat(data.buffer, temp_str);
+
+      parity = calculate_odd_parity(rounded_avg_temp);
+      sprintf(parity_bit, "%i,", parity);
+      // printf("Temp Str: %s°C\n", temp_str);
+      strcat(data.buffer, parity_bit);
+
+      for (int i = 0; i < array_length - 1; ++i) {
+          data.tempList[i] = data.tempList[i + 1];
       }
-      else {
-        data.tempList[array_length++] = temp;
-        int32_t sum = 0;
-        int numElements = array_length;
-        // printf("No of ele: %i\n", numElements);
-        for (int i = 0; i < numElements; i++) {
-          sum += (int32_t)data.tempList[i];
-          // printf("Temp List: %i.%u°C\n", (data.tempList[i] / 100), (data.tempList[i] % 100));
-        }
+      array_length--;
+      counter++;
 
-        // printf("Sum: %li\n", sum);
-
-        // avg_temp = sum / numElements;
-
-        double avg_temp = (double)sum / numElements;
-
-        // Round to the nearest integer
-        int16_t rounded_avg_temp = (int16_t)round(avg_temp);
-
-        char temp_str[10];
-        char parity_bit[4];
-
-        sprintf(temp_str, "%i,", rounded_avg_temp);
-        // printf("Temp Str: %s°C\n", temp_str);
-        strcat(data.buffer, temp_str);
-
-        parity = calculate_odd_parity(rounded_avg_temp);
-        sprintf(parity_bit, "%i,", parity);
-        // printf("Temp Str: %s°C\n", temp_str);
-        strcat(data.buffer, parity_bit);
-
-        for (int i = 0; i < array_length - 1; ++i) {
-            data.tempList[i] = data.tempList[i + 1];
-        }
-        array_length--;
-        counter++;
-      }
     }
+    
     if (counter == 10) {
       DEBUG_PRINT("Data: %s\n", data.buffer);
       ztimer_sleep(ZTIMER_MSEC, 1000);

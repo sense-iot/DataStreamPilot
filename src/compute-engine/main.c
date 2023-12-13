@@ -181,10 +181,12 @@ int main(void)
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
       char temp_str[10];
+      char noise[10];
       char parity_bit[4];
 
-      sprintf(temp_str, "%i,", temp + add_noise(789.2));
-      printf("Temp Str: %s°C\n", temp_str);
+      sprintf(temp_str, "%i,", temp);
+      sprintf(noise, "%f,", add_noise(789.2));
+      printf("Temp Str: %s°C | Noise: %s°C\n", temp_str, noise);
       strcat(data.buffer, temp_str);
 
       parity = calculate_odd_parity(temp);

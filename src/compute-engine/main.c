@@ -169,6 +169,7 @@ int main(void)
   srand(evtimer_now_msec());
   
   const char *site = getenv("SENSE_SITE");
+  printf("Site: %s\n", site);
 
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");

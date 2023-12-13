@@ -26,6 +26,7 @@ class TimeResource(resource.ObservableResource):
 
 class temperature(resource.Resource):
     async def render_post(self, request):
+        print(f"Received message {request.payload.decode('utf8')}")
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"Received message: {payload}")
         # decodedValues = decodeTemperature(payload)

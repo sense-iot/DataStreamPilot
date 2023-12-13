@@ -181,6 +181,7 @@ int main(void)
   while (1) {
     
     int16_t temp = 0;
+    int16_t base_value = 0;
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
       char temp_str[10];
@@ -188,8 +189,16 @@ int main(void)
 
       temp += (int) add_noise(789.2);
 
-      sprintf(temp_str, "%i,", temp);
-      strcat(data.buffer, temp_str);
+      if (counter == 0) {
+        base_value = temp;
+        sprintf(temp_str, "%i,", temp);
+        strcat(data.buffer, temp_str);
+      }
+      else {
+        temp -= base_value;
+        sprintf(temp_str, "%i,", temp);
+        strcat(data.buffer, temp_str);
+      }
 
       parity = calculate_odd_parity(temp);
       sprintf(parity_bit, "%i,", parity);

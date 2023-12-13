@@ -1,52 +1,37 @@
 #!/usr/bin/env bash
 
+# script has already run once for the current shell
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    if [ -n "$SENSE_SETUP_ENV_UP" ]; then
+        return 0
+    fi
+fi
+
 source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 # grenoble, paris, lille, saclay, strasbourg
 export SENSE_SITE=grenoble
 
-printf "%-25s %s\n" "SENSE_SITE:" "$SENSE_SITE"
+printf "%-50s %s\n" "DataStereamPilot: SENSE_SITE:" "$SENSE_SITE"
 
 # Get the current hostname
 current_hostname=$(hostname)
 
 # Compare the current hostname with the expected one
 if [ "$current_hostname" != "$SENSE_SITE" ]; then
-	error_message="ERROR: You are on site '$current_hostname', not on '$SENSE_SITE'"
-	# Displaying the Error Message in a Box
-	echo "****************************************************"
-	echo "*                                                  *"
-	printf "* %-36s*\n" "$error_message"
-	printf "* %-49s*\n" $0 
-	printf "* %s %-37s*\n" "SENSE_SITE:" "$SENSE_SITE"
-	echo "* Change SENSE_SITE variable in setup_env.sh       *"
-	echo "*                                                  *"
-	echo "****************************************************"
-	export ERROR_WRONG_SITE=1
-	exit $ERROR_WRONG_SITE
+    error_message="ERROR: You are on site '$current_hostname', not on '$SENSE_SITE'"
+    # Displaying the Error Message in a Box
+    echo "****************************************************"
+    echo "*                                                  *"
+    printf "* %-36s*\n" "$error_message"
+    printf "* %-49s*\n" $0
+    printf "* %s %-37s*\n" "SENSE_SITE:" "$SENSE_SITE"
+    echo "* Change SENSE_SITE variable in setup_env.sh       *"
+    echo "*                                                  *"
+    echo "****************************************************"
+    export ERROR_WRONG_SITE=1
+    exit $ERROR_WRONG_SITE
 fi
-
-
-export BORDER_ROUTER_NODE=60 # Border router
-
-# Incrementally set other variables based on BORDER_ROUTER_NODE
-export COAP_SERVER_NODE=$((BORDER_ROUTER_NODE + 1))
-export SENSOR_CONNECTED_NODE=$((BORDER_ROUTER_NODE + 2))
-export GNRC_NETWORKING_NODE=$((BORDER_ROUTER_NODE + 3))
-export COAP_CLIENT_NODE=$((BORDER_ROUTER_NODE + 4))
-export SENSOR_NODE=$((BORDER_ROUTER_NODE + 5))
-export COAP_CLIENT_TEST_NODE=$((BORDER_ROUTER_NODE + 6))
-export HELLO_NODE=$((BORDER_ROUTER_NODE + 7))
-export SENSOR_2=45
-
-printf "%-25s %s\n" "BORDER_ROUTER_NODE:" "$BORDER_ROUTER_NODE"
-printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
-printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"
-printf "%-25s %s\n" "GNRC_NETWORKING_NODE:" "$GNRC_NETWORKING_NODE"
-printf "%-25s %s\n" "COAP_CLIENT_NODE:" "$COAP_CLIENT_NODE"
-printf "%-25s %s\n" "SENSOR_NODE:" "$SENSOR_NODE"
-printf "%-25s %s\n" "COAP_CLIENT_TEST_NODE:" "$COAP_CLIENT_TEST_NODE"
-printf "%-25s %s\n" "HELLO_NODE:" "$HELLO_NODE"
-printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
@@ -66,7 +51,7 @@ export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 
 if [ "$SENSE_SITE" = "grenoble" ]; then
     # 2001:660:5307:3100::/64	2001:660:5307:317f::/64
-    export BORDER_ROUTER_IP=2001:660:5307:3108::1/64
+    export BORDER_ROUTER_IP=2001:660:5307:313f::1/64
 elif [ "$SENSE_SITE" = "paris" ]; then
     # 2001:660:330f:a280::/64   2001:660:330f:a2ff::/64
     export BORDER_ROUTER_IP=2001:660:330f:a293::1/64
@@ -98,41 +83,47 @@ export TAP_INTERFACE=tap7
 # export TAP_INTERFACE=tap6 - rukshan
 
 # this is seconds
-export JOB_WAIT_TIMEOUT=60
-export EXPERIMENT_TIME=120
+export JOB_WAIT_TIMEOUT=120
+export EXPERIMENT_TIME=20
 
 export BORDER_ROUTER_FOLDER_NAME=gnrc_border_router
-export BORDER_ROUTER_EXE_NAME=${BORDER_ROUTER_FOLDER_NAME}_gp12
+export BORDER_ROUTER_EXE_NAME=${BORDER_ROUTER_FOLDER_NAME}
 export BORDER_ROUTER_HOME=${SENSE_HOME}/src/network/${BORDER_ROUTER_FOLDER_NAME}
 
 export GNRC_NETWORKING_FOLDER_NAME=gnrc_networking
-export GNRC_NETWORKING_EXE_NAME=${GNRC_NETWORKING_FOLDER_NAME}_gp12
+export GNRC_NETWORKING_EXE_NAME=${GNRC_NETWORKING_FOLDER_NAME}
 export GNRC_NETWORKING_HOME=${SENSE_HOME}/src/network/${GNRC_NETWORKING_FOLDER_NAME}
 
+export EMCUTE_MQTSSN_FOLDER_NAME=emcute_mqttsn
+export EMCUTE_MQTSSN_EXE_NAME=${EMCUTE_MQTSSN_FOLDER_NAME}
+export EMCUTE_MQTSSN_HOME=${SENSE_HOME}/src/network/${EMCUTE_MQTSSN_FOLDER_NAME}
+
 export COAP_SERVER_FOLDER_NAME=nanocoap_server
-export COAP_SERVER_EXE_NAME=${COAP_SERVER_FOLDER_NAME}_gp12
+export COAP_SERVER_EXE_NAME=${COAP_SERVER_FOLDER_NAME}
 export COAP_SERVER_HOME=${SENSE_HOME}/src/network/${COAP_SERVER_FOLDER_NAME}
 
 export COAP_CLIENT_FOLDER_NAME=gcoap
-export COAP_CLIENT_EXE_NAME=${COAP_CLIENT_FOLDER_NAME}_gp12
+export COAP_CLIENT_EXE_NAME=${COAP_CLIENT_FOLDER_NAME}
 export COAP_CLIENT_HOME=${SENSE_HOME}/src/network/${COAP_CLIENT_FOLDER_NAME}
 
 export COAP_CLIENT_TEST_FOLDER_NAME=gcoap_test
-export COAP_CLIENT_TEST_EXE_NAME=${COAP_CLIENT_TEST_FOLDER_NAME}_gp12
+export COAP_CLIENT_TEST_EXE_NAME=${COAP_CLIENT_TEST_FOLDER_NAME}
 export COAP_CLIENT_TEST_HOME=${SENSE_HOME}/src/network/${COAP_CLIENT_TEST_FOLDER_NAME}
 
 export SENSOR_READ_FOLDER_NAME=sensor-m3-temperature
-export SENSOR_READ_EXE_NAME=${SENSOR_READ_FOLDER_NAME}_gp12
+export SENSOR_READ_EXE_NAME=${SENSOR_READ_FOLDER_NAME}
 export SENSOR_READ_HOME=${SENSE_HOME}/src/sensor/${SENSOR_READ_FOLDER_NAME}
 
 export SENSOR_CONNECTED_FOLDER_NAME=sensor-connected
-export SENSOR_CONNECTED_EXE_NAME=${SENSOR_CONNECTED_FOLDER_NAME}_gp12
+export SENSOR_CONNECTED_EXE_NAME=${SENSOR_CONNECTED_FOLDER_NAME}
 export SENSOR_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_CONNECTED_FOLDER_NAME}
 
 export SENSOR_2_CONNECTED_FOLDER_NAME=sensor2
-export SENSOR_2_CONNECTED_EXE_NAME=${SENSOR_2_CONNECTED_FOLDER_NAME}_gp12
+export SENSOR_2_CONNECTED_EXE_NAME=${SENSOR_2_CONNECTED_FOLDER_NAME}
 export SENSOR_2_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_2_CONNECTED_FOLDER_NAME}
 
 #SENSE_SCRIPTS_HOME="${SENSE_HOME}/${SCRIPTS}"
 #SENSE_STOPPERS_HOME="${SENSE_SCRIPTS_HOME}/stoppers"
 #SENSE_FIRMWARE_HOME="${HOME}/bin"
+
+export SENSE_SETUP_ENV_UP=1

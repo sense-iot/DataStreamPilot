@@ -1,4 +1,4 @@
-APPLICATION = sensor-connected_gp12
+APPLICATION = sensor-connected
 
 BOARD ?= iotlab-m3
 

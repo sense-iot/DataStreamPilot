@@ -1,17 +1,30 @@
-hello:
-	./hello_world_experiment.sh
+run_mini_project_2:
+	./scripts/mini_project2.sh
 
-run_mini_project_1:
-	./scripts/mini_project1.sh
+status:
+	./scripts/status.sh
+
+broker:
+	./scripts/mqtt_broker_setup.sh
+
+mqtt:
+	./scripts/emcute_mqttsn.sh
 
 run_sensor:
-	./sensor_read_experiment.sh
+	./scripts/sensor_read_experiment.sh
+
+.PHONY: border_router
+
+border_router:
+	./scripts/gnrc_border_router.sh
 
 sense:
 	./scripts/sensor-connected.sh
 
+.PHONY: stop
+
 stop:
-	./scripts/stoppers/stop_all.sh
+	./scripts/stoppers/stop_all.sh $(filter-out $@,$(MAKECMDGOALS))
 
 stop_one:
 	iotlab-experiment stop
@@ -52,3 +65,14 @@ clean_all: clean
 clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
+	rm -Rf ~/shared/logs
+	rm ~/A8/*.elf
+
+broker_sub:
+	./scripts/broker_sub.sh
+
+broker_pub:
+	./scripts/broker_pub.sh $(filter-out $@,$(MAKECMDGOALS))
+
+%:
+	@:

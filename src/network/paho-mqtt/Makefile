@@ -1,4 +1,4 @@
-APPLICATION = paho-mqtt-example
+APPLICATION = paho-mqtt
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3

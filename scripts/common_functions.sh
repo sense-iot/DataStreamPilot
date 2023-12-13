@@ -1,5 +1,186 @@
 #!/usr/bin/env bash
 
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    if [ -n "$SENSE_FUNCTONS_ENV_UP" ]; then
+        echo "Environment already set"
+        return 0
+    fi
+fi
+
+
+declare -a a8_nodes
+declare -a m3_nodes
+
+extract_and_categorize_nodes() {
+    local json=$1
+    a8_nodes=()
+    m3_nodes=()
+
+    # Extract the number of nodes
+    local num_nodes=$(echo "$json" | jq '.nb_nodes')
+
+    # Loop through each node and categorize
+    for (( i=0; i<num_nodes; i++ )); do
+        local node=$(echo "$json" | jq -r ".nodes[$i]")
+        if [[ $node == "a8-"* ]]; then
+            # Extract the number part for a8 nodes
+            local number=$(echo "$node" | cut -d'-' -f2 | cut -d'.' -f1)
+            a8_nodes+=( "$number" )
+        elif [[ $node == "m3-"* ]]; then
+            # Extract the number part for m3 nodes
+            local number=$(echo "$node" | cut -d'-' -f2 | cut -d'.' -f1)
+            m3_nodes+=( "$number" )
+        fi
+    done
+}
+
+
+# Function to execute the iotlab-node command with given parameters
+flash_firmware() {
+    local firmware_name=$1
+    local node=$2
+    local firmware_path="${SENSE_FIRMWARE_HOME}/${firmware_name}.elf"
+    local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
+
+    # Execute the command
+    echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node""
+    iotlab-node --flash "$firmware_path" -l "${site},m3,$node"
+}
+
+# Function to write a variable to a file
+write_variable_to_file() {
+    local variable_name=$1
+    local variable_value=$2
+    local file_path=~/shared/logs/"${variable_name}.txt"
+
+    # Create directory if it doesn't exist
+    mkdir -p "$(dirname "$file_path")"
+
+    # Write the variable value to the file
+    echo "$variable_value" > "$file_path"
+}
+
+# Function to read a variable from a file
+read_variable_from_file() {
+    local variable_name=$1
+    local file_path=~/shared/logs/"${variable_name}.txt"
+
+    # Check if the file exists
+    if [ -f "$file_path" ]; then
+        cat "$file_path"
+    else
+        echo "Error: File not found."
+        return 1  # Return a non-zero status to indicate failure
+    fi
+}
+
+extract_global_ipv6() {
+    local file_path="$HOME/shared/mqtt_broker_details.txt"
+    
+    # Check if the file exists
+    if [ ! -f "$file_path" ]; then
+        echo "File does not exist: $file_path"
+        return 1
+    fi
+
+    # Extract the global IPv6 address
+    local ipv6_addr=$(grep -o 'inet6 addr: 2001:[^ ]*' "$file_path" | awk '{print $3}')
+    
+    if [ -z "$ipv6_addr" ]; then
+        echo "Global IPv6 address not found in the file."
+        return 1
+    fi
+
+    ipv6_addr=${ipv6_addr%???}
+    echo "$ipv6_addr"
+}
+
+extract_local_ipv6() {
+    local file_path="$HOME/shared/mqtt_broker_details.txt"
+    
+    # Check if the file exists
+    if [ ! -f "$file_path" ]; then
+        echo "File does not exist: $file_path"
+        return 1
+    fi
+
+    # Extract the local IPv6 address
+    local ipv6_addr=$(grep -o 'inet6 addr: fe80:[^ ]*' "$file_path" | awk '{print $3}')
+    
+    if [ -z "$ipv6_addr" ]; then
+        echo "Local IPv6 address not found in the file."
+        return 1
+    fi
+
+    ipv6_addr=${ipv6_addr%???}
+    echo "$ipv6_addr"
+}
+
+# Function to write the experiment ID to a file
+write_experiment_id() {
+    local experiment_id=$1
+    local file_path=~/shared/logs/experiment_id.txt
+
+    # Create directory if it doesn't exist
+    mkdir -p "$(dirname "$file_path")"
+
+    # Write the experiment ID to the file
+    echo "$experiment_id" > "$file_path"
+}
+
+# Function to read the experiment ID from a file
+read_experiment_id() {
+    local file_path=~/shared/logs/experiment_id.txt
+
+    # Check if the file exists
+    if [ -f "$file_path" ]; then
+        cat "$file_path"
+    else
+        echo "Error: File not found."
+        return 1  # Return a non-zero status to indicate failure
+    fi
+}
+
+get_running_experiment_id() {
+    local experiment_name_to_check="$1"
+    local experiment_output=$(iotlab-experiment get -e)
+
+    if [ "$experiment_output" != "{}" ]; then
+        local running_experiments=$(echo "$experiment_output" | jq -r '.Running[]')
+        for job_id in $running_experiments; do
+            local experiment_info=$(iotlab-experiment get -i ${job_id} -p)
+            local experiment_name=$(echo "$experiment_info" | jq -r '.name')
+
+            if [ "$experiment_name" == "$experiment_name_to_check" ]; then
+                echo $job_id
+                return 0 # Experiment found, returning its job ID
+            fi
+        done
+    fi
+
+    echo "No running experiment found with the name $experiment_name_to_check"
+    return 1 # No experiment found with the given name
+}
+
+is_experiment_running() {
+    local experiment_name_to_check="$1"
+    local experiment_output=$(iotlab-experiment get -e)
+
+    if [ "$experiment_output" != "{}" ]; then
+        local running_experiments=$(echo "$experiment_output" | jq -r '.Running[]')
+        for job_id in $running_experiments; do
+            local experiment_info=$(iotlab-experiment get -i ${job_id} -p)
+            local experiment_name=$(echo "$experiment_info" | jq -r '.name')
+
+            if [ "$experiment_name" == "$experiment_name_to_check" ]; then
+                return 0 # True, experiment with the given name is running
+            fi
+        done
+    fi
+
+    return 1 # False, no experiment with the given name is running
+}
+
 create_stopper_script() {
     local script_name=$(basename "$0")
     local stopper_name="${script_name}_stopper.sh"
@@ -34,7 +215,7 @@ submit_border_router_job() {
 submit_coap_server_job() {
     local coap_server_node="$1"
 
-    local coap_server_job_json=$(iotlab-experiment submit -n ${COAP_SERVER_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${coap_server_node},${SENSE_FIRMWARE_HOME}/${COAP_SERVER_EXE_NAME}.elf)
+    local coap_server_job_json=$(iotlab-experiment submit -n ${COAP_SERVER_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE}${SENSE_SITE},m3,${coap_server_node},${SENSE_FIRMWARE_HOME}/${COAP_SERVER_EXE_NAME}.elf)
 
     # Extract job ID from JSON output
     local coap_server_job_id=$(echo $coap_server_job_json | jq -r '.id')
@@ -57,7 +238,7 @@ submit_sensor_node_job() {
 wait_for_job() {
     local n_node_job_id="$1"
 
-    echo "iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
+    echo "DataStereamPilot: iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
     iotlab-experiment wait --timeout "${JOB_WAIT_TIMEOUT}" --cancel-on-timeout -i "${n_node_job_id}" --state Running
 }
 
@@ -104,11 +285,7 @@ build_wireless_firmware() {
 
     local firmware_source_folder="$1"
     local exe_name="$2"
-
-    if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
-        echo "No need to build"
-        return 0 # Exit the function successfully
-    fi
+    local ARCH="${3:-$ARCH}"
 
     echo "Build firmware ${firmware_source_folder}"
     echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
@@ -132,6 +309,7 @@ build_wireless_firmware_forced() {
 
     local firmware_source_folder="$1"
     local exe_name="$2"
+    local ARCH="${3:-$ARCH}"
 
     echo "Build firmware ${firmware_source_folder}"
     echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
@@ -155,6 +333,7 @@ build_wireless_firmware_cached() {
 
     local firmware_source_folder="$1"
     local exe_name="$2"
+    local ARCH="${3:-$ARCH}"
 
     if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
         echo "No need to build"
@@ -243,7 +422,7 @@ are_files_new() {
     local newer_found=0
 
     # Iterate over .c and .h files in the directory
-    for file in "$directory"/*.{c,h} "$directory/Makefile" "${SENSE_SCRIPTS_HOME}/setup_env.sh" ; do
+    for file in "$directory"/*.{c,h} "$directory/Makefile" "${SENSE_SCRIPTS_HOME}/setup_env.sh"; do
         if [[ -e $file ]]; then
             local file_mod_time=$(stat -c %Y "$file")
             if [[ $first_file_mod_time -le $file_mod_time ]]; then
@@ -266,3 +445,5 @@ extract_ip() {
     ip="${server_ip:1:${#server_ip}-7}"
     echo "$ip"
 }
+
+export SENSE_FUNCTONS_ENV_UP=1

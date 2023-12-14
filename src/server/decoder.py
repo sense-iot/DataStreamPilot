@@ -5,27 +5,38 @@ import numpy as np
 def decodeTemperature(message):
     data_out = []
     message = list(map(int, message[:-1].strip().split(',')))
-    data_out = message[:-1]
-    print(data_out)
-    base_value = data_out[0]
-    for i, val in enumerate(data_out, start=1):
-        data_out[i] = (data_out[i] + base_value)/100.0
+    for i in range(0, len(message), 2):
+        value, parity = message[i], message[i + 1]
+        if i == 0:
+            base_value = value
+            data_out.append(value/100)
+            continue
+        if (parityCheck(value, parity)):
+            message[i] = (message[i] + base_value)/100.0
+            data_out.append(message[i])
+        else:
+            if 0 < i and i + 2 < len(message):
+                prev_value = message[i - 2] + base_value
+                next_value = message[i + 2] + base_value
+                interpolated_value = (prev_value + next_value) // 2 if i != 2 else (prev_value + message[i + 2] + base_value) // 2
+                data_out.append(interpolated_value / 100.0)
 
-    filtered_data = kalmanfilter(np.array(data_out))
-    # for i in range(0, len(message), 2):
-    #     value, parity = message[i], message[i + 1]
-    #     if (parityCheck(value, parity)):
-    #         data_out.append(value/100)
-    #     else:
-    #         if 0 < i and i + 2 < len(message):
-    #             prev_value, next_value = message[i - 2], message[i + 2]
-    #             interpolated_value = (prev_value + next_value) // 2
-    #             data_out.append(interpolated_value)
-    return filtered_data
+    # filtered_data = kalmanfilter(np.array(data_out))
+    filtered_data = kalmanfilter_numpy(np.array(data_out))
+    return data_out, filtered_data
 
 #checking odd parity
+def calculate_odd_parity(num):
+    count = 0
+    for i in range(16):  # Assuming 16-bit integers
+        if num & 1:
+            count += 1
+        num >>= 1
+    print(count)
+    return 1 if count % 2 == 0 else 0
+
 def parityCheck(value, parity):
-    ones_count = bin(int(value)).count('1')
+    ones_count = calculate_odd_parity(value)
     return (ones_count + int(parity)) % 2 == 1
 
 def kalmanfilter(z):
@@ -45,5 +56,37 @@ def kalmanfilter(z):
         kf.predict()
         kf.update(y)
         output[i] = kf.x[0][0]
+
+    return output
+
+# with  numpy only
+def kalmanfilter_numpy(z):
+    initial_state = np.array([[z[0]]])
+    F = np.array([[1]])  # State transition matrix
+    H = np.array([[1]])  # Measurement matrix
+    P = np.array([[10]])  # State covariance matrix
+    R = np.array([[20]])  # Measurement noise covariance matrix
+    Q = np.array([[5]])   # Process noise covariance matrix
+
+    num_measurements = len(z)
+    num_states = initial_state.shape[0]
+
+    x = initial_state
+    output = np.zeros((num_measurements, num_states))
+
+    for i in range(num_measurements):
+        # Prediction step
+        x_pred = np.dot(F, x)
+        P_pred = np.dot(np.dot(F, P), F.T) + Q
+
+        # Update step
+        y = z[i] - np.dot(H, x_pred)
+        S = np.dot(np.dot(H, P_pred), H.T) + R
+        K = np.dot(np.dot(P_pred, H.T), np.linalg.inv(S))
+
+        x = x_pred + np.dot(K, y)
+        P = P_pred - np.dot(np.dot(K, H), P_pred)
+
+        output[i] = x.flatten()
 
     return output

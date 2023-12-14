@@ -116,20 +116,17 @@ int temp_sensor_reset(void)
   return 1;
 }
 
-int calculate_odd_parity(int num) {
-    int parityBit = 0;
-    int count = 0;  // To count the number of set bits
 
-    // Count the number of set bits (1-bits) in the given number
-    while (num) {
-        count += num & 1;  // Increment count if rightmost bit is set
-        num >>= 1;  // Right shift num to check the next bit
+// Function to calculate odd parity 
+int8_t calculateOddParity(int16_t num) {
+    int8_t count = 0;
+    for (int i = 0; i < 16; ++i) { // Assuming 16-bit integers
+        if (num & 1) {
+            count++;
+        }
+        num >>= 1;
     }
-
-    // Set parityBit to 1 if the count of set bits is even, else 0
-    parityBit = (count % 2 == 0) ? 1 : 0;
-
-    return parityBit;
+    return (count % 2 == 0) ? 1 : 0;
 }
 
 #define MAIN_QUEUE_SIZE (4)
@@ -163,10 +160,39 @@ float add_noise(float stddev) {
     return noise_val;
 }
 
+// Define a structure to hold the location name and its corresponding binary value
+struct LocationMapping {
+    const char *location;
+    unsigned int binaryValue;
+};
+
+// Function to retrieve the binary value based on the location name
+unsigned int getBinaryValue(const struct LocationMapping *mapping, const char *location) {
+    for (int i = 0; mapping[i].location != NULL; ++i) {
+        if (strcmp(mapping[i].location, location) == 0) {
+            return mapping[i].binaryValue;
+        }
+    }
+    // Return a default value (e.g., 000) if the location is not found
+    return 0;
+}
 
 int main(void) {
+
+  struct LocationMapping locationMap[] = {
+        {"UNKNOWN", 0b000},
+        {"grenoble", 0b001},
+        {"paris", 0b010},
+        {"lille", 0b011},
+        {"saclay", 0b100},
+        {"strasbourg", 0b101},
+        {NULL, 0}
+    };
+
   srand(evtimer_now_msec());
-  static char *site_name = SITE_NAME;
+  
+  unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
+
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
     return 1;
@@ -183,7 +209,7 @@ int main(void) {
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
       char temp_str[10];
-      // char parity_bit[4];
+      char parity_bit[4];
 
       temp += (int) add_noise(789.2);
 
@@ -203,15 +229,16 @@ int main(void) {
       }
 
 
-      // parity = calculate_odd_parity(temp);
-      // sprintf(parity_bit, "%i,", parity);
-      // strcat(data.buffer, parity_bit);
+      parity = calculate_odd_parity(temp);
+      sprintf(parity_bit, "%i,", parity);
+      strcat(data.buffer, parity_bit);
 
       counter++;
 
     }
 
     if (counter == 10) {
+
       DEBUG_PRINT("Data: %s\n", data.buffer);
       DEBUG_PRINT("site: %s\n", site_name);
       ztimer_sleep(ZTIMER_MSEC, 1000);

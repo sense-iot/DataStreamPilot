@@ -16,7 +16,7 @@ int is_outlier(float readings[NUM_SENSORS], float z_threshold) {
     // Calculate standard deviation of the readings
     float std_dev_reading = 0.0;
     for (int i = 0; i < NUM_SENSORS; i++) {
-        std_dev_reading += pow(readings[i] - mean_reading, 2);
+        std_dev_reading += pow((double)(readings[i] - mean_reading), 2);  
     }
     std_dev_reading = sqrt(std_dev_reading / NUM_SENSORS);
 

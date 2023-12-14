@@ -15,8 +15,6 @@
 #define ENABLE_DEBUG 1
 #include "debug.h"
 
-#include <math.h>
-
 
 typedef struct {
   char buffer[128];

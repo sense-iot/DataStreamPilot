@@ -35,7 +35,7 @@ int is_outlier(float readings[NUM_SENSORS], float z_threshold) {
             break;
         }
     }
-
+    DEBUG_PRINT("is_outlier: %i\n", is_outlier);
     return is_outlier;
 }
 
@@ -43,21 +43,24 @@ int main(void) {
     ztimer_sleep(ZTIMER_SEC, 5);
     puts("Hello from RIOT!");
 
+    char temp1_str[10];
+
     // Assuming one set of readings from each sensor at a specific time
     float sensor_readings[NUM_SENSORS] = {25.5, 25.3, 25.6};  // Replace with actual readings
 
-    printf("Program started.. \n");
+    DEBUG_PRINT("Program started.. \n");
     // Set z-score threshold (adjust based on your requirements)
     float z_threshold = 2.0;
 
     // Check for outliers
      if (!is_outlier(sensor_readings, z_threshold)) {
          // Process the readings (replace with your processing logic)
-         printf("Processed Reading: Sensor1=%f, Sensor2=%f, Sensor3=%f\n",
-                (double)sensor_readings[0], (double)sensor_readings[1], (double)sensor_readings[2]);
+         sprintf(temp1_str, "%f,", sensor_readings[0]);
+         DEBUG_PRINT("Processed Reading: Sensor1=%s, Sensor2=%f, Sensor3=%f\n",
+                sprintf(temp1_str, "%f,", sensor_readings[0]), sensor_readings[1], sensor_readings[2]);
      } else {
          // Handle outlier case
-         printf("Outlier detected. Ignoring the reading.\n");
+         DEBUG_PRINT("Outlier detected. Ignoring the reading.\n");
      }
 
     return 0;

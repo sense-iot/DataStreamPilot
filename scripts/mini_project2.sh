@@ -35,20 +35,20 @@ export MQTT_CLIENT_NODE=${a8_nodes[1]}
 
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
-# export COMPUTE_ENGINE_NODE=${m3_nodes[2]}
+export COMPUTE_ENGINE_NODE=${m3_nodes[2]}
 
-# write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
+write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
 write_variable_to_file "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE"
 write_variable_to_file "SENSOR_CONNECTED_NODE" "$SENSOR_CONNECTED_NODE"
-# write_variable_to_file "COMPUTE_ENGINE_NODE" "$COMPUTE_ENGINE_NODE"
+write_variable_to_file "COMPUTE_ENGINE_NODE" "$COMPUTE_ENGINE_NODE"
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE:" "a8 - $MQTT_CLIENT_NODE"
 
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
-# printf "%-50s %s\n" "DataStereamPilot: COMPUTE_ENGINE_NODE:" "m3 - $COMPUTE_ENGINE_NODE"
+printf "%-50s %s\n" "DataStereamPilot: COMPUTE_ENGINE_NODE:" "m3 - $COMPUTE_ENGINE_NODE"
 
 # printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
 # printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"
@@ -69,5 +69,5 @@ source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
 # echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
 echo "======================================================== $ARCH"
-# source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
-# echo "======================================================== $ARCH"
+source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
+echo "======================================================== $ARCH"

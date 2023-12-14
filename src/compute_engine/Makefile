@@ -1,4 +1,4 @@
-APPLICATION = compute-engine
+APPLICATION = compute_engine
 
 BOARD ?= iotlab-m3
 

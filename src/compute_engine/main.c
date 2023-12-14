@@ -164,8 +164,7 @@ float add_noise(float stddev) {
 }
 
 
-int main(void)
-{
+int main(void) {
   srand(evtimer_now_msec());
   static char *site_name = SITE_NAME;
   if (temp_sensor_reset() == 0) {

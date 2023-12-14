@@ -9,7 +9,7 @@ def decodeTemperature(message):
     print(data_out)
     base_value = data_out[0]
     for i, val in enumerate(data_out, start=1):
-        data_out[i] = data_out[i] + base_value
+        data_out[i] = (data_out[i] + base_value)/100.0
 
     filtered_data = kalmanfilter(np.array(data_out))
     # for i in range(0, len(message), 2):

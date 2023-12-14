@@ -70,8 +70,6 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
     flash_firmware ${COMPUTE_ENGINE_EXE_NAME} ${COMPUTE_ENGINE_NODE}
   
-#   create_tap_interface "${COMPUTE_ENGINE_NODE}" &
-  
     export COMPUTE_ENGINE_ROUTER_UP=1
 
     echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"

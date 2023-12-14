@@ -61,13 +61,13 @@ printf "%-50s %s\n" "DataStereamPilot: COMPUTE_ENGINE_NODE:" "m3 - $COMPUTE_ENGI
 echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
 # echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+# source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 # echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
 # echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
-echo "======================================================== $ARCH"
+# source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
+# echo "======================================================== $ARCH"
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 echo "======================================================== $ARCH"

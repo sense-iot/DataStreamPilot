@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+
+#define ENABLE_DEBUG 1
+#include "debug.h"
 
 #define NUM_SENSORS 3
 
@@ -16,7 +20,7 @@ int is_outlier(float readings[NUM_SENSORS], float z_threshold) {
     // Calculate standard deviation of the readings
     float std_dev_reading = 0.0;
     for (int i = 0; i < NUM_SENSORS; i++) {
-        std_dev_reading += pow((double)(readings[i] - mean_reading), 2);  
+        std_dev_reading += (float)pow((double)(readings[i] - mean_reading), 2);  
     }
     std_dev_reading = sqrt(std_dev_reading / NUM_SENSORS);
 
@@ -37,6 +41,7 @@ int main(void) {
     // Assuming one set of readings from each sensor at a specific time
     float sensor_readings[NUM_SENSORS] = {25.5, 25.3, 25.6};  // Replace with actual readings
 
+    printf("Program started.. \n");
     // Set z-score threshold (adjust based on your requirements)
     float z_threshold = 2.0;
 

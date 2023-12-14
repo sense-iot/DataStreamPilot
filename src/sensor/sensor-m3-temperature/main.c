@@ -20,7 +20,7 @@
 
 typedef struct {
   char buffer[128];
-  int16_t tempList[5];
+  int16_t tempList[8];
 } data_t;
 
 static data_t data;
@@ -164,7 +164,7 @@ int main(void)
       
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
       DEBUG_PRINT("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
-      if (array_length < 4) {
+      if (array_length < 7) {
         data.tempList[array_length++] = temp_n_noise;
       }
       else {

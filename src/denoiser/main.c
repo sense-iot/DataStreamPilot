@@ -49,19 +49,24 @@ int main(void) {
     float sensor_readings[NUM_SENSORS] = {25.5, 25.3, 25.6};  // Replace with actual readings
 
     DEBUG_PRINT("Program started.. \n");
-    // Set z-score threshold (adjust based on your requirements)
-    float z_threshold = 2.0;
 
-    // Check for outliers
-     if (!is_outlier(sensor_readings, z_threshold)) {
-         // Process the readings (replace with your processing logic)
-         sprintf(temp1_str, "%f,", (double)sensor_readings[0]);
+    sprintf(temp1_str, "%f", (double)sensor_readings[0]);
          DEBUG_PRINT("Processed Reading: Sensor1=%s, Sensor2=%f, Sensor3=%f\n",
                 temp1_str, (double)sensor_readings[1], (double)sensor_readings[2]);
-     } else {
-         // Handle outlier case
-         DEBUG_PRINT("Outlier detected. Ignoring the reading.\n");
-     }
+
+    // Set z-score threshold (adjust based on your requirements)
+    // float z_threshold = 2.0;
+
+    // // Check for outliers
+    //  if (!is_outlier(sensor_readings, z_threshold)) {
+    //      // Process the readings (replace with your processing logic)
+    //      sprintf(temp1_str, "%f", (double)sensor_readings[0]);
+    //      DEBUG_PRINT("Processed Reading: Sensor1=%s, Sensor2=%f, Sensor3=%f\n",
+    //             temp1_str, (double)sensor_readings[1], (double)sensor_readings[2]);
+    //  } else {
+    //      // Handle outlier case
+    //      DEBUG_PRINT("Outlier detected. Ignoring the reading.\n");
+    //  }
 
     return 0;
 }

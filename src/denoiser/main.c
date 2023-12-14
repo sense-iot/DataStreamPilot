@@ -55,9 +55,9 @@ int main(void) {
     // Check for outliers
      if (!is_outlier(sensor_readings, z_threshold)) {
          // Process the readings (replace with your processing logic)
-         sprintf(temp1_str, "%f,", sensor_readings[0]);
+         sprintf(temp1_str, "%f,", (double)sensor_readings[0]);
          DEBUG_PRINT("Processed Reading: Sensor1=%s, Sensor2=%f, Sensor3=%f\n",
-                sprintf(temp1_str, "%f,", sensor_readings[0]), sensor_readings[1], sensor_readings[2]);
+                temp1_str, (double)sensor_readings[1], (double)sensor_readings[2]);
      } else {
          // Handle outlier case
          DEBUG_PRINT("Outlier detected. Ignoring the reading.\n");

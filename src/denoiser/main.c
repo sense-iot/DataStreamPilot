@@ -44,7 +44,7 @@ int main(void) {
     if (!is_outlier(sensor_readings, z_threshold)) {
         // Process the readings (replace with your processing logic)
         printf("Processed Reading: Sensor1=%f, Sensor2=%f, Sensor3=%f\n",
-               sensor_readings[0], sensor_readings[1], sensor_readings[2]);
+               (double)sensor_readings[0], (double)sensor_readings[1], (double)sensor_readings[2]);
     } else {
         // Handle outlier case
         printf("Outlier detected. Ignoring the reading.\n");

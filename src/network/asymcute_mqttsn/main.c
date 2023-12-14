@@ -554,9 +554,17 @@ int main(void)
     puts("Type 'help' to get started and have a look at the README.md for more"
          "information.");
 
-    /* we need a message queue for the thread running the shell in order to
-     * receive potentially fast incoming networking packets */
-    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
+    char *cmd_con[] = {"connect", "c1", "[2001:660:5307:3000::67]"};
+    int cmd_con_count = 3;
+    // connect client1 [2001:660:5307:3000::67]
+
+    _cmd_connect(cmd_con_count, cmd_con);
+
+    // _cmd_connect
+
+        /* we need a message queue for the thread running the shell in order to
+         * receive potentially fast incoming networking packets */
+        msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     /* start shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

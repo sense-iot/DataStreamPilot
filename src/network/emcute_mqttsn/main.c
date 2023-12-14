@@ -106,7 +106,7 @@ static void *emcute_thread(void *arg)
 {
     (void)arg;
     emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
-    return NULL;    /* should never be reached */
+    return NULL; /* should never be reached */
 }
 
 static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
@@ -413,14 +413,13 @@ static int cmd_will(int argc, char **argv)
 }
 
 static const shell_command_t shell_commands[] = {
-    { "con", "connect to MQTT broker", cmd_con },
-    { "discon", "disconnect from the current broker", cmd_discon },
-    { "pub", "publish something", cmd_pub },
-    { "sub", "subscribe topic", cmd_sub },
-    { "unsub", "unsubscribe from topic", cmd_unsub },
-    { "will", "register a last will", cmd_will },
-    { NULL, NULL, NULL }
-};
+    {"con", "connect to MQTT broker", cmd_con},
+    {"discon", "disconnect from the current broker", cmd_discon},
+    {"pub", "publish something", cmd_pub},
+    {"sub", "subscribe topic", cmd_sub},
+    {"unsub", "unsubscribe from topic", cmd_unsub},
+    {"will", "register a last will", cmd_will},
+    {NULL, NULL, NULL}};
 
 static char *server_ip = MQTT_BROKER_IP;
 
@@ -428,36 +427,34 @@ int main(void)
 {
     puts_append("Publish subscriber example - Group 12 MQTT\n");
     // char *server_ip = readFirstLine();
-    if (server_ip == NULL)
-    {
-        puts("broker ip cannot read\n");
-        return -1;
-    }
+    // if (server_ip == NULL)
+    // {
+    //     puts("broker ip cannot read\n");
+    //     return -1;
+    // }
     puts_append(server_ip);
     msg_init_queue(queue, ARRAY_SIZE(queue));
+
+    // char *cmd_con_m[] = {"con", "[2001:660:5307:3000::67]", "1883"};
+    // int cmd_con_count = 3;
 
     // /* initialize our subscription buffers */
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
 
-    puts_append("Publish subscriber example for MQTT\n");
-    if (cmd_con_i(1886, "temperature", "hi", server_ip))
-    {
-        puts_append("connection to broker is invalid\n");
-        return 1;
-    }
+    // cmd_con(cmd_con_count, cmd_con_m);
 
-    // int counter = 1000;
     // while (1)
     // {
-    //     ztimer_sleep(ZTIMER_MSEC, 1000);
+    //     ztimer_sleep(ZTIMER_MSEC, 2000);
+    //     char *cmd_pub_m[] = {"pub", "temperature", "32.5"};
+    //     int cmd_pub_count = 3;
 
-
-    //     cmd_pub_i(1, "temp0", "temperature");
+    //     cmd_pub(cmd_pub_count, cmd_pub_m);
     // }
 
     /* start the emcute thread */
     thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-      emcute_thread, NULL, "emcute");
+                  emcute_thread, NULL, "emcute");
 
     /* start shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
@@ -465,4 +462,6 @@ int main(void)
 
     /* should be never reached */
     return 0;
+
+    // con 2001:660:5307:3000::67 1883
 }

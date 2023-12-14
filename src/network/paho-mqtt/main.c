@@ -313,15 +313,19 @@ int main(void)
 
     MQTTStartTask(&client);
 
-    char *cmd_con[] = {"con", "2001:660:5307:3000::68", "1886"};
-    int cmd_con_count = 3;
+    // char *cmd_con[] = {"con", "2001:660:5307:3000::68", "1886"};
+    // int cmd_con_count = 3;
 
-    _cmd_con(cmd_con_count, cmd_con);
+    // _cmd_con(cmd_con_count, cmd_con);
 
-    char *cmd_pub[] = {"temperature", "32.5"};
-    int cmd_pub_count = 2;
-
-    _cmd_pub(cmd_pub_count, cmd_pub);
+    // while (1)
+    // {
+    //     char *cmd_pub[] = {"temperature", "32.5"};
+    //     int cmd_pub_count = 2;
+    //     ztimer_sleep(ZTIMER_MSEC, 1 * MS_PER_SEC);
+    //     _cmd_pub(cmd_pub_count, cmd_pub);
+    // }
+    
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

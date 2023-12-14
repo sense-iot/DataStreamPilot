@@ -49,7 +49,7 @@ int filter_outliers(int16_t readings[NUM_SENSORS], float z_threshold) {
             new_mean_reading += readings[i];
         }
     }
-    new_mean_reading /= sensors_count
+    new_mean_reading /= sensors_count;
     printf("new mean: %i\n", (int)new_mean_reading);    // Debugging
     return (int16_t)new_mean_reading;
 }

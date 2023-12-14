@@ -37,7 +37,7 @@
 #define NUMOFSUBS (16U)
 #define TOPIC_MAXLEN (64U)
 
-// static char stack[THREAD_STACKSIZE_DEFAULT];
+static char stack[THREAD_STACKSIZE_DEFAULT];
 static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
@@ -102,12 +102,12 @@ char *readFirstLine(void)
     return ipAddress;
 }
 
-// static void *emcute_thread(void *arg)
-// {
-//     (void)arg;
-//     emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
-//     return NULL;    /* should never be reached */
-// }
+static void *emcute_thread(void *arg)
+{
+    (void)arg;
+    emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
+    return NULL;    /* should never be reached */
+}
 
 static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
 {
@@ -412,15 +412,15 @@ static int cmd_will(int argc, char **argv)
     return 0;
 }
 
-// static const shell_command_t shell_commands[] = {
-//     { "con", "connect to MQTT broker", cmd_con },
-//     { "discon", "disconnect from the current broker", cmd_discon },
-//     { "pub", "publish something", cmd_pub },
-//     { "sub", "subscribe topic", cmd_sub },
-//     { "unsub", "unsubscribe from topic", cmd_unsub },
-//     { "will", "register a last will", cmd_will },
-//     { NULL, NULL, NULL }
-// };
+static const shell_command_t shell_commands[] = {
+    { "con", "connect to MQTT broker", cmd_con },
+    { "discon", "disconnect from the current broker", cmd_discon },
+    { "pub", "publish something", cmd_pub },
+    { "sub", "subscribe topic", cmd_sub },
+    { "unsub", "unsubscribe from topic", cmd_unsub },
+    { "will", "register a last will", cmd_will },
+    { NULL, NULL, NULL }
+};
 
 static char *server_ip = MQTT_BROKER_IP;
 
@@ -447,21 +447,21 @@ int main(void)
     }
 
     // int counter = 1000;
-    while (1)
-    {
-        ztimer_sleep(ZTIMER_MSEC, 1000);
+    // while (1)
+    // {
+    //     ztimer_sleep(ZTIMER_MSEC, 1000);
 
 
-        cmd_pub_i(1, "temp0", "temperature");
-    }
+    //     cmd_pub_i(1, "temp0", "temperature");
+    // }
 
     /* start the emcute thread */
-    // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-    //   emcute_thread, NULL, "emcute");
+    thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
+      emcute_thread, NULL, "emcute");
 
     /* start shell */
-    // char line_buf[SHELL_DEFAULT_BUFSIZE];
-    // shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
+    char line_buf[SHELL_DEFAULT_BUFSIZE];
+    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 
     /* should be never reached */
     return 0;

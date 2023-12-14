@@ -1,7 +1,7 @@
 APPLICATION = paho-mqtt
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= iotlab-m3
+BOARD ?= iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
@@ -14,8 +14,8 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-WIFI_SSID ?= "Your_WiFi_name"
-WIFI_PASS ?= "Your_secure_password"
+WIFI_SSID ?= "group12_ssid"
+WIFI_PASS ?= "group12_secure_123"
 
 # Optionally include remoteDNS support. This includes resolution of names at an
 # upstream DNS server and the handling of RDNSS options in Router Advertisements
@@ -37,6 +37,10 @@ USEMODULE += shell_cmds_default
 USEMODULE += ps
 USEMODULE += netdev_default
 USEPKG += paho-mqtt
+
+USEMODULE += auto_init_gnrc_netif
+USEMODULE += gnrc_icmpv6_error
+USEMODULE += netstats_ipv6
 
 # paho-mqtt depends on TCP support, choose which stacks you want
 GNRC_IPV6 ?= 1
@@ -62,3 +66,6 @@ ifneq (,$(filter arch_esp,$(FEATURES_USED)))
   CFLAGS += -DWIFI_SSID=\"$(WIFI_SSID)\"
   CFLAGS += -DWIFI_PASS=\"$(WIFI_PASS)\"
 endif
+
+# Set a custom channel if needed
+include $(RIOTMAKE)/default-radio-settings.inc.mk

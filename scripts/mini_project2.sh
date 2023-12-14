@@ -35,6 +35,7 @@ export MQTT_CLIENT_NODE=${a8_nodes[1]}
 
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
+export GNRC_NETWORKING_NODE_2=${m3_nodes[2]}
 
 write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
@@ -47,6 +48,7 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE:" "a8 - $MQTT_CLIENT_NOD
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
 
+
 # printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
 # printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"
 # printf "%-25s %s\n" "COAP_CLIENT_NODE:" "$COAP_CLIENT_NODE"
@@ -56,13 +58,14 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
 echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+# source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+# source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+# source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+export BROKER_IP=$(extract_global_ipv6)
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt.sh
 echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
-echo "======================================================== $ARCH"
+# source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
+# echo "======================================================== $ARCH"

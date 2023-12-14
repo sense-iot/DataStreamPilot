@@ -46,7 +46,7 @@ int main(void) {
     char temp1_str[10];
 
     // Assuming one set of readings from each sensor at a specific time
-    float sensor_readings[NUM_SENSORS] = {25.5, 25.3, 25.6};  // Replace with actual readings
+    // float sensor_readings[NUM_SENSORS] = {25.5, 25.3, 25.6};  // Replace with actual readings
     float sensor_value = 25.5;
 
     DEBUG_PRINT("Program started.. \n");

@@ -54,10 +54,10 @@ int main(void) {
     puts("Hello from RIOT!");
 
     // Assuming one set of readings from each sensor at a specific time
-    int16_t sensor_readings[NUM_SENSORS] = {4150, 4350, 4210};  // Replace with actual readings
+    int16_t sensor_readings[NUM_SENSORS] = {4150, 4250, 4450};  // Replace with actual readings
 
     // Set z-score threshold (adjust based on your requirements)
-    float z_threshold = 2.0;
+    float z_threshold = 1.3;
 
     // Check for outliers
      if (!is_outlier(sensor_readings, z_threshold)) {

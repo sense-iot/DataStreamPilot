@@ -11,15 +11,16 @@
 #define NUM_SENSORS 3
 
 // Function to check for outliers using z-scores
-int is_outlier(float readings[NUM_SENSORS], float z_threshold) {
+int is_outlier(int16_t readings[NUM_SENSORS], float z_threshold) {
     // Calculate mean of the readings
     float mean_reading = 0.0;
     for (int i = 0; i < NUM_SENSORS; i++) {
         mean_reading += readings[i];
     }
     mean_reading /= NUM_SENSORS;
-    int16_t mean_reading_int = (int16_t)(mean_reading * 100);
-    DEBUG_PRINT("Mean = %i\n", mean_reading_int);
+
+    double mean_reading_d = mean_reading * 100;    // Debugging
+    printf("Mean = %i\n", (int)mean_reading_d);    // Debugging
 
     // Calculate standard deviation of the readings
     float std_dev_reading = 0.0;
@@ -27,16 +28,17 @@ int is_outlier(float readings[NUM_SENSORS], float z_threshold) {
         std_dev_reading += (float)pow((double)(readings[i] - mean_reading), 2);  
     }
     std_dev_reading = sqrt(std_dev_reading / NUM_SENSORS);
-    int16_t std_dev_reading_int = (int16_t)(std_dev_reading * 1000);
-    DEBUG_PRINT("SD = %i\n", std_dev_reading_int);
+
+    int16_t sd = std_dev_reading * 100;   // Debugging
+    printf("SD = %i\n", (int)sd);       // Debugging
 
     // Calculate z-score for each sensor
     int is_outlier = 0;
     for (int i = 0; i < NUM_SENSORS; i++) {
         float z_score = fabs((readings[i] - mean_reading) / std_dev_reading);
 
-        int16_t z_score_int = (int16_t)(z_score * 1000);
-        DEBUG_PRINT("Z score = %i\n", z_score_int);
+        int16_t z_score_int = (int16_t)(z_score * 1000);   // Debugging   
+        DEBUG_PRINT("Z score = %i\n", z_score_int);     // Debugging
 
         if (z_score > z_threshold) {
             is_outlier = 1;

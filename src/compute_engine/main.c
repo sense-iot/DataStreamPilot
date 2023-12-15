@@ -118,7 +118,7 @@ int temp_sensor_reset(void)
 
 
 // Function to calculate odd parity 
-int8_t calculateOddParity(int16_t num) {
+int8_t calculate_odd_parity(int16_t num) {
     int8_t count = 0;
     for (int i = 0; i < 16; ++i) { // Assuming 16-bit integers
         if (num & 1) {

@@ -28,6 +28,8 @@
 #include "net/ipv6/addr.h"
 #include "thread.h"
 #include "ztimer.h"
+#include "shell.h"
+#include "mutex.h"
 
 #ifndef EMCUTE_ID
 #define EMCUTE_ID ("gertrud")
@@ -37,7 +39,7 @@
 #define NUMOFSUBS (16U)
 #define TOPIC_MAXLEN (64U)
 
-// static char stack[THREAD_STACKSIZE_DEFAULT];
+static char stack[THREAD_STACKSIZE_DEFAULT];
 static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
@@ -412,16 +414,18 @@ static int cmd_will(int argc, char **argv)
     return 0;
 }
 
-// static const shell_command_t shell_commands[] = {
-//     {"con", "connect to MQTT broker", cmd_con},
-//     {"discon", "disconnect from the current broker", cmd_discon},
-//     {"pub", "publish something", cmd_pub},
-//     {"sub", "subscribe topic", cmd_sub},
-//     {"unsub", "unsubscribe from topic", cmd_unsub},
-//     {"will", "register a last will", cmd_will},
-//     {NULL, NULL, NULL}};
+static const shell_command_t shell_commands[] = {
+    {"con", "connect to MQTT broker", cmd_con},
+    {"discon", "disconnect from the current broker", cmd_discon},
+    {"pub", "publish something", cmd_pub},
+    {"sub", "subscribe topic", cmd_sub},
+    {"unsub", "unsubscribe from topic", cmd_unsub},
+    {"will", "register a last will", cmd_will},
+    {NULL, NULL, NULL}};
 
 // static char *server_ip = MQTT_BROKER_IP;
+
+static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
 
 int main(void)
 {
@@ -434,14 +438,22 @@ int main(void)
     // }
     // puts_append(server_ip);
     msg_init_queue(queue, ARRAY_SIZE(queue));
+    ztimer_sleep(ZTIMER_MSEC, 300);
 
-    // char *cmd_con_m[] = {"con", "2001:660:5307:3000::67", "1885"};
-    // int cmd_con_count = 3;
+    char *cmd_con_m[] = {"con", "2001:660:5307:3000::67", "1885"};
+    int cmd_con_count = 3;
 
     // /* initialize our subscription buffers */
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
-
-    // cmd_con(cmd_con_count, cmd_con_m);
+    // ztimer_sleep(ZTIMER_MSEC, 300);
+    // mutex_lock(&mqtt_lock);
+    // if (cmd_con(cmd_con_count, cmd_con_m))
+    // {
+    //     puts_append("broker connection failed\n");
+    //     mutex_unlock(&mqtt_lock);
+    //     // return 0;
+    // }
+    // mutex_unlock(&mqtt_lock);
 
     // while (1)
     // {
@@ -449,19 +461,26 @@ int main(void)
     //     char *cmd_pub_m[] = {"pub", "temperature", "32.5"};
     //     int cmd_pub_count = 3;
 
-    //     cmd_pub(cmd_pub_count, cmd_pub_m);
+    //     mutex_lock(&mqtt_lock);
+    //     if (cmd_pub(cmd_pub_count, cmd_pub_m)) {
+    //         ztimer_sleep(ZTIMER_MSEC, 300);
+    //         continue;
+    //     }
+    //     mutex_unlock(&mqtt_lock);
     // }
 
     /* start the emcute thread */
-    // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-    //               emcute_thread, NULL, "emcute");
+    thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
+                  emcute_thread, NULL, "emcute");
 
     // /* start shell */
-    // char line_buf[SHELL_DEFAULT_BUFSIZE];
-    // shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
+    char line_buf[SHELL_DEFAULT_BUFSIZE];
+    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 
     /* should be never reached */
     return 0;
 
-    // con 2001:660:5307:3000::67 1883
+    // con 2001:660:5307:3000::67 1885
+    // ping 2001:4860:4860::8888
+    // pub temperature 32.5
 }

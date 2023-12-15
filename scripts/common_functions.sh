@@ -247,6 +247,7 @@ create_tap_interface() {
     echo "Create tap interface ${TAP_INTERFACE}"
     echo "nib neigh"
     echo "Creating tap interface..."
+    echo "sudo ethos_uhcpd.py m3-${node_id} ${TAP_INTERFACE} ${BORDER_ROUTER_IP}"
     sudo ethos_uhcpd.py m3-${node_id} ${TAP_INTERFACE} ${BORDER_ROUTER_IP}
     sleep 5
     echo "Done creating tap interface..."

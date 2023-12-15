@@ -4,6 +4,9 @@ run_mini_project_2:
 status:
 	./scripts/status.sh
 
+tap:
+	./scripts/gnrc_border_router_tap.sh
+
 broker:
 	./scripts/mqtt_broker_setup.sh
 

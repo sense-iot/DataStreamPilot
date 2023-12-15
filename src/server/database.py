@@ -1,5 +1,7 @@
 #import os
 from influxdb import InfluxDBClient
+from datetime import datetime, timedelta
+
 
 from configuration import HOST, PORT, USERNAME, PASSWORD, DATABASE, TEMPERATURE, sites
 import random
@@ -27,15 +29,16 @@ def getInfluxDB(query, measurement=TEMPERATURE):
 async def sendInfluxdb(decodedValues, site, filteredValues):
     db_client = await client()
     tags        = {"place": sites[site]}
+    base_timestamp = datetime.utcnow() - timedelta(seconds=len(decodedValues))
+
     for i in range(len(decodedValues)):
         fields      = { "value" : decodedValues[i], "filtered" : filteredValues[i] }
-        await save(db_client, sites[site], fields, tags=tags)    
-        time.sleep(1)
+        await save(db_client, sites[site], fields, tags=tags, timestamp=base_timestamp + timedelta(seconds=i))    
     return True
 
 
-async def save(db_client, measurement, fields, tags=None):
-    json_body = [{'measurement': measurement, 'tags': tags, 'fields': fields}]
+async def save(db_client, measurement, fields, tags=None, timestamp=None):
+    json_body = [{'measurement': measurement, 'tags': tags, 'fields': fields, 'time': timestamp}]
 
     # write / save into a row
     db_client.write_points(json_body)

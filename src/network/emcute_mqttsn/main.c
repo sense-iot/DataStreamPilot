@@ -115,6 +115,115 @@ char *sensor1_data = NULL;
 char *sensor2_data = NULL;
 char *sensor3_data = NULL;
 int count = 0;
+static mutex_t cb_lock = MUTEX_INIT;
+
+static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
+{
+    char *in = (char *)data;
+
+    if (strcmp(topic->name, "sens3_temperature") != 0)
+    {
+        return;
+    }
+
+    printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
+    printf("count : %d - Data : %s \n", count, in);
+
+    if (sensor3_data == NULL)
+    {
+        sensor3_data = malloc(len + 1);
+        strcpy(sensor3_data, in);
+    } else {
+        free(sensor3_data);
+        sensor3_data = NULL;
+        sensor3_data = malloc(len + 1);
+        strcpy(sensor3_data, in);
+    }
+
+    mutex_lock(&cb_lock);
+    count++;
+    mutex_unlock(&cb_lock);
+}
+
+static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
+{
+    char *in = (char *)data;
+
+    if (strcmp(topic->name, "sens1_temperature") != 0)
+    {
+        return;
+    }
+
+    printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
+
+    if (count >= 3)
+    {
+        printf("===============================================\n\n");
+        count = 0;
+        if (sensor1_data != NULL)
+        {
+            printf("sensor 1 : %s \n", sensor1_data);
+        }
+        if (sensor2_data != NULL)
+        {
+            printf("sensor 2 : %s \n", sensor2_data);
+        }
+        if (sensor3_data != NULL)
+        {
+            printf("sensor 3 : %s \n", sensor3_data);
+        }
+        if (sensor1_data != NULL)
+        {
+            free(sensor1_data);
+            sensor1_data = NULL;
+        }
+        printf("===============================================\n\n");
+}
+
+    if (sensor1_data == NULL)
+    {
+        sensor1_data = malloc(len + 1);
+        strcpy(sensor1_data, in);
+    }
+    else
+    {
+        free(sensor1_data);
+        sensor1_data = NULL;
+    }
+
+    mutex_lock(&cb_lock);
+    count++;
+    mutex_unlock(&cb_lock);
+}
+
+static void on_pub_2(const emcute_topic_t *topic, void *data, size_t len)
+{
+    char *in = (char *)data;
+
+    if (strcmp(topic->name, "sens2_temperature") != 0)
+    {
+        return;
+    }
+    printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
+    printf("count : %d - Data : %s \n", count, in);
+
+    if (sensor2_data == NULL)
+    {
+        sensor2_data = malloc(len + 1);
+        strcpy(sensor2_data, in);
+    }
+    else
+    {
+        free(sensor2_data);
+        sensor2_data = NULL;
+        sensor2_data = malloc(len + 1);
+        strcpy(sensor2_data, in);
+    }
+
+    mutex_lock(&cb_lock);
+    count++;
+    mutex_unlock(&cb_lock);
+}
 
 static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
 {
@@ -416,6 +525,138 @@ static int cmd_sub(int argc, char **argv)
     return 0;
 }
 
+static int cmd_sub_1(int argc, char **argv, emcute_cb_t cb)
+{
+    unsigned flags = EMCUTE_QOS_0;
+
+    if (argc < 2)
+    {
+        printf("usage: %s <topic name> [QoS level]\n", argv[0]);
+        return 1;
+    }
+
+    if (strlen(argv[1]) > TOPIC_MAXLEN)
+    {
+        puts("error: topic name exceeds maximum possible size");
+        return 1;
+    }
+    if (argc >= 3)
+    {
+        flags |= get_qos(argv[2]);
+    }
+
+    /* find empty subscription slot */
+    unsigned i = 0;
+    for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
+    {
+    }
+    if (i == NUMOFSUBS)
+    {
+        puts("error: no memory to store new subscriptions");
+        return 1;
+    }
+
+    subscriptions[i].cb = cb;
+    strcpy(topics[i], argv[1]);
+    subscriptions[i].topic.name = topics[i];
+    if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
+    {
+        printf("error: unable to subscribe to %s\n", argv[1]);
+        return 1;
+    }
+
+    printf("Now subscribed to %s\n", argv[1]);
+    return 0;
+}
+
+static int cmd_sub_2(int argc, char **argv)
+{
+    unsigned flags = EMCUTE_QOS_0;
+
+    if (argc < 2)
+    {
+        printf("usage: %s <topic name> [QoS level]\n", argv[0]);
+        return 1;
+    }
+
+    if (strlen(argv[1]) > TOPIC_MAXLEN)
+    {
+        puts("error: topic name exceeds maximum possible size");
+        return 1;
+    }
+    if (argc >= 3)
+    {
+        flags |= get_qos(argv[2]);
+    }
+
+    /* find empty subscription slot */
+    unsigned i = 0;
+    for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
+    {
+    }
+    if (i == NUMOFSUBS)
+    {
+        puts("error: no memory to store new subscriptions");
+        return 1;
+    }
+
+    subscriptions[i].cb = on_pub_2;
+    strcpy(topics[i], argv[1]);
+    subscriptions[i].topic.name = topics[i];
+    if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
+    {
+        printf("error: unable to subscribe to %s\n", argv[1]);
+        return 1;
+    }
+
+    printf("Now subscribed to %s\n", argv[1]);
+    return 0;
+}
+
+static int cmd_sub_3(int argc, char **argv)
+{
+    unsigned flags = EMCUTE_QOS_0;
+
+    if (argc < 2)
+    {
+        printf("usage: %s <topic name> [QoS level]\n", argv[0]);
+        return 1;
+    }
+
+    if (strlen(argv[1]) > TOPIC_MAXLEN)
+    {
+        puts("error: topic name exceeds maximum possible size");
+        return 1;
+    }
+    if (argc >= 3)
+    {
+        flags |= get_qos(argv[2]);
+    }
+
+    /* find empty subscription slot */
+    unsigned i = 0;
+    for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
+    {
+    }
+    if (i == NUMOFSUBS)
+    {
+        puts("error: no memory to store new subscriptions");
+        return 1;
+    }
+
+    subscriptions[i].cb = on_pub_3;
+    strcpy(topics[i], argv[1]);
+    subscriptions[i].topic.name = topics[i];
+    if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
+    {
+        printf("error: unable to subscribe to %s\n", argv[1]);
+        return 1;
+    }
+
+    printf("Now subscribed to %s\n", argv[1]);
+    return 0;
+}
+
 static int cmd_unsub(int argc, char **argv)
 {
     if (argc < 2)
@@ -481,7 +722,7 @@ static const shell_command_t shell_commands[] = {
 
 // static char *server_ip = MQTT_BROKER_IP;
 
-static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
+
 
 static char *server_ip = MQTT_BROKER_IP;
 
@@ -511,15 +752,27 @@ int main(void)
     }
     printf("connection okay\n");
 
+    char *unsub_message[2];
+    unsub_message[0] = "sub";
+    cmd_con_count = 2;
+
+    unsub_message[1] = "sens1_temperature";
+    cmd_unsub(cmd_con_count, unsub_message);
+    unsub_message[1] = "sens2_temperature";
+    cmd_unsub(cmd_con_count, unsub_message);
+    unsub_message[1] = "sens3_temperature";
+    cmd_unsub(cmd_con_count, unsub_message);
+
     char *sub_message[2];
     sub_message[0] = "sub";
-    sub_message[1] = "sens1_temperature";
     cmd_con_count = 2;
-    cmd_sub(cmd_con_count, sub_message);
+
     sub_message[1] = "sens2_temperature";
-    cmd_sub(cmd_con_count, sub_message);
+    cmd_sub_1(cmd_con_count, sub_message, on_pub_2);
+    sub_message[1] = "sens1_temperature";
+    cmd_sub_1(cmd_con_count, sub_message, on_pub_1);
     sub_message[1] = "sens3_temperature";
-    cmd_sub(cmd_con_count, sub_message);
+    cmd_sub_1(cmd_con_count, sub_message, on_pub_3);
 
     while (1)
     {

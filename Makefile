@@ -74,6 +74,9 @@ clean:
 broker_sub:
 	./scripts/broker_sub.sh
 
+sub_sensor1:
+	./scripts/broker_sub_sensor1.sh
+
 broker_pub:
 	./scripts/broker_pub.sh $(filter-out $@,$(MAKECMDGOALS))
 

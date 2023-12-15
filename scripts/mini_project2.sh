@@ -5,7 +5,7 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
 M3_NODE_COUNT=5
-A8_NODE_COUNT=2
+A8_NODE_COUNT=1
 EXPERIMENT_ID=0;
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
@@ -67,16 +67,23 @@ source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 echo "======================================================== $ARCH"
 export BROKER_IP=$(extract_global_ipv6)
-export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
-source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-
 # export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+
+export EMCUTE_ID="SENSOR_1"
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
+export QOS_LEVEL=2
+export CLIENT_TOPIC="sens1_temperature"
+source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+
+export EMCUTE_ID="SENSOR_2"
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
+export CLIENT_TOPIC="sens2_temperature"
 # source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 
-# export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
-# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
-
-# export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
+export EMCUTE_ID="SENSOR_3"
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
+export CLIENT_TOPIC="sens3_temperature"
 # source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 
 echo "======================================================== $ARCH"

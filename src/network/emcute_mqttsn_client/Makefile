@@ -47,6 +47,14 @@ ifneq (,$(EMCUTE_ID))
   CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
 endif
 
+ifneq (,$(CLIENT_TOPIC))
+  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
+endif
+
+ifneq (,$(QOS_LEVEL))
+  CFLAGS += -DQOS_LEVEL=\"$(QOS_LEVEL)\"
+endif
+
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:

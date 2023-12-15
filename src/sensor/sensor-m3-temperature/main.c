@@ -15,14 +15,6 @@
 #define ENABLE_DEBUG 1
 #include "debug.h"
 
-
-typedef struct {
-  char buffer[128];
-  int16_t tempList[8];
-} data_t;
-
-static data_t data;
-
 static lpsxxx_t lpsxxx;
 // static mutex_t lps_lock = MUTEX_INIT;
 
@@ -103,21 +95,21 @@ int temp_sensor_reset(void)
   return 1;
 }
 
-int calculate_odd_parity(int num) {
-    int parityBit = 0;
-    int count = 0;  // To count the number of set bits
+// int calculate_odd_parity(int num) {
+//     int parityBit = 0;
+//     int count = 0;  // To count the number of set bits
 
-    // Count the number of set bits (1-bits) in the given number
-    while (num) {
-        count += num & 1;  // Increment count if rightmost bit is set
-        num >>= 1;  // Right shift num to check the next bit
-    }
+//     // Count the number of set bits (1-bits) in the given number
+//     while (num) {
+//         count += num & 1;  // Increment count if rightmost bit is set
+//         num >>= 1;  // Right shift num to check the next bit
+//     }
 
-    // Set parityBit to 1 if the count of set bits is even, else 0
-    parityBit = (count % 2 == 0) ? 1 : 0;
+//     // Set parityBit to 1 if the count of set bits is even, else 0
+//     parityBit = (count % 2 == 0) ? 1 : 0;
 
-    return parityBit;
-}
+//     return parityBit;
+// }
 
 float generate_normal_random(float stddev) {
     float M_PI = 3.1415926535;
@@ -142,6 +134,13 @@ float add_noise(float stddev) {
     return noise_val;
 }
 
+typedef struct {
+  char buffer[128];
+  int16_t tempList[8];
+} data_t;
+
+static data_t data;
+
 int main(void)
 {
   if (temp_sensor_reset() == 0) {
@@ -152,7 +151,7 @@ int main(void)
   // int16_t avg_temp = 0; 
   int counter = 0;
   int array_length = 0;
-  int parity;
+  // int parity;
 
   while (1) {
     
@@ -161,7 +160,7 @@ int main(void)
       // DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
       
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-      DEBUG_PRINT("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      // DEBUG_PRINT("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       if (array_length < 7) {
         data.tempList[array_length++] = temp_n_noise;
       }
@@ -185,16 +184,16 @@ int main(void)
         int16_t rounded_avg_temp = (int16_t)round(avg_temp);
 
         char temp_str[10];
-        char parity_bit[4];
+        // char parity_bit[4];
 
         sprintf(temp_str, "%i,", rounded_avg_temp);
-        // printf("Temp Str: %s°C\n", temp_str);
+        printf("Temp Str: %s°C\n", temp_str);
         strcat(data.buffer, temp_str);
 
-        parity = calculate_odd_parity(rounded_avg_temp);
-        sprintf(parity_bit, "%i,", parity);
-        // printf("Temp Str: %s°C\n", temp_str);
-        strcat(data.buffer, parity_bit);
+        // parity = calculate_odd_parity(rounded_avg_temp);
+        // sprintf(parity_bit, "%i,", parity);
+        // // printf("Temp Str: %s°C\n", temp_str);
+        // strcat(data.buffer, parity_bit);
 
         for (int i = 0; i < array_length - 1; ++i) {
             data.tempList[i] = data.tempList[i + 1];

@@ -45,7 +45,7 @@ def kalmanfilter(z, s):
     kf.F = np.array([[1]])
     kf.H = np.array([[1]])
     kf.P = np.array([[10]])
-    kf.R = np.array([[20]])
+    kf.R = np.array([[10]])
     kf.Q = np.array([[5]])
 
     output = np.zeros(z.shape[0])

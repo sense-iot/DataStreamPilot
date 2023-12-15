@@ -24,7 +24,7 @@ class TimeResource(resource.ObservableResource):
                 strftime("%Y-%m-%d %H:%M").encode('ascii')
         return aiocoap.Message(payload=payload)
 
-class temperature(resource.Resource):
+class Temperature(resource.Resource):
     async def render_post(self, request):
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"Received message: {payload}")
@@ -34,7 +34,7 @@ class temperature(resource.Resource):
 
         recordedFlag = sendInfluxdb(decodedValues, payload['site'], filteredValues)
         logger.debug(f"Recorded flag: {recordedFlag}")
-        
+
         return aiocoap.Message(content_format=0,
                 payload=json.dumps({"status": "ok"}).encode('utf8'))
 
@@ -45,7 +45,7 @@ async def main():
     root.add_resource(['.well-known', 'core'],
             resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['time'], TimeResource())
-    root.add_resource(['temp'], temperature())
+    root.add_resource(['temp'], Temperature())
 
     await aiocoap.Context.create_server_context(root, bind=('::', 5683))
 

@@ -3,7 +3,7 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-my_arch=iotlab-a8-m3
+my_arch=${ARCH}
 
 build_wireless_firmware ${EMCUTE_MQTSSN_CLIENT_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${my_arch}
 build_status=$?

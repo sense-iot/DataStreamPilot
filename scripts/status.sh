@@ -26,6 +26,7 @@ BORDER_ROUTER_NODE=$(read_variable_from_file "BORDER_ROUTER_NODE")
 GNRC_NETWORKING_NODE=$(read_variable_from_file "GNRC_NETWORKING_NODE")
 SENSOR_CONNECTED_NODE=$(read_variable_from_file "SENSOR_CONNECTED_NODE")
 DENOISER_NODE=$(read_variable_from_file "DENOISER_NODE")
+DENOISER_NODE_TEST=$(read_variable_from_file "DENOISER_NODE_TEST")
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
@@ -34,6 +35,7 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "a8 - $MQTT_CLIENT_N
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "a8 - $MQTT_CLIENT_NODE_2"
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "a8 - $MQTT_CLIENT_NODE_3"
 printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE:" "a8 - $DENOISER_NODE"
+printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE_TEST:" "a8 - $DENOISER_NODE_TEST"
 
 
 echo " ----- M3 - A8 nodes ----- "
@@ -46,6 +48,7 @@ echo "ssh root@node-a8-${DENOISER_NODE}    # denoiser"
 echo " ----- M3 nodes ----- "
 echo "nc m3-${BORDER_ROUTER_NODE} 20000         # border router"
 echo "nc m3-${SENSOR_CONNECTED_NODE} 20000      # sensor connected"
+echo "nc m3-${DENOISER_NODE_TEST} 20000      # DENOISER_NODE_TEST"
 
 
 echo "Broker IP : $(extract_global_ipv6)"

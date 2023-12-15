@@ -111,17 +111,67 @@ static void *emcute_thread(void *arg)
     return NULL; /* should never be reached */
 }
 
+char *sensor1_data = NULL;
+char *sensor2_data = NULL;
+char *sensor3_data = NULL;
+int count = 0;
+
 static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
 
-    printf("### got publication for topic '%s' [%i] ###\n",
-           topic->name, (int)topic->id);
-    for (size_t i = 0; i < len; i++)
-    {
-        printf("%c", in[i]);
+    printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
+    printf("count : %d - Data : %s ", count, in);
+
+    if (count >= 3) {
+        count = 0;
+        if (sensor1_data != NULL) {
+            printf("sensor 1 : %s ", sensor1_data);
+        }
+         if (sensor2_data != NULL) {
+        printf("sensor 2 : %s ", sensor2_data);
+         }
+          if (sensor3_data   != NULL) {
+        printf("sensor 3 : %s ", sensor3_data);
+          }
+        if (sensor1_data != NULL) {
+            free(sensor1_data);
+            sensor1_data = NULL;
+        }
+        if (sensor2_data != NULL) {
+            free(sensor2_data);
+            sensor2_data = NULL;
+        }
+        if (sensor3_data != NULL) {
+            free(sensor3_data);
+            sensor3_data = NULL;
+        }
+        printf("\n");
     }
-    puts("");
+
+    if (strcmp(topic->name, "sens1_temperature") == 0)
+    {
+        if (sensor1_data == NULL) {
+            sensor1_data = malloc(strlen(in) + 1);
+            strcpy(sensor1_data, in);
+        }
+
+    }
+    else if (strcmp(topic->name, "sens2_temperature") == 0)
+    {
+        if (sensor2_data == NULL) {
+            sensor2_data = malloc(strlen(in) + 1);
+            strcpy(sensor2_data, in);
+        }
+    }
+    else
+    {
+        if (sensor3_data == NULL) {
+            sensor3_data = malloc(strlen(in) + 1);
+            strcpy(sensor3_data, in);
+        }
+    }
+    count++;
 }
 
 // change this function work with enum it self
@@ -433,23 +483,18 @@ static const shell_command_t shell_commands[] = {
 
 static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
 
+static char *server_ip = MQTT_BROKER_IP;
+
 int main(void)
 {
     printf("Publish subscriber example - Group 12 MQTT\n");
-    // char *server_ip = readFirstLine();
-    // if (server_ip == NULL)
-    // {
-    //     puts("broker ip cannot read\n");
-    //     return -1;
-    // }
-    // puts_append(server_ip);
     msg_init_queue(queue, ARRAY_SIZE(queue));
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
 
     printf("memset okay\n");
     char *cmd_con_m[3];
     cmd_con_m[0] = "con";
-    cmd_con_m[1] = "2001:660:5307:3000::67";
+    cmd_con_m[1] = server_ip;
     cmd_con_m[2] = "1885";
     int cmd_con_count = 3;
 
@@ -466,32 +511,23 @@ int main(void)
     }
     printf("connection okay\n");
 
+    char *sub_message[2];
+    sub_message[0] = "sub";
+    sub_message[1] = "sens1_temperature";
+    cmd_con_count = 2;
+    cmd_sub(cmd_con_count, sub_message);
+    sub_message[1] = "sens2_temperature";
+    cmd_sub(cmd_con_count, sub_message);
+    sub_message[1] = "sens3_temperature";
+    cmd_sub(cmd_con_count, sub_message);
+
     while (1)
     {
         ztimer_sleep(ZTIMER_MSEC, 1000);
-        char *cmd_pub_m[] = {"pub", "temperature", "32.5"};
-        int cmd_pub_count = 3;
-
-        // mutex_lock(&mqtt_lock);
-        if (cmd_pub(cmd_pub_count, cmd_pub_m)) {
-            ztimer_sleep(ZTIMER_MSEC, 300);
-            continue;
-        }
-        // mutex_unlock(&mqtt_lock);
     }
 
-    /* start the emcute thread */
-    // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-    //               emcute_thread, NULL, "emcute");
-
-    // /* start shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 
-    /* should be never reached */
     return 0;
-
-    // con 2001:660:5307:3000::67 1885
-    // ping 2001:4860:4860::8888
-    // pub temperature 32.5
 }

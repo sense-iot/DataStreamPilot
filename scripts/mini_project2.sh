@@ -4,7 +4,7 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=2
+M3_NODE_COUNT=5
 A8_NODE_COUNT=5
 EXPERIMENT_ID=0
 
@@ -32,10 +32,10 @@ fi
 export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 # export MQTT_CLIENT_NODE=${a8_nodes[1]}
 
-
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
 
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
+export DENOISER_NODE_TEST=${m3_nodes[2]}
 
 export MQTT_CLIENT_NODE_1=${a8_nodes[1]}
 export MQTT_CLIENT_NODE_2=${a8_nodes[2]}
@@ -49,6 +49,7 @@ write_variable_to_file "SENSOR_CONNECTED_NODE" "$SENSOR_CONNECTED_NODE"
 write_variable_to_file "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1"
 write_variable_to_file "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2"
 write_variable_to_file "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3"
+write_variable_to_file "DENOISER_NODE_TEST" "$DENOISER_NODE_TEST"
 write_variable_to_file "DENOISER_NODE" "$DENOISER_NODE"
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
@@ -59,7 +60,6 @@ printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE:" "a8 - $DENOISER_NODE"
 
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
-
 
 # printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
 # printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"
@@ -72,11 +72,17 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 echo "================ Border Router ======================"
 # source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
+
 echo "============== Broker setup ======================="
 # source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
 # source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
+
+
+echo "======================================================"
+source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+exit 0
 
 echo "=============== Starting Denoiser ==================="
 
@@ -108,6 +114,9 @@ fi
 
 echo "=============== Starting sensors ==================="
 
+# iotlab-m3, iotlab-a8-m3
+my_arch=iotlab-m3
+
 echo "======== client 1 sensor ======================="
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
 export EMCUTE_ID="SENSOR_1"
@@ -125,9 +134,20 @@ else
     else
         echo "File exists: $file_to_check"
         ELF_FILE=$file_to_check
-        # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
         echo "flashing sensor 1 from root script"
-        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+
+        if [ "$my_arch" = "iotlab-m3" ]; then
+            cp $file_to_check ${SENSE_FIRMWARE_HOME}
+            echo "Architecture is iotlab-m3."
+            flash_elf $file_to_check ${MQTT_CLIENT_NODE}
+        elif [ "$my_arch" = "iotlab-a8-m3" ]; then
+            cp $file_to_check ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
+            echo "Architecture is iotlab-a8-m3."
+            ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+            echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
+        else
+            echo "Architecture is something else."
+        fi
     fi
 fi
 
@@ -141,16 +161,25 @@ if [ "$PREV_BROKER_IP" != "$BROKER_IP" ]; then
     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 else
     echo "DataStereamPilot: The broker IP has not changed ${BROKER_IP}."
-    
+
     if [ ! -f "$file_to_check" ]; then
         source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
         echo "ELF NOT FOUND"
     else
         echo "File exists: $file_to_check"
         ELF_FILE=$file_to_check
-        # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
-        echo "flashing sensor 2 from root script"
-        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+        if [ "$my_arch" = "iotlab-m3" ]; then
+            cp $file_to_check ${SENSE_FIRMWARE_HOME}
+            echo "Architecture is iotlab-m3."
+            flash_elf $file_to_check ${MQTT_CLIENT_NODE}
+        elif [ "$my_arch" = "iotlab-a8-m3" ]; then
+            cp $file_to_check ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
+            echo "Architecture is iotlab-a8-m3."
+            ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+            echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
+        else
+            echo "Architecture is something else."
+        fi
     fi
 fi
 
@@ -171,9 +200,18 @@ else
     else
         echo "File exists: $file_to_check"
         ELF_FILE=$file_to_check
-        # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
-        echo "flashing sensor 3 from root script"
-        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+        if [ "$my_arch" = "iotlab-m3" ]; then
+            cp $file_to_check ${SENSE_FIRMWARE_HOME}
+            echo "Architecture is iotlab-m3."
+            flash_elf $file_to_check ${MQTT_CLIENT_NODE}
+        elif [ "$my_arch" = "iotlab-a8-m3" ]; then
+            cp $file_to_check ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
+            echo "Architecture is iotlab-a8-m3."
+            ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+            echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
+        else
+            echo "Architecture is something else."
+        fi
     fi
 fi
 

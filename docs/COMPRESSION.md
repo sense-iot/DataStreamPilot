@@ -53,4 +53,5 @@ Sensor nodes are associated with specific sites, and a 3-bit encoding scheme is 
 ## Error-Checking and Parity Bit
 
 - Add an odd parity bit to all payload values, including site encoding and encoded differences.
-- Parity bit ai
+- Parity bit aids in error-checking during transmission.
+- The server checks parity bits; if they don't match the expected odd parity, it interpolates values using the previous and next readings.

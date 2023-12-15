@@ -17,7 +17,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("coap-server")
 logger.setLevel(logging.DEBUG)
 
-
 class TimeResource(resource.ObservableResource):
     async def render_get(self, request):
         payload = datetime.datetime.now().\

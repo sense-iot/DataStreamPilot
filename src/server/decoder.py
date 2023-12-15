@@ -1,8 +1,11 @@
-import struct
+import logging
 from filterpy.kalman import KalmanFilter
 import numpy as np
 
 kf = None  # Set to None initially
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("coap-server")
+logger.setLevel(logging.DEBUG)
 
 def initializeKalmanFilter(initial_value):
     global kf
@@ -22,7 +25,7 @@ def decodeTemperature(message):
 
     if kf is None:
         # Initialize Kalman filter with the initial value from the first request
-        print("Initializing Kalman filter")
+        logger.debug("Initializing Kalman filter")
         initial_value = message[0] / 100.0
         initializeKalmanFilter(initial_value)
 
@@ -62,7 +65,7 @@ def parityCheck(value, parity):
 def kalmanfilter(z, kf):
 
     output = np.zeros(z.shape[0])
-    # output[0] = kf.x[0][0]
+    output[0] = kf.x[0][0]
 
     for i in range(z.shape[0]):
         y = z[i]

@@ -135,7 +135,7 @@ float add_noise(float stddev) {
 }
 
 typedef struct {
-  char buffer[128];
+  // char buffer[128];
   int16_t tempList[8];
 } data_t;
 
@@ -149,7 +149,7 @@ int main(void)
   }
 
   // int16_t avg_temp = 0; 
-  int counter = 0;
+  // int counter = 0;
   int array_length = 0;
   // int parity;
 
@@ -186,9 +186,9 @@ int main(void)
         char temp_str[10];
         // char parity_bit[4];
 
-        sprintf(temp_str, "%i,", rounded_avg_temp);
-        printf("Temp Str: %s°C\n", temp_str);
-        strcat(data.buffer, temp_str);
+        sprintf(temp_str, "%i", rounded_avg_temp);
+        printf("Temp Str: %s\n", temp_str);
+        // strcat(data.buffer, temp_str);
 
         // parity = calculate_odd_parity(rounded_avg_temp);
         // sprintf(parity_bit, "%i,", parity);
@@ -199,14 +199,14 @@ int main(void)
             data.tempList[i] = data.tempList[i + 1];
         }
         array_length--;
-        counter++;
+        // counter++;
       }
     }
-    if (counter == 10) {
-      DEBUG_PRINT("Data: %s\n", data.buffer);
-      memset(data.buffer, 0, sizeof(data.buffer));
-      counter = 0;
-    }
+    // if (counter == 10) {
+    //   DEBUG_PRINT("Data: %s\n", data.buffer);
+    //   memset(data.buffer, 0, sizeof(data.buffer));
+    //   counter = 0;
+    // }
     ztimer_sleep(ZTIMER_MSEC, 1000);
   }
 

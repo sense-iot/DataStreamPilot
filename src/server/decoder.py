@@ -32,7 +32,6 @@ def calculate_odd_parity(num):
         if num & 1:
             count += 1
         num >>= 1
-    print(count)
     return 1 if count % 2 == 0 else 0
 
 def parityCheck(value, parity):
@@ -89,4 +88,6 @@ def kalmanfilter_numpy(z):
 
         output[i] = x.flatten()
 
-    return output.reshape(1, -1).tolist()
+    flat_list = [item for sublist in output for item in sublist]
+
+    return flat_list

@@ -199,7 +199,7 @@ int main(void) {
   }
 
   int counter = 0;
-  // int parity;
+  int8_t parity;
   int16_t base_value = 0;
 
   while (1) {
@@ -240,13 +240,13 @@ int main(void) {
     if (counter == 10) {
 
       DEBUG_PRINT("Data: %s\n", data.buffer);
-      DEBUG_PRINT("site: %s\n", site_name);
+      DEBUG_PRINT("site: %d\n", site_name);
       ztimer_sleep(ZTIMER_MSEC, 1000);
 
       // Create a JSON-like string manually
       char json_payload[MAX_JSON_PAYLOAD_SIZE];
       int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                   "{\"site\": \"%s\", \"temperature\": \"%s\"}",
+                                   "{\"site\": \"%d\", \"temperature\": \"%s\"}",
                                    site_name, data.buffer);
 
       // Check if snprintf was successful

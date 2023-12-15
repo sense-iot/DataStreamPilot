@@ -46,10 +46,16 @@ async def main():
     root.add_resource(['time'], TimeResource())
     root.add_resource(['temp'], Temperature())
 
-    await aiocoap.Context.create_server_context(root, bind=('::', 5683))
+    tasks = [
+        aiocoap.Context.create_server_context(root, bind=('::', 5683)),
+        aiocoap.Context.create_server_context(root, bind=('::', 5684)),  # Add more contexts as needed
+    ]
+
+    # Run until all server contexts are closed
+    await asyncio.gather(*tasks)
 
     # Run forever
-    await asyncio.get_running_loop().create_future()
+    # await asyncio.get_running_loop().create_future()
 
 if __name__ == "__main__":
     try:

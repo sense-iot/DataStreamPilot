@@ -61,7 +61,7 @@ def parityCheck(value, parity):
 def kalmanfilter(z, kf):
 
     output = np.zeros(z.shape[0])
-    output[0]? = kf.x[0][0]
+    # output[0] = kf.x[0][0]
 
     for i in range(z.shape[0]):
         y = z[i]

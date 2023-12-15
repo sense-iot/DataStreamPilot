@@ -51,7 +51,7 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 /**
  * @brief Default MQTT port
  */
-#define DEFAULT_MQTT_PORT               1883
+#define DEFAULT_MQTT_PORT               1886
 
 /**
  * @brief Keepalive timeout in seconds
@@ -312,6 +312,20 @@ int main(void)
     printf("Running mqtt paho example. Type help for commands info\n");
 
     MQTTStartTask(&client);
+
+    // char *cmd_con[] = {"con", "2001:660:5307:3000::68", "1886"};
+    // int cmd_con_count = 3;
+
+    // _cmd_con(cmd_con_count, cmd_con);
+
+    // while (1)
+    // {
+    //     char *cmd_pub[] = {"temperature", "32.5"};
+    //     int cmd_pub_count = 2;
+    //     ztimer_sleep(ZTIMER_MSEC, 1 * MS_PER_SEC);
+    //     _cmd_pub(cmd_pub_count, cmd_pub);
+    // }
+    
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

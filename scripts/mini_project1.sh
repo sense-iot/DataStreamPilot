@@ -3,53 +3,44 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-if [ $ERROR_WRONG_SITE -ne 0]; then
-	exit $ERROR_WRONG_SITE
+EXPERIMENT_NAME="mini-project-1-group-12"
+M3_NODE_COUNT=2
+A8_NODE_COUNT=0
+EXPERIMENT_ID=0;
+
+if ! is_experiment_running "${EXPERIMENT_NAME}"; then
+    echo "DataStereamPilot: submitting a new experiment"
+    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d 120 -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
+    EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
+    iotlab-ssh --verbose wait-for-boot
+    wait_for_job "${EXPERIMENT_ID}"
+else
+    EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
+    echo "DataStereamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
+    wait_for_job "${EXPERIMENT_ID}"
 fi
 
-buILD_WIRELess_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME}
-build_status=$?
-if [ $build_status -ne 0 ]; then
-    exit $build_status
+write_experiment_id "$EXPERIMENT_ID"
+nodes_list=$(iotlab-experiment get -i ${EXPERIMENT_ID} -p)
+extract_and_categorize_nodes "$nodes_list"
+
+if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
+    echo "DataStereamPilot: [Error] Not enough m3 nodes."
+    exit 1
 fi
 
-build_wireless_firmware ${SENSOR_CONNECTED_HOME} ${SENSOR_CONNECTED_EXE_NAME}
-build_status=$?
-if [ $build_status -ne 0 ]; then
-    exit $build_status
-fi
 
-if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
-    echo "Copy firmware files to shared"
-    echo "cp ${BORDER_ROUTER_HOME}/bin/${ARCH}/${BORDER_ROUTER_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}"
+export BORDER_ROUTER_NODE=${m3_nodes[0]}
+export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
 
-    cp ${BORDER_ROUTER_HOME}/bin/${ARCH}/${BORDER_ROUTER_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
-    cp ${SENSOR_CONNECTED_HOME}/bin/${ARCH}/${SENSOR_CONNECTED_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
+write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
+write_variable_to_file "SENSOR_CONNECTED_NODE" "$SENSOR_CONNECTED_NODE"
 
-    # submit border router job and save job id
-    border_router_job_id=$(submit_border_router_job "${BORDER_ROUTER_NODE}")
-    sensor_node_job_id=$(submit_sensor_node_job "${SENSOR_CONNECTED_NODE}")
+printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
+printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
 
-    create_stopper_script $n_node_job_id $border_router_job_id $sensor_node_job_id
-
-    wait_for_job "${border_router_job_id}"
-    wait_for_job "${sensor_node_job_id}"
-
-    create_tap_interface "${BORDER_ROUTER_NODE}" &
-
-    echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"
-    echo "coap info"
-    echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /.well-known/core"
-    echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /riot/board"
-    echo "coap get 192.168.2.135:5683 /.well-known/core"
-    echo "coap get example.com:5683 /.well-known/core # with sock dns"
-    echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /temperature"
-
-    echo "I am setting up the system......"
-    sleep 10
-    echo "Connecting to sensor node....."
-    echo "nc m3-${SENSOR_CONNECTED_NODE} 20000"
-    nc m3-${SENSOR_CONNECTED_NODE} 20000
-
-    stop_jobs "${sensor_node_job_id}" "${n_node_job_id}" "${border_router_job_id}"
-fi
+echo "======================================================== $ARCH"
+source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+echo "======================================================== $ARCH"
+source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
+echo "======================================================== $ARCH"

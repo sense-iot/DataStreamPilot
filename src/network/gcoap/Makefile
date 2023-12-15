@@ -1,7 +1,7 @@
 # Default Makefile, for host native GNRC-based networking
 
 # name of your application
-APPLICATION = gcoap_gp12
+APPLICATION = gcoap
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3

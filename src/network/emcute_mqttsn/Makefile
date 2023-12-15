@@ -4,6 +4,12 @@ APPLICATION = emcute_mqttsn
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3
 
+CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable
+
+
+MQTT_BROKER_IP=${BROKER_IP}
+CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'
+
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
 
@@ -23,6 +29,18 @@ USEMODULE += ps
 USEMODULE += gnrc_icmpv6_echo
 # Optimize network stack to for use with a single network interface
 USEMODULE += gnrc_netif_single
+
+# USEMODULE += ztimer_usec
+USEMODULE += ztimer_msec
+# USEMODULE += ztimer_sec
+# USEMODULE += ztimer_no_periph_rtt
+
+USEMODULE += shell
+USEMODULE += shell_cmds_default
+SEMODULE += ps
+USEMODULE += netstats_l2
+USEMODULE += netstats_ipv6
+USEMODULE += netstats_rpl
 
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)
 ifneq (,$(EMCUTE_ID))

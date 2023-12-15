@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
-if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
-  source /opt/riot.source
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    if [ -n "$SENSE_SETUP_UP" ]; then
+        return 0
+    fi
 fi
 
-export SENSE_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-printf "%-25s %s\n" "SENSE_HOME:" "$SENSE_HOME"
+if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
+    source /opt/riot.source
+fi
+
+export SENSE_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+printf "%-50s %s\n" "DataStereamPilot: SENSE_HOME:" "$SENSE_HOME"
 
 SCRIPTS=scripts
 
@@ -31,11 +37,13 @@ if [ ! -d "$SENSE_STOPPERS_HOME" ]; then
     mkdir -p "$SENSE_STOPPERS_HOME"
 fi
 
-if [ ! -d "$SENSE_HOME/external/RIOT" ]; then
+if [ ! -d "$SENSE_HOME/external/RIOT/boards" ]; then
 
-	(
-	cd $SENSE_SCRIPTS_HOME
-	./init.sh
-	)
+    (
+        cd $SENSE_SCRIPTS_HOME
+        ./init.sh
+    )
 
 fi
+
+export SENSE_SETUP_UP=1

@@ -7,6 +7,9 @@ BOARD ?= iotlab-m3
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
 
+WIFI_SSID ?= "group12_ssid"
+WIFI_PASS ?= "group12_secure_123"
+
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
 USEMODULE += netdev_default
@@ -20,6 +23,7 @@ USEMODULE += shell_cmds_default
 USEMODULE += ps
 # For testing we also include the ping command and some stats
 USEMODULE += gnrc_icmpv6_echo
+USEMODULE += gnrc_icmpv6_error
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
@@ -30,3 +34,5 @@ DEVELHELP ?= 1
 QUIET ?= 1
 
 include $(RIOTBASE)/Makefile.include
+
+include $(RIOTMAKE)/default-radio-settings.inc.mk

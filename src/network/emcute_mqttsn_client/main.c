@@ -69,41 +69,6 @@ void puts_append(const char *data)
     fclose(file);
 }
 
-char *readFirstLine(void)
-{
-    const char *filePath = "~/shared/logs/BROKER_IP.txt";
-    FILE *file = fopen(filePath, "r");
-    if (file == NULL)
-    {
-        perror("Error opening file");
-        puts("Error opening file");
-        return NULL;
-    }
-
-    char *ipAddress = malloc(MAX_IP_LENGTH + 1); // Allocate memory for the IP address
-    if (ipAddress == NULL)
-    {
-        perror("Memory allocation failed");
-        puts("Memory allocation failed");
-        fclose(file);
-        return NULL;
-    }
-
-    if (fgets(ipAddress, MAX_IP_LENGTH, file) == NULL)
-    {
-        perror("Error reading file");
-        puts("Error reading file");
-        free(ipAddress);
-        fclose(file);
-        return NULL;
-    }
-
-    ipAddress[strcspn(ipAddress, "\n")] = 0; // Remove newline character
-    fclose(file);
-
-    return ipAddress;
-}
-
 static void *emcute_thread(void *arg)
 {
     (void)arg;
@@ -152,36 +117,6 @@ static unsigned get_qos_i(int qos)
     }
 }
 
-static int cmd_con_i(int port, char *topic, char *message, char *ipv6_addr)
-{
-    sock_udp_ep_t gw = {.family = AF_INET6, .port = CONFIG_EMCUTE_DEFAULT_PORT};
-
-    puts_append(ipv6_addr);
-    // puts("error: unable to obtain topic ID");
-    if (ipv6_addr_from_str((ipv6_addr_t *)&gw.addr.ipv6, ipv6_addr) == NULL)
-    {
-        puts_append("error parsing IPv6 address\n");
-        return 1;
-    }
-
-    if (port != -1)
-    {
-        gw.port = port;
-    }
-
-    size_t len = strlen(message);
-
-    if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
-    {
-        printf("error: unable to connect to [%s]:%i\n", ipv6_addr, (int)gw.port);
-        return 1;
-    }
-    printf("Successfully connected to gateway at [%s]:%i\n",
-           ipv6_addr, (int)gw.port);
-
-    return 0;
-}
-
 static int cmd_con(int argc, char **argv)
 {
     sock_udp_ep_t gw = {.family = AF_INET6, .port = 1885U};
@@ -209,16 +144,6 @@ static int cmd_con(int argc, char **argv)
 
     printf("ip address okay\n");
 
-    // if (argc >= 3)
-    // {
-    //     gw.port = atoi(argv[2]);
-    // }
-    // if (argc >= 5)
-    // {
-    //     topic = argv[3];
-    //     message = argv[4];
-    //     len = strlen(message);
-    // }
     printf("starting mqtt con\n");
     if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
     {
@@ -236,6 +161,23 @@ static int cmd_discon(int argc, char **argv)
     (void)argc;
     (void)argv;
 
+    int res = emcute_discon();
+    if (res == EMCUTE_NOGW)
+    {
+        puts("error: not connected to any broker");
+        return 1;
+    }
+    else if (res != EMCUTE_OK)
+    {
+        puts("error: unable to disconnect");
+        return 1;
+    }
+    puts("Disconnect successful");
+    return 0;
+}
+
+static int cmd_discon_simple(void)
+{
     int res = emcute_discon();
     if (res == EMCUTE_NOGW)
     {
@@ -292,35 +234,7 @@ static int cmd_pub(int argc, char **argv)
     return 0;
 }
 
-static int cmd_pub_i(int qos, char *data, char *topic)
-{
-    emcute_topic_t t;
-    unsigned flags = EMCUTE_QOS_0;
 
-    flags |= get_qos_i(qos);
-
-    // printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, data, (int)flags);
-
-    /* step 1: get topic id */
-    t.name = topic;
-    if (emcute_reg(&t) != EMCUTE_OK)
-    {
-        puts("error: unable to obtain topic ID");
-        return 1;
-    }
-
-    /* step 2: publish data */
-    if (emcute_pub(&t, data, strlen(data), flags) != EMCUTE_OK)
-    {
-        printf("error: unable to publish data to topic '%s [%i]'\n",
-               t.name, (int)t.id);
-        return 1;
-    }
-
-    // printf("Published %i bytes to topic '%s [%i]'\n", data(int) strlen(data), t.name, t.id);
-
-    return 0;
-}
 
 static int cmd_sub(int argc, char **argv)
 {
@@ -420,35 +334,39 @@ static int cmd_will(int argc, char **argv)
     return 0;
 }
 
-static const shell_command_t shell_commands[] = {
-    {"con", "connect to MQTT broker", cmd_con},
-    {"discon", "disconnect from the current broker", cmd_discon},
-    {"pub", "publish something", cmd_pub},
-    {"sub", "subscribe topic", cmd_sub},
-    {"unsub", "unsubscribe from topic", cmd_unsub},
-    {"will", "register a last will", cmd_will},
-    {NULL, NULL, NULL}};
-
 static char *server_ip = MQTT_BROKER_IP;
 static char *my_topic = CLIENT_TOPIC;
 static char *my_qos = QOS_LEVEL;
 
-static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
-
-int main(void)
+static int cmd_pub_simple(char *data, unsigned qos)
 {
-    printf("Publish subscriber example - Group 12 MQTT\n");
-    // char *server_ip = readFirstLine();
-    // if (server_ip == NULL)
-    // {
-    //     puts("broker ip cannot read\n");
-    //     return -1;
-    // }
-    // puts_append(server_ip);
+    emcute_topic_t t;
+    unsigned flags = EMCUTE_QOS_0;
+
+    flags |= qos;
+
+    t.name = my_topic;
+    if (emcute_reg(&t) != EMCUTE_OK)
+    {
+        return 1;
+    }
+
+    /* step 2: publish data */
+    if (emcute_pub(&t, data, strlen(data), flags) != EMCUTE_OK)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+
+void initizlize_mqtt_client(void) {
     msg_init_queue(queue, ARRAY_SIZE(queue));
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
-
     printf("memset okay\n");
+
+    
+
     char *cmd_con_m[3];
     cmd_con_m[0] = "con";
     cmd_con_m[1] = server_ip;
@@ -464,43 +382,28 @@ int main(void)
     if (cmd_con(cmd_con_count, cmd_con_m))
     {
         printf("broker connection failed\n");
-        // return 0;
     }
     printf("connection okay\n");
+}
 
-    char *cmd_pub_m[4];
-    cmd_pub_m[0] = "pub";
-    cmd_pub_m[1] = my_topic;
-    cmd_pub_m[4] = my_qos;
+int main(void)
+{
+    printf("Publish subscriber example - Group 12 MQTT\n");
+
+    initizlize_mqtt_client();
+    unsigned qos = get_qos(my_qos);
 
     while (1)
     {
         ztimer_sleep(ZTIMER_MSEC, 1000);
 
-        int cmd_pub_count = 3;
-
-        cmd_pub_m[2] = my_topic;
-
-        if (cmd_pub(cmd_pub_count, cmd_pub_m))
+        if (cmd_pub_simple("my data", qos))
         {
             ztimer_sleep(ZTIMER_MSEC, 300);
             continue;
         }
-        // mutex_unlock(&mqtt_lock);
     }
 
-    /* start the emcute thread */
-    // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-    //               emcute_thread, NULL, "emcute");
-
-    // /* start shell */
-    char line_buf[SHELL_DEFAULT_BUFSIZE];
-    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
-
-    /* should be never reached */
+    cmd_discon_simple();
     return 0;
-
-    // con 2001:660:5307:3000::67 1885
-    // ping 2001:4860:4860::8888
-    // pub temperature 32.5
 }

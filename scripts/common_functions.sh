@@ -34,6 +34,15 @@ extract_and_categorize_nodes() {
     done
 }
 
+flash_elf() {
+    local firmware_path=$1
+    local node=$2
+    local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
+
+    # Execute the command
+    echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node""
+    iotlab-node --flash "$firmware_path" -l "${site},m3,$node"
+}
 
 # Function to execute the iotlab-node command with given parameters
 flash_firmware() {

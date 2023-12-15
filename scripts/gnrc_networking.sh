@@ -8,13 +8,12 @@ fi
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-
 # File to check
 file_to_check= ${SENSE_HOME}/release/gnrc_networking.elf
 
 # Check if the file exists
 if [ ! -f "$file_to_check" ]; then
-    build_wireless_firmware_cached ${GNRC_NETWORKING_HOME} ${GNRC_NETWORKING_EXE_NAME} iotlab-a8-m3
+  build_wireless_firmware_cached ${GNRC_NETWORKING_HOME} ${GNRC_NETWORKING_EXE_NAME} iotlab-a8-m3
   build_status=$?
   if [ $build_status -ne 0 ]; then
     exit $build_status
@@ -24,8 +23,6 @@ else
   echo "File exists: $file_to_check"
   ELF_FILE=$file_to_check
 fi
-
-
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 

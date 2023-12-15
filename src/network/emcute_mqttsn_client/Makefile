@@ -36,10 +36,12 @@ USEMODULE += ztimer_msec
 
 USEMODULE += shell
 USEMODULE += shell_cmds_default
-SEMODULE += ps
-USEMODULE += netstats_l2
-USEMODULE += netstats_ipv6
-USEMODULE += netstats_rpl
+# SEMODULE += ps
+# USEMODULE += netstats_l2
+# USEMODULE += netstats_ipv6
+# USEMODULE += netstats_rpl
+
+USEMODULE += lps331ap
 
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)
 ifneq (,$(EMCUTE_ID))

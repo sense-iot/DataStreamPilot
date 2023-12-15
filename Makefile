@@ -77,6 +77,12 @@ broker_sub:
 sub_sensor1:
 	./scripts/broker_sub_sensor1.sh
 
+sub_sensor2:
+	./scripts/broker_sub_sensor2.sh
+
+sub_sensor3:
+	./scripts/broker_sub_sensor3.sh
+
 broker_pub:
 	./scripts/broker_pub.sh $(filter-out $@,$(MAKECMDGOALS))
 

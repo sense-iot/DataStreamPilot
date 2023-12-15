@@ -44,13 +44,18 @@ write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
 write_variable_to_file "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE"
 write_variable_to_file "SENSOR_CONNECTED_NODE" "$SENSOR_CONNECTED_NODE"
+write_variable_to_file "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1"
+write_variable_to_file "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2"
+write_variable_to_file "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3"
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
 
 
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE:" "m3 - $MQTT_CLIENT_NODE"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "m3 - $MQTT_CLIENT_NODE_1"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "m3 - $MQTT_CLIENT_NODE_2"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_NODE_3"
 
 # printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
 # printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"
@@ -61,10 +66,10 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE:" "m3 - $MQTT_CLIENT_NOD
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
 echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+# source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 # # echo "======================================================== $ARCH"
-source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+# source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+# source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 echo "======================================================== $ARCH"
 export BROKER_IP=$(extract_global_ipv6)
 # export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
@@ -79,12 +84,12 @@ source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 export EMCUTE_ID="SENSOR_2"
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
 export CLIENT_TOPIC="sens2_temperature"
-# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 
 export EMCUTE_ID="SENSOR_3"
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
 export CLIENT_TOPIC="sens3_temperature"
-# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh

@@ -430,10 +430,10 @@ static const shell_command_t shell_commands[] = {
     {NULL, NULL, NULL}};
 
 static char *server_ip = MQTT_BROKER_IP;
-static char *my_topic = TOPIC;
-static char *my_qos = QOS_LEVEL
+static char *my_topic = CLIENT_TOPIC;
+static char *my_qos = QOS_LEVEL;
 
-    static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
+static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
 
 int main(void)
 {
@@ -476,12 +476,13 @@ int main(void)
     while (1)
     {
         ztimer_sleep(ZTIMER_MSEC, 1000);
-        
+
         int cmd_pub_count = 3;
 
         cmd_pub_m[2] = my_topic;
 
-        if (cmd_pub(cmd_pub_count, cmd_pub_m)) {
+        if (cmd_pub(cmd_pub_count, cmd_pub_m))
+        {
             ztimer_sleep(ZTIMER_MSEC, 300);
             continue;
         }

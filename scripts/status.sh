@@ -19,7 +19,9 @@ extract_and_categorize_nodes "$nodes_list"
 echo "DataStereamPilot: a8 nodes: ${a8_nodes[@]}"
 echo "DataStereamPilot: m3 nodes: ${m3_nodes[@]}"
 
-MQTT_CLIENT_NODE=$(read_variable_from_file "MQTT_CLIENT_NODE")
+MQTT_CLIENT_NODE_1=$(read_variable_from_file "MQTT_CLIENT_NODE_1")
+MQTT_CLIENT_NODE_2=$(read_variable_from_file "MQTT_CLIENT_NODE_2")
+MQTT_CLIENT_NODE_3=$(read_variable_from_file "MQTT_CLIENT_NODE_3")
 BORDER_ROUTER_NODE=$(read_variable_from_file "BORDER_ROUTER_NODE")
 GNRC_NETWORKING_NODE=$(read_variable_from_file "GNRC_NETWORKING_NODE")
 SENSOR_CONNECTED_NODE=$(read_variable_from_file "SENSOR_CONNECTED_NODE")
@@ -29,7 +31,9 @@ printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWOR
 
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE:" "m3 - $MQTT_CLIENT_NODE"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "m3 - $MQTT_CLIENT_NODE_1"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "m3 - $MQTT_CLIENT_NODE_2"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_NODE_3"
 
 
 echo " ----- M3 - A8 nodes ----- "
@@ -39,6 +43,8 @@ echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}"
 echo " ----- M3 nodes ----- "
 echo "nc m3-${BORDER_ROUTER_NODE} 20000"
 echo "nc m3-${SENSOR_CONNECTED_NODE} 20000"
-echo "nc m3-${MQTT_CLIENT_NODE} 20000"
+echo "nc m3-${MQTT_CLIENT_NODE_1} 20000"
+echo "nc m3-${MQTT_CLIENT_NODE_2} 20000"
+echo "nc m3-${MQTT_CLIENT_NODE_3} 20000"
 
 echo "Broker IP : $(extract_global_ipv6)"

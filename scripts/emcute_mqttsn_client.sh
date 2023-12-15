@@ -24,6 +24,6 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   echo "Flashing new firmware for ${ARCH} node : ${MQTT_CLIENT_NODE}"
   flash_firmware ${EMCUTE_MQTSSN_CLIENT_EXE_NAME} ${MQTT_CLIENT_NODE}
-  # echo "nc m3-${MQTT_CLIENT_NODE} 20000"
+  echo "nc m3-${MQTT_CLIENT_NODE} 20000"
   # nc m3-${MQTT_CLIENT_NODE} 20000
 fi

@@ -118,7 +118,7 @@ int temp_sensor_reset(void)
 
 
 // Function to calculate odd parity 
-int8_t calculate_odd_parity(int16_t num) {
+int calculate_odd_parity(int16_t num) {
     int8_t count = 0;
     for (int i = 0; i < 16; ++i) { // Assuming 16-bit integers
         if (num & 1) {
@@ -199,7 +199,7 @@ int main(void) {
   }
 
   int counter = 0;
-  int8_t parity;
+  int parity;
   int16_t base_value = 0;
 
   while (1) {
@@ -221,13 +221,11 @@ int main(void) {
         strcat(data.buffer, temp_str);
       }
       else {
-        temp -= base_value;
-        // threshold = 128
+        temp -= base_value;// threshold = 128
         temp = (temp < -128) ? -128 : (temp > 128) ? 128 : temp;
         sprintf(temp_str, "%i,", temp);
         strcat(data.buffer, temp_str);
       }
-
 
       parity = calculate_odd_parity(temp);
       sprintf(parity_bit, "%i,", parity);

@@ -361,17 +361,6 @@ int main(void)
 
     initizlize_mqtt_client();
 
-    // while (1)
-    // {
-    //     ztimer_sleep(ZTIMER_MSEC, 1000);
-
-    //     if (cmd_pub_simple("mydata"))
-    //     {
-    //         ztimer_sleep(ZTIMER_MSEC, 300);
-    //         continue;
-    //     }
-    // }
-
     if (temp_sensor_reset() == 0)
     {
         puts("Sensor failed");

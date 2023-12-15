@@ -21,8 +21,9 @@ def decodeTemperature(message):
                 interpolated_value = (prev_value + next_value) // 2 if i != 2 else (prev_value + message[i + 2] + base_value) // 2
                 data_out.append(interpolated_value / 100.0)
 
-    # filtered_data = kalmanfilter(np.array(data_out))
-    filtered_data = kalmanfilter_numpy(np.array(data_out))
+    filtered_data = kalmanfilter(np.array(data_out, data_out[0]))
+    # filtered_data = kalmanfilter_numpy(np.array(data_out, data_out[0]))
+    # filtered_data = []
     return data_out, filtered_data
 
 #checking odd parity
@@ -38,9 +39,9 @@ def parityCheck(value, parity):
     ones_count = calculate_odd_parity(value)
     return (ones_count + int(parity)) % 2 == 1
 
-def kalmanfilter(z):
+def kalmanfilter(z, s):
     kf = KalmanFilter(dim_x=1, dim_z=1) 
-    kf.x = np.array([[z[0]]])
+    kf.x = np.array([[s]])
     kf.F = np.array([[1]])
     kf.H = np.array([[1]])
     kf.P = np.array([[10]])
@@ -59,8 +60,8 @@ def kalmanfilter(z):
     return output
 
 # with  numpy only
-def kalmanfilter_numpy(z):
-    initial_state = np.array([[z[0]]])
+def kalmanfilter_numpy(z, s):
+    initial_state = np.array([[s]])
     F = np.array([[1]])  # State transition matrix
     H = np.array([[1]])  # Measurement matrix
     P = np.array([[10]])  # State covariance matrix

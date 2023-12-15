@@ -47,6 +47,8 @@ done
 
 function build_and_deploy_server()
 {
+    cd src/server/
+    echo "Building the server..."
     docker build -t coap-server . 
 
     docker run \
@@ -72,6 +74,7 @@ function influxdb_start() {
 }
 
 if [ $mode == "all" ];then
+    
 	grafana_start
 	influxdb_start
     build_and_deploy_server
@@ -85,6 +88,7 @@ if [ $mode == "all" ];then
 fi
 
 if [ $mode == "server" ];then
+
     build_and_deploy_server
     if [[ $build_status == 'success' ]];then
 		echo "successfully deployed the server and script is exited"

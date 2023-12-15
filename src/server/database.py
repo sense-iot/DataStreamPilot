@@ -27,8 +27,8 @@ def getInfluxDB(query, measurement=TEMPERATURE):
 def sendInfluxdb(decodedValues, site, filteredValues):
     db_client = client()
     tags        = {"place": sites[site]}
-    for dec, fil in zip(decodedValues, filteredValues):
-        fields      = { "value" : dec, "filtered" : fil }
+    for i in range(len(decodedValues)):
+        fields      = { "value" : decodedValues[i], "filtered" : filteredValues[i] }
         save(db_client, TEMPERATURE, fields, tags=tags)    
         time.sleep(1)
 

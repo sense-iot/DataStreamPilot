@@ -5,7 +5,7 @@ from configuration import HOST, PORT, USERNAME, PASSWORD, DATABASE, TEMPERATURE,
 import random
 import time
 
-def client():
+async def client():
     # InfluxDB client setup
     client = InfluxDBClient(host=HOST, port=int(PORT), username=USERNAME, password=PASSWORD)
 
@@ -24,17 +24,17 @@ def getInfluxDB(query, measurement=TEMPERATURE):
     return output
 
 
-def sendInfluxdb(decodedValues, site, filteredValues):
-    db_client = client()
+async def sendInfluxdb(decodedValues, site, filteredValues):
+    db_client = await client()
     tags        = {"place": sites[site]}
     for i in range(len(decodedValues)):
         fields      = { "value" : decodedValues[i], "filtered" : filteredValues[i] }
-        save(db_client, TEMPERATURE, fields, tags=tags)    
+        await save(db_client, TEMPERATURE, fields, tags=tags)    
         time.sleep(1)
     return True
 
 
-def save(db_client, measurement, fields, tags=None):
+async def save(db_client, measurement, fields, tags=None):
     json_body = [{'measurement': measurement, 'tags': tags, 'fields': fields}]
 
     # write / save into a row

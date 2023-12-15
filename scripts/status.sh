@@ -25,6 +25,7 @@ MQTT_CLIENT_NODE_3=$(read_variable_from_file "MQTT_CLIENT_NODE_3")
 BORDER_ROUTER_NODE=$(read_variable_from_file "BORDER_ROUTER_NODE")
 GNRC_NETWORKING_NODE=$(read_variable_from_file "GNRC_NETWORKING_NODE")
 SENSOR_CONNECTED_NODE=$(read_variable_from_file "SENSOR_CONNECTED_NODE")
+DENOISER_NODE=$(read_variable_from_file "DENOISER_NODE")
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
@@ -32,13 +33,15 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "a8 - $MQTT_CLIENT_NODE_1"
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "a8 - $MQTT_CLIENT_NODE_2"
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "a8 - $MQTT_CLIENT_NODE_3"
+printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE:" "a8 - $DENOISER_NODE"
 
 
 echo " ----- M3 - A8 nodes ----- "
 echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}  # mqtt broker"
 echo "ssh root@node-a8-${MQTT_CLIENT_NODE_1}    # sensor 1"
 echo "ssh root@node-a8-${MQTT_CLIENT_NODE_2}    # sensor 2"
-echo "ssh root@node-a8-${MQTT_CLIENT_NODE_3}    # sensor 3 "
+echo "ssh root@node-a8-${MQTT_CLIENT_NODE_3}    # sensor 3"
+echo "ssh root@node-a8-${DENOISER_NODE}    # denoiser"
 
 echo " ----- M3 nodes ----- "
 echo "nc m3-${BORDER_ROUTER_NODE} 20000         # border router"

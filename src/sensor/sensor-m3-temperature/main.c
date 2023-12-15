@@ -15,9 +15,10 @@
 #define ENABLE_DEBUG 1
 #include "debug.h"
 
+
 typedef struct {
   char buffer[128];
-  int16_t tempList[5];
+  int16_t tempList[8];
 } data_t;
 
 static data_t data;
@@ -118,6 +119,29 @@ int calculate_odd_parity(int num) {
     return parityBit;
 }
 
+float generate_normal_random(float stddev) {
+    float M_PI = 3.1415926535;
+
+    // Box-Muller transform to generate random numbers with normal distribution
+    float u1 = rand() / (float)RAND_MAX;
+    float u2 = rand() / (float)RAND_MAX;
+    float z = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
+    
+    return stddev * z;
+}
+
+float add_noise(float stddev) {
+    int num;
+    float noise_val = 0;
+    
+    num = rand() % 100 + 1; // use rand() function to get the random number
+    if (num >= 50) {
+        // Generate a random number with normal distribution based on a stddev
+        noise_val = generate_normal_random(stddev);
+    }
+    return noise_val;
+}
+
 int main(void)
 {
   if (temp_sensor_reset() == 0) {
@@ -134,13 +158,15 @@ int main(void)
     
     int16_t temp = 0;
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
-      DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
-
+      // DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
+      
+      int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
+      DEBUG_PRINT("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       if (array_length < 7) {
-        data.tempList[array_length++] = temp;
+        data.tempList[array_length++] = temp_n_noise;
       }
       else {
-        data.tempList[array_length++] = temp;
+        data.tempList[array_length++] = temp_n_noise;
         int32_t sum = 0;
         int numElements = array_length;
         // printf("No of ele: %i\n", numElements);

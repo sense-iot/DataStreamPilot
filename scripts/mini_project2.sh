@@ -63,55 +63,83 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_N
 # printf "%-25s %s\n" "HELLO_NODE:" "$HELLO_NODE"
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
-echo "======================================================== $ARCH"
-# source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
-# # echo "======================================================== $ARCH"
-# source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-# source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
-echo "======================================================== $ARCH"
+echo "================ Border Router ======================"
+source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+
+echo "============== Broker setup ======================="
+source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
-# export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
-# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
 
-file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_1.elf
-if [ ! -f "$file_to_check" ]; then
-    export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
-    export EMCUTE_ID="SENSOR_1"
-    export QOS_LEVEL=2
-    export CLIENT_TOPIC="sens1_temperature"
+echo "=============== Starting sensors ==================="
+
+echo "======== client 1 sensor ======================="
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
+export EMCUTE_ID="SENSOR_1"
+export CLIENT_TOPIC="sens1_temperature"
+file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_1.elf
+
+if [ "$PREV_BROKER_IP" != "$BROKER_IP" ]; then
+    echo "DataStereamPilot: The broker IP has changed ${BROKER_IP}."
     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 else
-    echo "File exists: $file_to_check"
-    ELF_FILE=$file_to_check
-    flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
+    echo "DataStereamPilot: The broker IP has not changed ${BROKER_IP}."
+    if [ ! -f "$file_to_check" ]; then
+        source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+        echo "ELF NOT FOUND"
+    else
+        echo "File exists: $file_to_check"
+        ELF_FILE=$file_to_check
+        flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+    fi
 fi
 
-file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_2.elf
-if [ ! -f "$file_to_check" ]; then
-    export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
-    export EMCUTE_ID="SENSOR_2"
-    export QOS_LEVEL=2
-    export CLIENT_TOPIC="sens2_temperature"
+echo "======== client 2 sensor ======================="
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
+export EMCUTE_ID="SENSOR_2"
+export CLIENT_TOPIC="sens2_temperature"
+file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_2.elf
+if [ "$PREV_BROKER_IP" != "$BROKER_IP" ]; then
+    echo "DataStereamPilot: The broker IP has changed ${BROKER_IP}."
     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 else
-    echo "File exists: $file_to_check"
-    ELF_FILE=$file_to_check
-    flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
+    echo "DataStereamPilot: The broker IP has not changed ${BROKER_IP}."
+    
+    if [ ! -f "$file_to_check" ]; then
+        source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+        echo "ELF NOT FOUND"
+    else
+        echo "File exists: $file_to_check"
+        ELF_FILE=$file_to_check
+        flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+    fi
 fi
 
-file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_3.elf
-if [ ! -f "$file_to_check" ]; then
-    export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
-    export EMCUTE_ID="SENSOR_3"
-    export QOS_LEVEL=2
-    export CLIENT_TOPIC="sens3_temperature"
+# echo "======== client 3 sensor ======================="
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
+export EMCUTE_ID="SENSOR_3"
+export CLIENT_TOPIC="sens3_temperature"
+file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_3.elf
+
+if [ "$PREV_BROKER_IP" != "$BROKER_IP" ]; then
+    echo "DataStereamPilot: The broker IP has changed ${BROKER_IP}."
     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 else
-    echo "File exists: $file_to_check"
-    ELF_FILE=$file_to_check
-    flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
+    echo "DataStereamPilot: The broker IP has not changed ${BROKER_IP}."
+    if [ ! -f "$file_to_check" ]; then
+        source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+        echo "ELF NOT FOUND"
+    else
+        echo "File exists: $file_to_check"
+        ELF_FILE=$file_to_check
+        flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+    fi
 fi
 
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
 echo "======================================================== $ARCH"
+
+export PREV_BROKER_IP=${BROKER_IP}
+write_variable_to_file "PREV_BROKER_IP" "$PREV_BROKER_IP"

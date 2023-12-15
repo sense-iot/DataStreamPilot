@@ -121,8 +121,13 @@ static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
 
+    if (count >= 3) {
+        ztimer_sleep(ZTIMER_MSEC, 100);
+    }
+
     if (strcmp(topic->name, "sens3_temperature") != 0)
     {
+        ztimer_sleep(ZTIMER_MSEC, 100);
         return;
     }
 
@@ -151,6 +156,7 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 
     if (strcmp(topic->name, "sens1_temperature") != 0)
     {
+        ztimer_sleep(ZTIMER_MSEC, 100);
         return;
     }
 
@@ -200,8 +206,14 @@ static void on_pub_2(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
 
+    if (count >= 3)
+    {
+        ztimer_sleep(ZTIMER_MSEC, 100);
+    }
+
     if (strcmp(topic->name, "sens2_temperature") != 0)
     {
+        ztimer_sleep(ZTIMER_MSEC, 100);
         return;
     }
     printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
@@ -767,10 +779,10 @@ int main(void)
     sub_message[0] = "sub";
     cmd_con_count = 2;
 
-    sub_message[1] = "sens2_temperature";
-    cmd_sub_1(cmd_con_count, sub_message, on_pub_2);
     sub_message[1] = "sens1_temperature";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_1);
+    sub_message[1] = "sens2_temperature";
+    cmd_sub_1(cmd_con_count, sub_message, on_pub_2);
     sub_message[1] = "sens3_temperature";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_3);
 

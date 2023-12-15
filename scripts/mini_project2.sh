@@ -29,18 +29,18 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
     exit 1
 fi
 
+# assign a8 nodes
 export GNRC_NETWORKING_NODE=${a8_nodes[0]}
-# export MQTT_CLIENT_NODE=${a8_nodes[1]}
+export DENOISER_NODE=${a8_nodes[1]}
 
+# assign m3 nodes
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
-
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
 export DENOISER_NODE_TEST=${m3_nodes[2]}
 
-export MQTT_CLIENT_NODE_1=${a8_nodes[1]}
-export MQTT_CLIENT_NODE_2=${a8_nodes[2]}
-export MQTT_CLIENT_NODE_3=${a8_nodes[3]}
-export DENOISER_NODE=${a8_nodes[4]}
+export MQTT_CLIENT_NODE_1=${m3_nodes[3]}
+export MQTT_CLIENT_NODE_2=${m3_nodes[4]}
+export MQTT_CLIENT_NODE_3=${m3_nodes[5]}
 
 write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
@@ -53,13 +53,14 @@ write_variable_to_file "DENOISER_NODE_TEST" "$DENOISER_NODE_TEST"
 write_variable_to_file "DENOISER_NODE" "$DENOISER_NODE"
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "a8 - $MQTT_CLIENT_NODE_1"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "a8 - $MQTT_CLIENT_NODE_2"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "a8 - $MQTT_CLIENT_NODE_3"
 printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE:" "a8 - $DENOISER_NODE"
 
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
+printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE_TEST:" "m3 - $DENOISER_NODE_TEST"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "m3 - $MQTT_CLIENT_NODE_1"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "m3 - $MQTT_CLIENT_NODE_2"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_NODE_3"
 
 # printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
 # printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"

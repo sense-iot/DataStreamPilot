@@ -1,7 +1,7 @@
 #import os
 from influxdb import InfluxDBClient
 
-from configuration import HOST, PORT, USERNAME, PASSWORD, DATABASE, TEMPERATURE
+from configuration import HOST, PORT, USERNAME, PASSWORD, DATABASE, TEMPERATURE, sites
 import random
 import time
 
@@ -26,7 +26,7 @@ def getInfluxDB(query, measurement=TEMPERATURE):
 
 def sendInfluxdb(decodedValues, site, filteredValues):
     db_client = client()
-    tags        = {"place": site}
+    tags        = {"place": sites[site]}
     for dec, fil in zip(decodedValues, filteredValues):
         fields      = { "value" : dec, "filtered" : fil }
         save(db_client, TEMPERATURE, fields, tags=tags)    

@@ -15,3 +15,4 @@ DATABASE = os.environ.get('INFLUXDB_DB', 'dht')
 TEMPERATURE = 'temperature'
 HUMIDITY    = 'humidity'
 
+sites = {"UNKNOWN": 0, "grenoble": 1, "paris": 2, "lille": 3, "saclay": 4, "strasbourg": 5}

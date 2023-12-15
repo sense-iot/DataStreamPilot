@@ -141,7 +141,6 @@ static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
         sensor3_data[len] = '\0';
     } else {
         free(sensor3_data);
-        sensor3_data = NULL;
         sensor3_data = malloc(len + 1);
         strncpy(sensor3_data, in, len);
         sensor3_data[len] = '\0';
@@ -193,7 +192,6 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
     else
     {
         free(sensor1_data);
-        sensor1_data = NULL;
         sensor1_data = malloc(len + 1);
         strncpy(sensor1_data, in, len);
         sensor1_data[len] = '\0';
@@ -230,7 +228,6 @@ static void on_pub_2(const emcute_topic_t *topic, void *data, size_t len)
     else
     {
         free(sensor2_data);
-        sensor2_data = NULL;
         sensor2_data = malloc(len + 1);
         strncpy(sensor2_data, in, len);
         sensor2_data[len] = '\0';

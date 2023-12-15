@@ -45,9 +45,9 @@ async def decodeTemperature(message):
                 interpolated_value = (prev_value + next_value) // 2 if i != 2 else (prev_value + message[i + 2] + base_value) // 2
                 data_out.append(interpolated_value / 100.0)
 
-    filtered_data = await kalmanfilter(np.array(data_out), kf).tolist()
+    filtered_data = await kalmanfilter(np.array(data_out), kf)
     # filtered_data = []
-    return data_out, filtered_data
+    return data_out, filtered_data.tolist()
 
 #checking odd parity
 async def calculate_odd_parity(num):

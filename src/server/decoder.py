@@ -22,6 +22,7 @@ def decodeTemperature(message):
 
     if kf is None:
         # Initialize Kalman filter with the initial value from the first request
+        print("Initializing Kalman filter")
         initial_value = message[0] / 100.0
         initializeKalmanFilter(initial_value)
 

@@ -78,7 +78,6 @@ file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_1.elf
 if [ ! -f "$file_to_check" ]; then
     export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
     export EMCUTE_ID="SENSOR_1"
-    export QOS_LEVEL=2
     export CLIENT_TOPIC="sens1_temperature"
     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
 else
@@ -88,32 +87,30 @@ else
 fi
 
 echo "======== client 2 sensor ======================="
-# file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_2.elf
-# if [ ! -f "$file_to_check" ]; then
-#     export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
-#     export EMCUTE_ID="SENSOR_2"
-#     export QOS_LEVEL=2
-#     export CLIENT_TOPIC="sens2_temperature"
-#     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
-# else
-#     echo "File exists: $file_to_check"
-#     ELF_FILE=$file_to_check
-#     flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
-# fi
+file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_2.elf
+if [ ! -f "$file_to_check" ]; then
+    export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
+    export EMCUTE_ID="SENSOR_2"
+    export CLIENT_TOPIC="sens2_temperature"
+    source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+else
+    echo "File exists: $file_to_check"
+    ELF_FILE=$file_to_check
+    flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
+fi
 
 # echo "======== client 3 sensor ======================="
-# file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_3.elf
-# if [ ! -f "$file_to_check" ]; then
-#     export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
-#     export EMCUTE_ID="SENSOR_3"
-#     export QOS_LEVEL=2
-#     export CLIENT_TOPIC="sens3_temperature"
-#     source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
-# else
-#     echo "File exists: $file_to_check"
-#     ELF_FILE=$file_to_check
-#     flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
-# fi
+file_to_check= ${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_3.elf
+if [ ! -f "$file_to_check" ]; then
+    export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
+    export EMCUTE_ID="SENSOR_3"
+    export CLIENT_TOPIC="sens3_temperature"
+    source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+else
+    echo "File exists: $file_to_check"
+    ELF_FILE=$file_to_check
+    flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE_1}
+fi
 
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh

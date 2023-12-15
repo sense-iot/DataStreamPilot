@@ -74,6 +74,9 @@ clean:
 broker_sub:
 	./scripts/broker_sub.sh
 
+sub_dead_sensors:
+	./scripts/broker_sub_dead_sensors.sh
+
 sub_sensor1:
 	./scripts/broker_sub_sensor1.sh
 

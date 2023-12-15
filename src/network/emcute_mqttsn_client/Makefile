@@ -4,8 +4,7 @@ APPLICATION = emcute_mqttsn_client
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3
 
-CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-parameter
-
+CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common 
 
 MQTT_BROKER_IP=${BROKER_IP}
 CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'
@@ -49,10 +48,6 @@ endif
 
 ifneq (,$(CLIENT_TOPIC))
   CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
-endif
-
-ifneq (,$(QOS_LEVEL))
-  CFLAGS += -DQOS_LEVEL=\"$(QOS_LEVEL)\"
 endif
 
 # Comment this out to disable code in RIOT that does safety checking

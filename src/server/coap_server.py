@@ -28,7 +28,7 @@ class Temperature(resource.Resource):
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"Received message: {payload}")
 
-        decodedValues, filteredValues = await decodeTemperature(payload['temperature'])
+        decodedValues, filteredValues = await decodeTemperature(payload['site'], payload['temperature'])
         logger.debug(f"Decoded values: {decodedValues}, Filtered values: {filteredValues}")
 
         recordedFlag = await sendInfluxdb(decodedValues, payload['site'], filteredValues)

@@ -2,32 +2,36 @@ import logging
 from filterpy.kalman import KalmanFilter
 import numpy as np
 
-kf = None  # Set to None initially
+from configuration import sites
+
+kf = {}  # Set to None initially
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("coap-server")
 logger.setLevel(logging.DEBUG)
 
 async def initializeKalmanFilter(initial_value):
-    global kf
     kf = KalmanFilter(dim_x=1, dim_z=1)
     kf.x = np.array([[initial_value]])
     kf.F = np.array([[1]])
     kf.H = np.array([[1]])
     kf.P = np.array([[10]])
-    kf.R = np.array([[10]])
+    kf.R = np.array([[20]])
     kf.Q = np.array([[5]])
+    return kf
 
-async def decodeTemperature(message):
+async def decodeTemperature(site, message):
     global kf
     data_out = []
+    site_name = sites[site]
 
     message = list(map(int, message[:-1].strip().split(',')))
     logger.debug(f"Message {message}")
-    if kf is None:
+
+    if site_name not in kf.keys():
         # Initialize Kalman filter with the initial value from the first request
-        logger.debug("Initializing Kalman filter")
+        logger.debug(f"Initializing Kalman filter for site {site_name}")
         initial_value = message[0] / 100.0
-        await initializeKalmanFilter(initial_value)
+        kf[site_name] = await initializeKalmanFilter(initial_value)
 
     for i in range(0, len(message), 2):
         value, parity = message[i], message[i + 1]
@@ -46,8 +50,7 @@ async def decodeTemperature(message):
                 interpolated_value = (prev_value + next_value) // 2 if i != 2 else (prev_value + message[i + 2] + base_value) // 2
                 data_out.append(interpolated_value / 100.0)
 
-    filtered_data = await kalmanfilter(np.array(data_out), kf)
-    # filtered_data = []
+    filtered_data, kf[site_name] = await kalmanfilter(np.array(data_out), kf[site_name])
     return data_out, filtered_data.tolist()
 
 #checking odd parity
@@ -74,4 +77,4 @@ async def kalmanfilter(z, kf):
         kf.update(y)
         output[i] = kf.x[0][0]
 
-    return output
+    return output, kf

@@ -4,7 +4,7 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=4
+M3_NODE_COUNT=5
 A8_NODE_COUNT=2
 EXPERIMENT_ID=0;
 
@@ -35,8 +35,10 @@ export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
-export GNRC_NETWORKING_NODE_2=${m3_nodes[2]}
-export MQTT_CLIENT_NODE=${m3_nodes[3]}
+
+export MQTT_CLIENT_NODE_1=${m3_nodes[2]}
+export MQTT_CLIENT_NODE_2=${m3_nodes[3]}
+export MQTT_CLIENT_NODE_3=${m3_nodes[4]}
 
 write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
@@ -65,9 +67,18 @@ source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 echo "======================================================== $ARCH"
 export BROKER_IP=$(extract_global_ipv6)
+export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-# source ${SENSE_SCRIPTS_HOME}/paho_mqtt.sh
-# source ${SENSE_SCRIPTS_HOME}/asymcute_mqttsn.sh
+
+# export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+
+# export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+
+# export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
+# source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
-# echo "======================================================== $ARCH"
+echo "======================================================== $ARCH"

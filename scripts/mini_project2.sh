@@ -4,8 +4,8 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=5
-A8_NODE_COUNT=1
+M3_NODE_COUNT=2
+A8_NODE_COUNT=5
 EXPERIMENT_ID=0
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
@@ -32,12 +32,14 @@ fi
 export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 # export MQTT_CLIENT_NODE=${a8_nodes[1]}
 
+
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
+
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
 
-export MQTT_CLIENT_NODE_1=${m3_nodes[2]}
-export MQTT_CLIENT_NODE_2=${m3_nodes[3]}
-export MQTT_CLIENT_NODE_3=${m3_nodes[4]}
+export MQTT_CLIENT_NODE_1=${a8_nodes[1]}
+export MQTT_CLIENT_NODE_2=${a8_nodes[2]}
+export MQTT_CLIENT_NODE_3=${a8_nodes[3]}
 
 write_variable_to_file "MQTT_CLIENT_NODE" "$MQTT_CLIENT_NODE"
 write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
@@ -48,12 +50,13 @@ write_variable_to_file "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2"
 write_variable_to_file "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3"
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "a8 - $MQTT_CLIENT_NODE_1"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "a8 - $MQTT_CLIENT_NODE_2"
+printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "a8 - $MQTT_CLIENT_NODE_3"
 
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CONNECTED_NODE"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "m3 - $MQTT_CLIENT_NODE_1"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "m3 - $MQTT_CLIENT_NODE_2"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_NODE_3"
+
 
 # printf "%-25s %s\n" "COAP_SERVER_NODE:" "$COAP_SERVER_NODE"
 # printf "%-25s %s\n" "SENSOR_CONNECTED_NODE:" "$SENSOR_CONNECTED_NODE"
@@ -64,11 +67,11 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_N
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
 echo "================ Border Router ======================"
-source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+# source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
 echo "============== Broker setup ======================="
-source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+# source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+# source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
 
@@ -91,7 +94,9 @@ else
     else
         echo "File exists: $file_to_check"
         ELF_FILE=$file_to_check
-        flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+        # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+        echo "flashing sensor 1 from root script"
+        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
     fi
 fi
 
@@ -112,7 +117,9 @@ else
     else
         echo "File exists: $file_to_check"
         ELF_FILE=$file_to_check
-        flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+        # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+        echo "flashing sensor 2 from root script"
+        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
     fi
 fi
 
@@ -133,7 +140,9 @@ else
     else
         echo "File exists: $file_to_check"
         ELF_FILE=$file_to_check
-        flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+        # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
+        echo "flashing sensor 3 from root script"
+        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
     fi
 fi
 

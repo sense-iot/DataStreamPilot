@@ -21,7 +21,7 @@ def decodeTemperature(message):
                 interpolated_value = (prev_value + next_value) // 2 if i != 2 else (prev_value + message[i + 2] + base_value) // 2
                 data_out.append(interpolated_value / 100.0)
 
-    filtered_data = kalmanfilter(np.array(data_out, data_out[0]))
+    filtered_data = kalmanfilter(np.array(data_out), data_out[0])
     # filtered_data = kalmanfilter_numpy(np.array(data_out, data_out[0]))
     # filtered_data = []
     return data_out, filtered_data

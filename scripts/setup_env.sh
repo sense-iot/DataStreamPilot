@@ -84,7 +84,7 @@ export TAP_INTERFACE=tap7
 
 # this is seconds
 export JOB_WAIT_TIMEOUT=120
-export EXPERIMENT_TIME=20
+export EXPERIMENT_TIME=180
 
 export BORDER_ROUTER_FOLDER_NAME=gnrc_border_router
 export BORDER_ROUTER_EXE_NAME=${BORDER_ROUTER_FOLDER_NAME}

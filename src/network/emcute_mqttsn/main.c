@@ -37,7 +37,7 @@
 #define NUMOFSUBS (16U)
 #define TOPIC_MAXLEN (64U)
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
+// static char stack[THREAD_STACKSIZE_DEFAULT];
 static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
@@ -182,7 +182,7 @@ static int cmd_con_i(int port, char *topic, char *message, char *ipv6_addr)
 
 static int cmd_con(int argc, char **argv)
 {
-    sock_udp_ep_t gw = {.family = AF_INET6, .port = CONFIG_EMCUTE_DEFAULT_PORT};
+    sock_udp_ep_t gw = {.family = AF_INET6, .port = 1885U};
     char *topic = NULL;
     char *message = NULL;
     size_t len = 0;
@@ -412,16 +412,16 @@ static int cmd_will(int argc, char **argv)
     return 0;
 }
 
-static const shell_command_t shell_commands[] = {
-    {"con", "connect to MQTT broker", cmd_con},
-    {"discon", "disconnect from the current broker", cmd_discon},
-    {"pub", "publish something", cmd_pub},
-    {"sub", "subscribe topic", cmd_sub},
-    {"unsub", "unsubscribe from topic", cmd_unsub},
-    {"will", "register a last will", cmd_will},
-    {NULL, NULL, NULL}};
+// static const shell_command_t shell_commands[] = {
+//     {"con", "connect to MQTT broker", cmd_con},
+//     {"discon", "disconnect from the current broker", cmd_discon},
+//     {"pub", "publish something", cmd_pub},
+//     {"sub", "subscribe topic", cmd_sub},
+//     {"unsub", "unsubscribe from topic", cmd_unsub},
+//     {"will", "register a last will", cmd_will},
+//     {NULL, NULL, NULL}};
 
-static char *server_ip = MQTT_BROKER_IP;
+// static char *server_ip = MQTT_BROKER_IP;
 
 int main(void)
 {
@@ -432,10 +432,10 @@ int main(void)
     //     puts("broker ip cannot read\n");
     //     return -1;
     // }
-    puts_append(server_ip);
+    // puts_append(server_ip);
     msg_init_queue(queue, ARRAY_SIZE(queue));
 
-    // char *cmd_con_m[] = {"con", "[2001:660:5307:3000::67]", "1883"};
+    // char *cmd_con_m[] = {"con", "2001:660:5307:3000::67", "1885"};
     // int cmd_con_count = 3;
 
     // /* initialize our subscription buffers */
@@ -453,12 +453,12 @@ int main(void)
     // }
 
     /* start the emcute thread */
-    thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-                  emcute_thread, NULL, "emcute");
+    // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
+    //               emcute_thread, NULL, "emcute");
 
-    /* start shell */
-    char line_buf[SHELL_DEFAULT_BUFSIZE];
-    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
+    // /* start shell */
+    // char line_buf[SHELL_DEFAULT_BUFSIZE];
+    // shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 
     /* should be never reached */
     return 0;

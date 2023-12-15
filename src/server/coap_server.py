@@ -28,9 +28,13 @@ class temperature(resource.Resource):
     async def render_post(self, request):
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"Received message: {payload}")
+
         decodedValues, filteredValues = decodeTemperature(payload['temperature'])
         logger.debug(f"Decoded values: {decodedValues}, Filtered values: {filteredValues}")
-        sendInfluxdb(decodedValues, payload['site'], filteredValues)
+
+        recordedFlag = sendInfluxdb(decodedValues, payload['site'], filteredValues)
+        logger.debug(f"Recorded flag: {recordedFlag}")
+        
         return aiocoap.Message(content_format=0,
                 payload=json.dumps({"status": "ok"}).encode('utf8'))
 

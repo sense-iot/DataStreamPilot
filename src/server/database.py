@@ -31,6 +31,7 @@ def sendInfluxdb(decodedValues, site, filteredValues):
         fields      = { "value" : decodedValues[i], "filtered" : filteredValues[i] }
         save(db_client, TEMPERATURE, fields, tags=tags)    
         time.sleep(1)
+    return True
 
 
 def save(db_client, measurement, fields, tags=None):

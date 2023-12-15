@@ -165,7 +165,7 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 
     if (count >= 3)
     {
-        printf("===============================================\n\n");
+        printf("================= DILAN ===================\n\n");
         count = 0;
         if (sensor1_data != NULL)
         {

@@ -54,7 +54,6 @@ static emcute_sub_t subscriptions[NUMOFSUBS];
 
 typedef struct
 {
-    char buffer[128];
     int16_t tempList[8];
 } data_t;
 
@@ -137,24 +136,6 @@ int temp_sensor_reset(void)
 
     ztimer_sleep(ZTIMER_MSEC, 1000);
     return 1;
-}
-
-int calculate_odd_parity(int num)
-{
-    int parityBit = 0;
-    int count = 0; // To count the number of set bits
-
-    // Count the number of set bits (1-bits) in the given number
-    while (num)
-    {
-        count += num & 1; // Increment count if rightmost bit is set
-        num >>= 1;        // Right shift num to check the next bit
-    }
-
-    // Set parityBit to 1 if the count of set bits is even, else 0
-    parityBit = (count % 2 == 0) ? 1 : 0;
-
-    return parityBit;
 }
 
 float generate_normal_random(float stddev)
@@ -367,10 +348,7 @@ int main(void)
         return 1;
     }
 
-    // int16_t avg_temp = 0;
-    int counter = 0;
     int array_length = 0;
-    int parity;
 
     while (1)
     {
@@ -408,35 +386,20 @@ int main(void)
                 int16_t rounded_avg_temp = (int16_t)round(avg_temp);
 
                 char temp_str[10];
-                char parity_bit[4];
 
-                sprintf(temp_str, "%i,", rounded_avg_temp);
-                // printf("Temp Str: %s°C\n", temp_str);
-                strcat(data.buffer, temp_str);
-
-                parity = calculate_odd_parity(rounded_avg_temp);
-                sprintf(parity_bit, "%i,", parity);
-                // printf("Temp Str: %s°C\n", temp_str);
-                strcat(data.buffer, parity_bit);
+                sprintf(temp_str, "%i", rounded_avg_temp);
+                printf("Temp Str: %s\n", temp_str);
+                cmd_pub_simple(temp_str);
 
                 for (int i = 0; i < array_length - 1; ++i)
                 {
                     data.tempList[i] = data.tempList[i + 1];
                 }
                 array_length--;
-                counter++;
             }
-        }
-        if (counter == 10)
-        {
-            DEBUG_PRINT("Data: %s\n", data.buffer);
-            cmd_pub_simple(data.buffer);
-            memset(data.buffer, 0, sizeof(data.buffer));
-            counter = 0;
         }
         ztimer_sleep(ZTIMER_MSEC, 1000);
     }
-
 
     cmd_discon_simple();
     return 0;

@@ -23,7 +23,7 @@ def decodeTemperature(message):
 
     # filtered_data = kalmanfilter(np.array(data_out))
     filtered_data = kalmanfilter_numpy(np.array(data_out))
-    return data_out, filtered_data
+    return data_out, filtered_data.tolist()
 
 #checking odd parity
 def calculate_odd_parity(num):

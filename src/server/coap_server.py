@@ -37,25 +37,24 @@ class Temperature(resource.Resource):
         return aiocoap.Message(content_format=0,
                 payload=json.dumps({"status": "ok"}).encode('utf8'))
 
-async def main():
-    # Resource tree creation
+async def handle_requests():
     root = resource.Site()
-
-    root.add_resource(['.well-known', 'core'],
-            resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['time'], TimeResource())
     root.add_resource(['temp'], Temperature())
 
-    tasks = [
-        aiocoap.Context.create_server_context(root, bind=('::', 5683)),
-        aiocoap.Context.create_server_context(root, bind=('::', 5684)),  # Add more contexts as needed
-    ]
+    context = await aiocoap.Context.create_server_context(root, bind=('::', 5683))
+    logger.info("Server started on ('::', 5683)")
 
-    # Run until all server contexts are closed
-    await asyncio.gather(*tasks)
+    try:
+        while True:
+            await asyncio.sleep(3600)  # Sleep for 1 hour or adjust as needed
+    except asyncio.CancelledError:
+        pass
+    finally:
+        await context.shutdown()
 
-    # Run forever
-    # await asyncio.get_running_loop().create_future()
+async def main():
+    await asyncio.gather(handle_requests())
 
 if __name__ == "__main__":
     try:

@@ -22,7 +22,7 @@ async def decodeTemperature(message):
     data_out = []
 
     message = list(map(int, message[:-1].strip().split(',')))
-
+    logger.debug(f"Message {message}")
     if kf is None:
         # Initialize Kalman filter with the initial value from the first request
         logger.debug("Initializing Kalman filter")
@@ -35,12 +35,13 @@ async def decodeTemperature(message):
             base_value = value
             data_out.append(value/100)
             continue
-        if (await parityCheck(value, parity)):
+        if (parityCheck(value, parity)):
             message[i] = (message[i] + base_value)/100.0
             data_out.append(message[i])
         else:
             if 0 < i and i + 2 < len(message):
-                prev_value = message[i - 2] + base_value
+                logger.debug(f"mismatched{value} {parity} {parityCheck(value, parity)}" )
+                prev_value = message[i - 2] 
                 next_value = message[i + 2] + base_value
                 interpolated_value = (prev_value + next_value) // 2 if i != 2 else (prev_value + message[i + 2] + base_value) // 2
                 data_out.append(interpolated_value / 100.0)
@@ -50,16 +51,16 @@ async def decodeTemperature(message):
     return data_out, filtered_data.tolist()
 
 #checking odd parity
-async def calculate_odd_parity(num):
+def calculate_odd_parity(num):
     count = 0
     for i in range(16):  # Assuming 16-bit integers
         if num & 1:
             count += 1
         num >>= 1
-    return 1 if count % 2 == 0 else 0
+    return count
 
-async def parityCheck(value, parity):
-    ones_count = await calculate_odd_parity(value)
+def parityCheck(value, parity):
+    ones_count = calculate_odd_parity(value)
     return (ones_count + int(parity)) % 2 == 1
 
 async def kalmanfilter(z, kf):

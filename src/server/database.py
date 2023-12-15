@@ -29,7 +29,7 @@ async def sendInfluxdb(decodedValues, site, filteredValues):
     tags        = {"place": sites[site]}
     for i in range(len(decodedValues)):
         fields      = { "value" : decodedValues[i], "filtered" : filteredValues[i] }
-        await save(db_client, TEMPERATURE, fields, tags=tags)    
+        await save(db_client, sites[site], fields, tags=tags)    
         time.sleep(1)
     return True
 

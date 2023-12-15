@@ -47,12 +47,14 @@ done
 
 function build_and_deploy_server()
 {
-    cd src/server/
     echo "Building the server..."
+    
+    cd src/server
+
     docker build -t coap-server . 
 
     docker run \
-            --network host -p 5683:5683 coap-server 
+            --network host coap-server 
 }
 
 function grafana_start() {

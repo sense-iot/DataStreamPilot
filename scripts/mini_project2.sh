@@ -70,17 +70,19 @@ printf "%-50s %s\n" "DataStereamPilot: SENSOR_CONNECTED_NODE:" "m3 - $SENSOR_CON
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
 echo "================ Border Router ======================"
-# source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
 
 echo "============== Broker setup ======================="
-# source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-# source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
+source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
 
 
 echo "======================================================"
+export EMCUTE_ID="DENOISER"
+export DENOISER_NODE_TEST=${DENOISER_NODE_TEST}
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
 exit 0
 
@@ -88,10 +90,10 @@ echo "=============== Starting Denoiser ==================="
 
 export DENOISER_NODE=${DENOISER_NODE}
 export EMCUTE_ID="DENOISER"
-export CLIENT_TOPIC1="sens1_temperature"
-export CLIENT_TOPIC2="sens2_temperature"
-export CLIENT_TOPIC3="sens3_temperature"
-export DENOISE_TOPIC="denoise_temperature"
+# export CLIENT_TOPIC1="sens1_temperature"
+# export CLIENT_TOPIC2="sens2_temperature"
+# export CLIENT_TOPIC3="sens3_temperature"
+# export DENOISE_TOPIC="denoise_temperature"
 
 file_to_check=${SENSE_HOME}/release/denoiser.elf
 

@@ -343,17 +343,21 @@ static int cmd_pub_simple(char *data, unsigned qos)
     emcute_topic_t t;
     unsigned flags = EMCUTE_QOS_0;
 
-    flags |= qos;
+    // flags |= EMCUTE_QOS_0;
 
     t.name = my_topic;
     if (emcute_reg(&t) != EMCUTE_OK)
     {
+        printf("error: unable to obtain topic ID : %s\n", my_topic);
         return 1;
     }
+
+    printf("pub with topic: %s and name %s and flags 0x%02x\n", my_topic, data, (int)flags);
 
     /* step 2: publish data */
     if (emcute_pub(&t, data, strlen(data), flags) != EMCUTE_OK)
     {
+        printf("Failed\n");
         return 1;
     }
     return 0;
@@ -364,8 +368,6 @@ void initizlize_mqtt_client(void) {
     msg_init_queue(queue, ARRAY_SIZE(queue));
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
     printf("memset okay\n");
-
-    
 
     char *cmd_con_m[3];
     cmd_con_m[0] = "con";
@@ -390,14 +392,34 @@ int main(void)
 {
     printf("Publish subscriber example - Group 12 MQTT\n");
 
-    initizlize_mqtt_client();
+    msg_init_queue(queue, ARRAY_SIZE(queue));
+    memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
+    printf("memset okay\n");
+
+    char *cmd_con_m[3];
+    cmd_con_m[0] = "con";
+    cmd_con_m[1] = server_ip;
+    cmd_con_m[2] = "1885";
+    int cmd_con_count = 3;
+
+    printf("char arguments okay\n");
+
+    thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
+                  emcute_thread, NULL, "emcute");
+
+    printf("Starting connection\n");
+    if (cmd_con(cmd_con_count, cmd_con_m))
+    {
+        printf("broker connection failed\n");
+    }
+    printf("connection okay\n");
     unsigned qos = get_qos(my_qos);
 
     while (1)
     {
         ztimer_sleep(ZTIMER_MSEC, 1000);
 
-        if (cmd_pub_simple("my data", qos))
+        if (cmd_pub_simple("mydata", qos))
         {
             ztimer_sleep(ZTIMER_MSEC, 300);
             continue;

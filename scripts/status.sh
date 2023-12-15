@@ -37,14 +37,14 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_N
 
 
 echo " ----- M3 - A8 nodes ----- "
-echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}"
+echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}  # mqtt broker"
 
 
 echo " ----- M3 nodes ----- "
-echo "nc m3-${BORDER_ROUTER_NODE} 20000"
-echo "nc m3-${SENSOR_CONNECTED_NODE} 20000"
-echo "nc m3-${MQTT_CLIENT_NODE_1} 20000"
-echo "nc m3-${MQTT_CLIENT_NODE_2} 20000"
-echo "nc m3-${MQTT_CLIENT_NODE_3} 20000"
+echo "nc m3-${BORDER_ROUTER_NODE} 20000         # border router"
+echo "nc m3-${SENSOR_CONNECTED_NODE} 20000      # sensor connected"
+echo "nc m3-${MQTT_CLIENT_NODE_1} 20000         # sensor 1"
+echo "nc m3-${MQTT_CLIENT_NODE_2} 20000         # sensor 2"
+echo "nc m3-${MQTT_CLIENT_NODE_3} 20000         # sensor 3 "
 
 echo "Broker IP : $(extract_global_ipv6)"

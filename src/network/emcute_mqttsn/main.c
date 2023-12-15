@@ -189,6 +189,8 @@ static int cmd_con(int argc, char **argv)
     char *message = NULL;
     size_t len = 0;
 
+    printf("Starting connection inside\n");
+
     if (argc < 2)
     {
         printf("usage: %s <ipv6 addr> [port] [<will topic> <will message>]\n",
@@ -197,23 +199,27 @@ static int cmd_con(int argc, char **argv)
     }
 
     /* parse address */
+    printf("checking ip address\n");
+    printf("checking ip address: %s\n", argv[1]);
     if (ipv6_addr_from_str((ipv6_addr_t *)&gw.addr.ipv6, argv[1]) == NULL)
     {
         printf("error parsing IPv6 address\n");
         return 1;
     }
 
-    if (argc >= 3)
-    {
-        gw.port = atoi(argv[2]);
-    }
-    if (argc >= 5)
-    {
-        topic = argv[3];
-        message = argv[4];
-        len = strlen(message);
-    }
+    printf("ip address okay\n");
 
+    // if (argc >= 3)
+    // {
+    //     gw.port = atoi(argv[2]);
+    // }
+    // if (argc >= 5)
+    // {
+    //     topic = argv[3];
+    //     message = argv[4];
+    //     len = strlen(message);
+    // }
+    printf("starting mqtt con\n");
     if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
     {
         printf("error: unable to connect to [%s]:%i\n", argv[1], (int)gw.port);
@@ -429,7 +435,7 @@ static mutex_t mqtt_lock = MUTEX_INIT_LOCKED;
 
 int main(void)
 {
-    puts_append("Publish subscriber example - Group 12 MQTT\n");
+    printf("Publish subscriber example - Group 12 MQTT\n");
     // char *server_ip = readFirstLine();
     // if (server_ip == NULL)
     // {
@@ -438,40 +444,45 @@ int main(void)
     // }
     // puts_append(server_ip);
     msg_init_queue(queue, ARRAY_SIZE(queue));
-    ztimer_sleep(ZTIMER_MSEC, 300);
+    memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
 
-    char *cmd_con_m[] = {"con", "2001:660:5307:3000::67", "1885"};
+    printf("memset okay\n");
+    char *cmd_con_m[3];
+    cmd_con_m[0] = "con";
+    cmd_con_m[1] = "2001:660:5307:3000::67";
+    cmd_con_m[2] = "1885";
     int cmd_con_count = 3;
 
-    // /* initialize our subscription buffers */
-    memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
-    // ztimer_sleep(ZTIMER_MSEC, 300);
-    // mutex_lock(&mqtt_lock);
-    // if (cmd_con(cmd_con_count, cmd_con_m))
-    // {
-    //     puts_append("broker connection failed\n");
-    //     mutex_unlock(&mqtt_lock);
-    //     // return 0;
-    // }
-    // mutex_unlock(&mqtt_lock);
+    printf("char arguments okay\n");
 
-    // while (1)
-    // {
-    //     ztimer_sleep(ZTIMER_MSEC, 2000);
-    //     char *cmd_pub_m[] = {"pub", "temperature", "32.5"};
-    //     int cmd_pub_count = 3;
-
-    //     mutex_lock(&mqtt_lock);
-    //     if (cmd_pub(cmd_pub_count, cmd_pub_m)) {
-    //         ztimer_sleep(ZTIMER_MSEC, 300);
-    //         continue;
-    //     }
-    //     mutex_unlock(&mqtt_lock);
-    // }
-
-    /* start the emcute thread */
     thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
                   emcute_thread, NULL, "emcute");
+
+    printf("Starting connection\n");
+    if (cmd_con(cmd_con_count, cmd_con_m))
+    {
+        printf("broker connection failed\n");
+        // return 0;
+    }
+    printf("connection okay\n");
+
+    while (1)
+    {
+        ztimer_sleep(ZTIMER_MSEC, 1000);
+        char *cmd_pub_m[] = {"pub", "temperature", "32.5"};
+        int cmd_pub_count = 3;
+
+        // mutex_lock(&mqtt_lock);
+        if (cmd_pub(cmd_pub_count, cmd_pub_m)) {
+            ztimer_sleep(ZTIMER_MSEC, 300);
+            continue;
+        }
+        // mutex_unlock(&mqtt_lock);
+    }
+
+    /* start the emcute thread */
+    // thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
+    //               emcute_thread, NULL, "emcute");
 
     // /* start shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];

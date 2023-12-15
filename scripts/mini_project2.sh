@@ -10,7 +10,7 @@ EXPERIMENT_ID=0;
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     echo "DataStereamPilot: submitting a new experiment"
-    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d 120 -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
+    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
     iotlab-ssh --verbose wait-for-boot
     wait_for_job "${EXPERIMENT_ID}"

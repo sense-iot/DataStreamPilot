@@ -122,12 +122,12 @@ static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
     char *in = (char *)data;
 
     if (count >= 3) {
-        ztimer_sleep(ZTIMER_MSEC, 100);
+        ztimer_sleep(ZTIMER_MSEC, 97);
     }
 
     if (strcmp(topic->name, "sens3_temperature") != 0)
     {
-        ztimer_sleep(ZTIMER_MSEC, 100);
+        ztimer_sleep(ZTIMER_MSEC, 120);
         return;
     }
 
@@ -137,12 +137,14 @@ static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
     if (sensor3_data == NULL)
     {
         sensor3_data = malloc(len + 1);
-        strcpy(sensor3_data, in);
+        strncpy(sensor3_data, in, len);
+        sensor3_data[len] = '\0';
     } else {
         free(sensor3_data);
         sensor3_data = NULL;
         sensor3_data = malloc(len + 1);
-        strcpy(sensor3_data, in);
+        strncpy(sensor3_data, in, len);
+        sensor3_data[len] = '\0';
     }
 
     mutex_lock(&cb_lock);
@@ -156,7 +158,7 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 
     if (strcmp(topic->name, "sens1_temperature") != 0)
     {
-        ztimer_sleep(ZTIMER_MSEC, 100);
+        ztimer_sleep(ZTIMER_MSEC, 80);
         return;
     }
 
@@ -178,23 +180,23 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
         {
             printf("sensor 3 : %s \n", sensor3_data);
         }
-        if (sensor1_data != NULL)
-        {
-            free(sensor1_data);
-            sensor1_data = NULL;
-        }
         printf("===============================================\n\n");
-}
+    }
 
     if (sensor1_data == NULL)
     {
         sensor1_data = malloc(len + 1);
         strcpy(sensor1_data, in);
+        strncpy(sensor1_data, in, len);
+        sensor1_data[len] = '\0';
     }
     else
     {
         free(sensor1_data);
         sensor1_data = NULL;
+        sensor1_data = malloc(len + 1);
+        strncpy(sensor1_data, in, len);
+        sensor1_data[len] = '\0';
     }
 
     mutex_lock(&cb_lock);
@@ -208,12 +210,12 @@ static void on_pub_2(const emcute_topic_t *topic, void *data, size_t len)
 
     if (count >= 3)
     {
-        ztimer_sleep(ZTIMER_MSEC, 100);
+        ztimer_sleep(ZTIMER_MSEC, 135);
     }
 
     if (strcmp(topic->name, "sens2_temperature") != 0)
     {
-        ztimer_sleep(ZTIMER_MSEC, 100);
+        ztimer_sleep(ZTIMER_MSEC, 113);
         return;
     }
     printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
@@ -222,14 +224,16 @@ static void on_pub_2(const emcute_topic_t *topic, void *data, size_t len)
     if (sensor2_data == NULL)
     {
         sensor2_data = malloc(len + 1);
-        strcpy(sensor2_data, in);
+        strncpy(sensor2_data, in, len);
+        sensor2_data[len] = '\0'; 
     }
     else
     {
         free(sensor2_data);
         sensor2_data = NULL;
         sensor2_data = malloc(len + 1);
-        strcpy(sensor2_data, in);
+        strncpy(sensor2_data, in, len);
+        sensor2_data[len] = '\0';
     }
 
     mutex_lock(&cb_lock);
@@ -794,5 +798,8 @@ int main(void)
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 
+    free(sensor1_data);
+    free(sensor2_data);
+    free(sensor3_data);
     return 0;
 }

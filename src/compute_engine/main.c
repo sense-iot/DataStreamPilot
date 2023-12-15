@@ -235,7 +235,7 @@ int main(void) {
 
     }
 
-    if (counter == 10) {
+    if (counter == 3) {
 
       DEBUG_PRINT("Data: %s\n", data.buffer);
       DEBUG_PRINT("site: %d\n", site_name);

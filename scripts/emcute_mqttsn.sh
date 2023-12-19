@@ -31,5 +31,5 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   echo "nc m3-${DENOISER_NODE_TEST} 20000"
   echo "con 2001:660:5307:3000::67 1885"
   echo "pub temperature 32.5"
-  nc m3-${DENOISER_NODE_TEST} 20000
+  echo "nc m3-${DENOISER_NODE_TEST} 20000"
 fi

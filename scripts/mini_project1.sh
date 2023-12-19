@@ -29,7 +29,6 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
     exit 1
 fi
 
-
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
 export SENSOR_CONNECTED_NODE=${m3_nodes[1]}
 

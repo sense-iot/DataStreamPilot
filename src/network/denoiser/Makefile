@@ -14,6 +14,6 @@ USEMODULE += lps331ap
 
 CFLAGS += -Werror -Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common
 
-RIOTBASE ?= ../../external/RIOT
+RIOTBASE ?= $(CURDIR)/../../../external/RIOT
 
 include $(RIOTBASE)/Makefile.include

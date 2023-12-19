@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+echo "ip -6 -o addr show eth0"
 ip -6 -o addr show eth0
-ifconfig eth0 >~/shared/mqtt_broker_details.txt
+echo "ifconfig eth0 > ~/shared/mqtt_broker_details.txt"
+ifconfig eth0 > ~/shared/mqtt_broker_details.txt
 current_mqtt_id=$(ps -ef | grep mosquitto | head -1 | awk '{print $2}')
 
 if [ -z "$current_mqtt_id" ]; then

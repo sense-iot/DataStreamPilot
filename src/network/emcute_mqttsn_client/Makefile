@@ -36,6 +36,11 @@ USEMODULE += ztimer_msec
 
 USEMODULE += shell
 USEMODULE += shell_cmds_default
+
+# add routing support for sensor nodes
+USEMODULE += gnrc_rpl
+USEMODULE += auto_init_gnrc_rpl
+
 # SEMODULE += ps
 # USEMODULE += netstats_l2
 # USEMODULE += netstats_ipv6

@@ -23,7 +23,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   elif [ "$my_arch" = "iotlab-a8-m3" ]; then
       cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
       echo "Architecture is iotlab-a8-m3."
-      ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
       echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
   else
       echo "Architecture is something else."

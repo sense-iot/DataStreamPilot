@@ -69,6 +69,7 @@ clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
 	rm -Rf ~/shared/logs
+	rm ~/shared/*.elf
 	rm ~/A8/*.elf
 
 broker_sub:

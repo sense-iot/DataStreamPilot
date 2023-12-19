@@ -4,16 +4,16 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=5
-A8_NODE_COUNT=5
+M3_NODE_COUNT=6
+A8_NODE_COUNT=2
 EXPERIMENT_ID=0
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     echo "DataStereamPilot: submitting a new experiment"
     experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
-    iotlab-ssh --verbose wait-for-boot
     wait_for_job "${EXPERIMENT_ID}"
+    iotlab-ssh --verbose wait-for-boot
 else
     EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
     echo "DataStereamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
@@ -70,22 +70,34 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_N
 # printf "%-25s %s\n" "HELLO_NODE:" "$HELLO_NODE"
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
 
-echo "================ Border Router ======================"
-source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
-
-
-echo "============== Broker setup ======================="
+echo "================ Border Router and Broker node =========================="
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
+sleep 1
+source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+sleep 1
+
+echo "============== Start broker in the gnrc_networking node ======================="
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
 
+BROKER_DETAILS_FILE=~/shared/mqtt_broker_details.txt
+if [ ! -f "$BROKER_DETAILS_FILE" ]; then
+    error_message="ERROR: Broker failed"
+    # Displaying the Error Message in a Box
+    echo "****************************************************"
+    echo "*                                                  *"
+    printf "* %-36s*\n" "$error_message"
+    echo "*                                                  *"
+    echo "****************************************************"
+    exit
+fi
 
 echo "======================================================"
+
 export EMCUTE_ID="DENOISER"
 export DENOISER_NODE_TEST=${DENOISER_NODE_TEST}
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-exit 0
 
 echo "=============== Starting Denoiser ==================="
 
@@ -111,7 +123,7 @@ else
         ELF_FILE=$file_to_check
         # flash_elf ${ELF_FILE} ${MQTT_CLIENT_NODE}
         echo "flashing denoiser from root script"
-        ssh -oStrictHostKeyChecking=accept-new root@node-a8-${DENOISER_NODE} 'bash -s' <${SENSE_HOME}/src/network/denoiser/ssh_denoiser.sh
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${DENOISER_NODE} 'bash -s' <${SENSE_HOME}/src/network/denoiser/ssh_denoiser.sh
     fi
 fi
 
@@ -146,7 +158,7 @@ else
         elif [ "$my_arch" = "iotlab-a8-m3" ]; then
             cp $file_to_check ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
             echo "Architecture is iotlab-a8-m3."
-            ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
             echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
         else
             echo "Architecture is something else."
@@ -178,7 +190,7 @@ else
         elif [ "$my_arch" = "iotlab-a8-m3" ]; then
             cp $file_to_check ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
             echo "Architecture is iotlab-a8-m3."
-            ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
             echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
         else
             echo "Architecture is something else."
@@ -210,7 +222,7 @@ else
         elif [ "$my_arch" = "iotlab-a8-m3" ]; then
             cp $file_to_check ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
             echo "Architecture is iotlab-a8-m3."
-            ssh -oStrictHostKeyChecking=accept-new root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
             echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
         else
             echo "Architecture is something else."

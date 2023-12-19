@@ -13,7 +13,7 @@ if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
     wait_for_job "${EXPERIMENT_ID}"
-    iotlab-ssh --verbose wait-for-boot
+    # iotlab-ssh --verbose wait-for-boot
 else
     EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
     echo "DataStereamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
@@ -69,14 +69,18 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_N
 # printf "%-25s %s\n" "COAP_CLIENT_TEST_NODE:" "$COAP_CLIENT_TEST_NODE"
 # printf "%-25s %s\n" "HELLO_NODE:" "$HELLO_NODE"
 # printf "%-25s %s\n" "SITE:" "$SENSE_SITE"
+echo "I am sleeping for nodes to start..."
+sleep 5
 
 echo "================ Border Router and Broker node =========================="
+echo "========= starting gnrc_border_router node ========="
+source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
+create_tap_interface "${BORDER_ROUTER_NODE}" &
+sleep 1
+echo "========= starting gnrc_networking node to flash broker ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
 sleep 1
-source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
-sleep 1
-
-echo "============== Start broker in the gnrc_networking node ======================="
+echo "========= starting broker setup ========="
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")

@@ -30,7 +30,13 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp $ELF_FILE ~/A8
 
   echo "Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"
-  ssh root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/flash.sh
+  until ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/flash.sh; do
+    echo "------------------------------------------"
+    echo "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/mqtt_broker/broker.sh"
+    echo "Error: ssh failed to broker. Retrying...!"
+    echo "------------------------------------------"
+    sleep 10
+  done
 
   export SENSE_GNRC_NETWORKING_NODE_UP=1
 fi

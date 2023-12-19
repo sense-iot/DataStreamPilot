@@ -69,8 +69,13 @@ clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
 	rm -Rf ~/shared/logs
-	rm ~/shared/*.elf
-	rm ~/A8/*.elf
+	rm -f ~/A8/*.elf
+	rm -f ~/A8/*.txt
+	rm -f ~/A8/*.conf
+	rm -f ~/shared/*.elf
+	rm -f ~/shared/*.txt
+	rm -f ~/shared/*.conf
+	
 
 broker_sub:
 	./scripts/broker_sub.sh

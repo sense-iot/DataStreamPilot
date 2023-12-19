@@ -8,7 +8,10 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     fi
 fi
 
-source ${SENSE_SCRIPTS_HOME}/common_functions.sh
+# this is seconds
+export JOB_WAIT_TIMEOUT=150
+export EXPERIMENT_TIME=180
+
 # grenoble, paris, lille, saclay, strasbourg
 export SENSE_SITE=grenoble
 
@@ -32,6 +35,8 @@ if [ "$current_hostname" != "$SENSE_SITE" ]; then
     export ERROR_WRONG_SITE=1
     exit $ERROR_WRONG_SITE
 fi
+
+source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
@@ -82,9 +87,7 @@ export TAP_INTERFACE=tap7
 # export TAP_INTERFACE=tap5 - waas
 # export TAP_INTERFACE=tap6 - rukshan
 
-# this is seconds
-export JOB_WAIT_TIMEOUT=120
-export EXPERIMENT_TIME=180
+
 
 export BORDER_ROUTER_FOLDER_NAME=gnrc_border_router
 export BORDER_ROUTER_EXE_NAME=${BORDER_ROUTER_FOLDER_NAME}

@@ -38,7 +38,5 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
     kill -9 $current_ethos_id
   fi
 
-  create_tap_interface "${BORDER_ROUTER_NODE}" &
-
   export SENSE_BORDER_ROUTER_UP=1
 fi

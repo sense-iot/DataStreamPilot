@@ -57,18 +57,23 @@ export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 if [ "$SENSE_SITE" = "grenoble" ]; then
     # 2001:660:5307:3100::/64	2001:660:5307:317f::/64
     export BORDER_ROUTER_IP=2001:660:5307:313f::1/64
+    export BORDER_ROUTER_IP_2=2001:660:5307:313a::1/64
 elif [ "$SENSE_SITE" = "paris" ]; then
     # 2001:660:330f:a280::/64   2001:660:330f:a2ff::/64
     export BORDER_ROUTER_IP=2001:660:330f:a293::1/64
+    export BORDER_ROUTER_IP_2=2001:660:330f:a29f::1/64
 elif [ "$SENSE_SITE" = "lille" ]; then
     # 2001:660:4403:0480::/64	2001:660:4403:04ff::/64
     export BORDER_ROUTER_IP=2001:660:4403:0493::1/64
+    export BORDER_ROUTER_IP_2=2001:660:4403:049f::1/64
 elif [ "$SENSE_SITE" = "saclay" ]; then
     # 2001:660:3207:04c0::/64	2001:660:3207:04ff::/64
     export BORDER_ROUTER_IP=2001:660:3207:04de::1/64
+    export BORDER_ROUTER_IP_2=2001:660:3207:04df::1/64
 elif [ "$SENSE_SITE" = "strasbourg" ]; then
     # 2001:660:4701:f0a0::/64	2001:660:4701:f0bf::/64
     export BORDER_ROUTER_IP=2001:660:4701:f0af::1/64
+    export BORDER_ROUTER_IP_2=2001:660:4701:f0ae::1/64
 else
     echo "Invalid SENSE_SITE value. Please set to 'grenoble' or 'paris'."
 fi
@@ -77,12 +82,14 @@ export ARCH=iotlab-m3
 
 # values are from 11-26
 export DEFAULT_CHANNEL=22
+export DEFAULT_CHANNEL_2=23
 #export DEFAULT_CHANNEL=23 - dilan
 #export DEFAULT_CHANNEL=24 - waas
 #export DEFAULT_CHANNEL=25 - rukshan
 
 export ETHOS_BAUDRATE=500000
 export TAP_INTERFACE=tap7
+export TAP_INTERFACE_2=tap8
 # export TAP_INTERFACE=tap4 - dilan
 # export TAP_INTERFACE=tap5 - waas
 # export TAP_INTERFACE=tap6 - rukshan

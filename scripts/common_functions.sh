@@ -253,11 +253,13 @@ wait_for_job() {
 
 create_tap_interface() {
     local node_id="$1"
-    echo "Create tap interface ${TAP_INTERFACE}"
+    local tap_interface="$2"
+    local border_router_ip="$3"
+    echo "Create tap interface ${tap_interface}"
     echo "nib neigh"
     echo "Creating tap interface..."
-    echo "sudo ethos_uhcpd.py m3-${node_id} ${TAP_INTERFACE} ${BORDER_ROUTER_IP}"
-    sudo ethos_uhcpd.py m3-${node_id} ${TAP_INTERFACE} ${BORDER_ROUTER_IP}
+    echo "sudo ethos_uhcpd.py m3-${node_id} ${tap_interface} ${border_router_ip}"
+    sudo ethos_uhcpd.py m3-${node_id} ${tap_interface} ${border_router_ip} &
     sleep 5
     echo "Done creating tap interface..."
 }
@@ -296,10 +298,11 @@ build_wireless_firmware() {
     local firmware_source_folder="$1"
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
+    local channel="${4:-$DEFAULT_CHANNEL}"
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" BOARD=${ARCH} -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD=${ARCH} -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -320,10 +323,11 @@ build_wireless_firmware_forced() {
     local firmware_source_folder="$1"
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
+    local channel="${4:-$DEFAULT_CHANNEL}"
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" BOARD="${ARCH}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD="${ARCH}" -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -344,6 +348,7 @@ build_wireless_firmware_cached() {
     local firmware_source_folder="$1"
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
+    local channel="${4:-$DEFAULT_CHANNEL}"
 
     if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
         echo "No need to build"
@@ -351,8 +356,8 @@ build_wireless_firmware_cached() {
     fi
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" BOARD="${ARCH}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD="${ARCH}" -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?

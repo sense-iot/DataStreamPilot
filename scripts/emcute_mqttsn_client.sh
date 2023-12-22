@@ -5,7 +5,9 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 my_arch=${ARCH}
 
-build_wireless_firmware ${EMCUTE_MQTSSN_CLIENT_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${my_arch}
+echo "============== Building on channel ${NODE_CHANNEL} ================="
+
+build_wireless_firmware ${EMCUTE_MQTSSN_CLIENT_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${my_arch} ${NODE_CHANNEL}
 build_status=$?
 if [ $build_status -ne 0 ]; then
   exit $build_status

@@ -12,8 +12,8 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 file_to_check=${SENSE_HOME}/release/gnrc_border_router.elf
 
 if [ ! -f "$file_to_check" ]; then
-  echo "build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3"
-  build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3
+  echo "build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3" ${DEFAULT_CHANNEL}
+  build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3 ${DEFAULT_CHANNEL}
   build_status=$?
   if [ $build_status -ne 0 ]; then
     exit $build_status
@@ -28,6 +28,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
 
   flash_firmware ${BORDER_ROUTER_EXE_NAME} ${BORDER_ROUTER_NODE}
+  # flash_firmware ${BORDER_ROUTER_EXE_NAME} ${BORDER_ROUTER_NODE_2}
 
   current_ethos_id=$(ps -ef | grep ethos | grep -v "grep" | grep perera | awk '{print $2}' | head -1)
   if [ -z "$current_ethos_id" ]; then

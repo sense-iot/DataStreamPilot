@@ -15,7 +15,7 @@ fi
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
-  cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/iotlab-m3/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ${SENSE_HOME}/release/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
+  cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ${SENSE_HOME}/release/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
 
   if [ "$my_arch" = "iotlab-m3" ]; then
       echo "Architecture is iotlab-m3."

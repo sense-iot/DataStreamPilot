@@ -3,12 +3,12 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-ip_address=$(read_variable_from_file "BROKER_IP")
-echo "mosquitto_pub -h $ip_address -p 1883 -t sens1_temperature -m $1"
-mosquitto_pub -h $ip_address -p 1883 -t sens1_temperature -m $1 -q 2
+ip_address=$(extract_global_ipv6)
+echo "mosquitto_pub -h $ip_address -p 1883 -t s1 -m $1"
+mosquitto_pub -h $ip_address -p 1883 -t s1 -m $1 -q 2
 
-echo "mosquitto_pub -h $ip_address -p 1883 -t sens2_temperature -m $2"
-mosquitto_pub -h $ip_address -p 1883 -t sens2_temperature -m $2
+echo "mosquitto_pub -h $ip_address -p 1883 -t s2 -m $2"
+mosquitto_pub -h $ip_address -p 1883 -t s2 -m $2
 
-echo "mosquitto_pub -h $ip_address -p 1883 -t sens3_temperature -m $3"
-mosquitto_pub -h $ip_address -p 1883 -t sens3_temperature -m $3
+echo "mosquitto_pub -h $ip_address -p 1883 -t s3 -m $3"
+mosquitto_pub -h $ip_address -p 1883 -t s3 -m $3

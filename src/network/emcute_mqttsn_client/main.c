@@ -34,7 +34,7 @@
 #include "lpsxxx.h"
 #include "lpsxxx_params.h"
 
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 0
 #include "debug.h"
 
 #ifndef EMCUTE_ID
@@ -164,7 +164,6 @@ float add_noise(float stddev)
     return noise_val;
 }
 
-
 void puts_append(const char *data)
 {
     // File path
@@ -222,7 +221,8 @@ static int cmd_con(int argc, char **argv)
     printf("ip address okay\n");
 
     printf("starting mqtt con\n");
-    if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
+    int connectionResp = emcute_con(&gw, true, topic, message, len, 0);
+    if (connectionResp != EMCUTE_OK)
     {
         printf("error: unable to connect to [%s]:%i\n", argv[1], (int)gw.port);
         return 1;
@@ -230,7 +230,7 @@ static int cmd_con(int argc, char **argv)
     printf("Successfully connected to gateway at [%s]:%i\n",
            argv[1], (int)gw.port);
 
-    return 0;
+    return connectionResp;
 }
 
 static int cmd_discon_simple(void)
@@ -284,7 +284,7 @@ static int cmd_pub_simple(char *data)
     t.name = my_topic;
     if (emcute_reg(&t) != EMCUTE_OK)
     {
-        // printf("error: unable to obtain topic ID : %s\n", my_topic);
+        printf("error: unable to obtain topic ID : %s\n", my_topic);
         return 1;
     }
 
@@ -299,8 +299,8 @@ static int cmd_pub_simple(char *data)
     return 0;
 }
 
-
-void initizlize_mqtt_client(void) {
+void initizlize_mqtt_client(void)
+{
     msg_init_queue(queue, ARRAY_SIZE(queue));
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
     printf("memset okay\n");
@@ -317,9 +317,16 @@ void initizlize_mqtt_client(void) {
                   emcute_thread, NULL, "emcute");
 
     printf("Starting connection\n");
-    if (cmd_con(cmd_con_count, cmd_con_m))
+    while (cmd_con(cmd_con_count, cmd_con_m))
     {
         printf("broker connection failed\n");
+        printf("Trying with a different broker\n");
+
+        int randi = rand();
+        float u1 = randi / RAND_MAX;                // Normalized to [0, 1]
+        int sleepDuration = (int)(u1 * 1000) + 500; // Convert to milliseconds (0 to 1000 ms range)
+        printf("Sleeping for : %d ms\n", sleepDuration);
+        ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }
     printf("connection okay\n");
 
@@ -389,7 +396,10 @@ int main(void)
 
                 sprintf(temp_str, "%i", rounded_avg_temp);
                 printf("Temp Str: %s\n", temp_str);
-                cmd_pub_simple(temp_str);
+                if (cmd_pub_simple(temp_str))
+                {
+                    printf("No of ele: %i\n", numElements);
+                }
 
                 for (int i = 0; i < array_length - 1; ++i)
                 {
@@ -398,7 +408,12 @@ int main(void)
                 array_length--;
             }
         }
-        ztimer_sleep(ZTIMER_MSEC, 1000);
+
+        int randi = rand();
+        float u1 = randi / RAND_MAX;
+        int sleepDuration = (int)(u1 * 1000) + 1000; // delay of 1-2 seconds
+        printf("Sleeping for : %d ms\n", sleepDuration);
+        ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }
 
     cmd_discon_simple();

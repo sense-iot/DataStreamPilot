@@ -23,7 +23,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   elif [ "$my_arch" = "iotlab-a8-m3" ]; then
       cp ${DENOISER_HOME}/bin/${my_arch}/${DENOISER_EXE_NAME}.elf ~/A8/${DENOISER_EXE_NAME}.elf
       echo "Architecture is iotlab-a8-m3."
-      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/nullw root@node-a8-${DENOISER_NODE} 'bash -s' <${SENSE_HOME}/src/network/denoiser/ssh_denoiser.sh
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${DENOISER_NODE} 'bash -s' <${SENSE_HOME}/src/network/denoiser/ssh_denoiser.sh
       echo "ssh root@node-a8-${DENOISER_NODE}"
   else
       echo "Architecture is something else."

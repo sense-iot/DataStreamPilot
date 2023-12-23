@@ -29,17 +29,18 @@ USEMODULE += gnrc_icmpv6_echo
 # Optimize network stack to for use with a single network interface
 USEMODULE += gnrc_netif_single
 
+USEMODULE += gnrc_sixlowpan_router_default
+
 # USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
 # USEMODULE += ztimer_sec
 # USEMODULE += ztimer_no_periph_rtt
 
 USEMODULE += shell
-USEMODULE += shell_cmds_default
+# USEMODULE += shell_cmds_default
 
-# add routing support for sensor nodes
-USEMODULE += gnrc_rpl
-USEMODULE += auto_init_gnrc_rpl
+# # add routing support for sensor nodes
+# USEMODULE += auto_init_gnrc_rpl
 
 # SEMODULE += ps
 # USEMODULE += netstats_l2

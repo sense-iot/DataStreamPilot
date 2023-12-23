@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "shell.h"
 #include "msg.h"
 #include "net/emcute.h"
@@ -392,7 +393,8 @@ static int cmd_con(int argc, char **argv)
     //     len = strlen(message);
     // }
     printf("starting mqtt con\n");
-    if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
+    int connectionResp = emcute_con(&gw, true, topic, message, len, 0);
+    if (connectionResp != EMCUTE_OK)
     {
         printf("error: unable to connect to [%s]:%i\n", argv[1], (int)gw.port);
         return 1;
@@ -400,7 +402,7 @@ static int cmd_con(int argc, char **argv)
     printf("Successfully connected to gateway at [%s]:%i\n",
            argv[1], (int)gw.port);
 
-    return 0;
+    return connectionResp;
 }
 
 static int cmd_discon(int argc, char **argv)
@@ -758,10 +760,13 @@ int main(void)
                   emcute_thread, NULL, "emcute");
 
     printf("Starting connection\n");
-    if (cmd_con(cmd_con_count, cmd_con_m))
+    while (cmd_con(cmd_con_count, cmd_con_m))
     {
         printf("broker connection failed\n");
-        // return 0;
+        float u1 = (float)rand() / RAND_MAX;        // Normalized to [0, 1]
+        int sleepDuration = (int)(u1 * 1000) + 500; // Convert to milliseconds (0 to 1000 ms range)
+        printf("Sleeping for : %d ms\n", sleepDuration);
+        ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }
     printf("connection okay\n");
 

@@ -48,6 +48,9 @@ static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
 
+// Set z-score threshold (adjust based on your requirements)
+float z_threshold = 1.3;
+
 void puts_append(const char *data)
 {
     // File path
@@ -152,6 +155,50 @@ static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
     mutex_unlock(&cb_lock);
 }
 
+// Function to check for outliers using z-scores
+int filter_outliers(int readings[NUM_SENSORS], float z_threshold) {
+    // Calculate mean of the readings
+    float mean_reading = 0.0;
+    for (int i = 0; i < NUM_SENSORS; i++) {
+        mean_reading += readings[i];
+    }
+    mean_reading /= NUM_SENSORS;
+
+    double mean_reading_d = mean_reading * 100;    // Debugging
+    printf("Mean = %i\n", (int)mean_reading_d);    // Debugging
+
+    // Calculate standard deviation of the readings
+    float std_dev_reading = 0.0;
+    for (int i = 0; i < NUM_SENSORS; i++) {
+        std_dev_reading += (float)pow((double)(readings[i] - mean_reading), 2);  
+    }
+    std_dev_reading = sqrt(std_dev_reading / NUM_SENSORS);
+
+    int sd = std_dev_reading * 100;     // Debugging
+    printf("SD = %i\n", sd);           // Debugging
+
+    // Filtering outliers
+    int sensors_count = NUM_SENSORS;
+    float new_mean_reading = 0.0;
+    for (int i = 0; i < NUM_SENSORS; i++) {
+
+        // Calculate z-score
+        float z_score = fabs((readings[i] - mean_reading) / std_dev_reading);
+
+        int16_t z_score_int = (int16_t)(z_score * 1000);    // Debugging   
+        DEBUG_PRINT("Z score = %i\n", z_score_int);         // Debugging
+
+        if (z_score > z_threshold) {
+            sensors_count--;
+        } else {
+            new_mean_reading += readings[i];
+        }
+    }
+    new_mean_reading /= sensors_count;
+    printf("new mean: %i\n", (int)new_mean_reading);    // Debugging
+    return (int)new_mean_reading;
+}
+
 static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
@@ -164,23 +211,31 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 
     printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
 
-    if (count >= 3)
-    {
-        printf("================= DILAN ===================\n\n");
+    if (count >= 3) {
+
+        int sensor_readings[3];
+
         count = 0;
         if (sensor1_data != NULL)
         {
             printf("sensor 1 : %s \n", sensor1_data);
+            sensor_readings[0] = atoi(sensor1_data);
         }
         if (sensor2_data != NULL)
         {
             printf("sensor 2 : %s \n", sensor2_data);
+            sensor_readings[1] = atoi(sensor2_data);
         }
         if (sensor3_data != NULL)
         {
             printf("sensor 3 : %s \n", sensor3_data);
+            sensor_readings[2] = atoi(sensor3_data);
         }
-        printf("===============================================\n\n");
+
+        int avg_temp = filter_outliers(sensor_readings, z_threshold);
+        // cmd_pub_simple(avg_temp); Define this method
+
+
     }
 
     if (sensor1_data == NULL)
@@ -734,10 +789,6 @@ static const shell_command_t shell_commands[] = {
     {"unsub", "unsubscribe from topic", cmd_unsub},
     {"will", "register a last will", cmd_will},
     {NULL, NULL, NULL}};
-
-// static char *server_ip = MQTT_BROKER_IP;
-
-
 
 static char *server_ip = MQTT_BROKER_IP;
 

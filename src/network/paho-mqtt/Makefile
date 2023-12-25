@@ -1,7 +1,7 @@
 APPLICATION = paho-mqtt
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= iotlab-a8-m3
+BOARD ?= iotlab-m3
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
@@ -16,6 +16,9 @@ QUIET ?= 1
 
 WIFI_SSID ?= "group12_ssid"
 WIFI_PASS ?= "group12_secure_123"
+
+MQTT_BROKER_IP=${BROKER_IP}
+CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'
 
 # Optionally include remoteDNS support. This includes resolution of names at an
 # upstream DNS server and the handling of RDNSS options in Router Advertisements
@@ -55,10 +58,21 @@ USEMODULE += sock_ip
 USEMODULE += sock_udp
 USEMODULE += sock_tcp
 
-USEMODULE += ztimer
+USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
+USEMODULE += ztimer_sec
+USEMODULE += ztimer_no_periph_rtt
 
 ####
+
+ifneq (,$(EMCUTE_ID))
+  CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
+endif
+
+ifneq (,$(CLIENT_TOPIC))
+  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
+endif
+
 
 include $(RIOTBASE)/Makefile.include
 

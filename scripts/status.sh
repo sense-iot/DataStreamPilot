@@ -30,6 +30,7 @@ BORDER_ROUTER_NODE=$(read_variable_from_file "BORDER_ROUTER_NODE")
 SENSOR_CONNECTED_NODE=$(read_variable_from_file "SENSOR_CONNECTED_NODE")
 DENOISER_NODE=$(read_variable_from_file "DENOISER_NODE")
 BORDER_ROUTER_NODE_a8=$(read_variable_from_file "BORDER_ROUTER_NODE_a8")
+COAP_SERVER_NODE=$(read_variable_from_file "COAP_SERVER_NODE")
 
 printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE: " "a8 - $GNRC_NETWORKING_NODE"
 printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE: " "m3 - $BORDER_ROUTER_NODE"
@@ -39,7 +40,7 @@ printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2: " "m3 - $MQTT_CLIENT_
 printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3: " "m3 - $MQTT_CLIENT_NODE_3"
 printf "%-50s %s\n" "DataStereamPilot: BROKER_DISCOVERY_NODE: " "m3 - $BROKER_DISCOVERY_NODE"
 printf "%-50s %s\n" "DataStereamPilot: COMPUTER_ENGINE_NODE: " "m3 - $COMPUTER_ENGINE_NODE"
-
+printf "%-50s %s\n" "DataStereamPilot: COAP_SERVER_NODE: " "m3 - $COAP_SERVER_NODE"
 
 echo " ----- M3 - A8 nodes ----- "
 echo "ssh root@node-a8-${GNRC_NETWORKING_NODE}  # mqtt broker"
@@ -51,7 +52,8 @@ echo "nc m3-${MQTT_CLIENT_NODE_1} 20000   # sensor 1"
 echo "nc m3-${MQTT_CLIENT_NODE_2} 20000   # sensor 2"
 echo "nc m3-${MQTT_CLIENT_NODE_3} 20000    # sensor 3"
 echo "nc m3-${BROKER_DISCOVERY_NODE} 20000 # BROKER_DISCOVERY_NODE"
-echo "nc m3-${COMPUTER_ENGINE_NODE} 20000 # BROKER_DISCOVERY_NODE"
+echo "nc m3-${COMPUTER_ENGINE_NODE} 20000 # COMPUTER_ENGINE_NODE"
+echo "nc m3-${COAP_SERVER_NODE} 20000 # COAP_SERVER_NODE"
 
 
 echo "Broker IP 1 : $(extract_global_ipv6)"

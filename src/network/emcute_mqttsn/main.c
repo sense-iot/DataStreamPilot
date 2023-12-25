@@ -31,6 +31,7 @@
 #include "ztimer.h"
 #include "shell.h"
 #include "mutex.h"
+#include "debug.h"
 
 #ifndef EMCUTE_ID
 #define EMCUTE_ID ("gertrud")
@@ -47,6 +48,7 @@ static emcute_sub_t subscriptions[NUMOFSUBS];
 static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
+#define NUM_SENSORS 3
 
 // Set z-score threshold (adjust based on your requirements)
 float z_threshold = 1.3;
@@ -73,41 +75,6 @@ void puts_append(const char *data)
     fclose(file);
 }
 
-char *readFirstLine(void)
-{
-    const char *filePath = "~/shared/logs/BROKER_IP.txt";
-    FILE *file = fopen(filePath, "r");
-    if (file == NULL)
-    {
-        perror("Error opening file");
-        puts("Error opening file");
-        return NULL;
-    }
-
-    char *ipAddress = malloc(MAX_IP_LENGTH + 1); // Allocate memory for the IP address
-    if (ipAddress == NULL)
-    {
-        perror("Memory allocation failed");
-        puts("Memory allocation failed");
-        fclose(file);
-        return NULL;
-    }
-
-    if (fgets(ipAddress, MAX_IP_LENGTH, file) == NULL)
-    {
-        perror("Error reading file");
-        puts("Error reading file");
-        free(ipAddress);
-        fclose(file);
-        return NULL;
-    }
-
-    ipAddress[strcspn(ipAddress, "\n")] = 0; // Remove newline character
-    fclose(file);
-
-    return ipAddress;
-}
-
 static void *emcute_thread(void *arg)
 {
     (void)arg;
@@ -129,7 +96,7 @@ static void on_pub_3(const emcute_topic_t *topic, void *data, size_t len)
         ztimer_sleep(ZTIMER_MSEC, 97);
     }
 
-    if (strcmp(topic->name, "sens3_temperature") != 0)
+    if (strcmp(topic->name, "s3") != 0)
     {
         ztimer_sleep(ZTIMER_MSEC, 120);
         return;
@@ -203,7 +170,7 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
 
-    if (strcmp(topic->name, "sens1_temperature") != 0)
+    if (strcmp(topic->name, "s1") != 0)
     {
         ztimer_sleep(ZTIMER_MSEC, 80);
         return;
@@ -267,7 +234,7 @@ static void on_pub_2(const emcute_topic_t *topic, void *data, size_t len)
         ztimer_sleep(ZTIMER_MSEC, 135);
     }
 
-    if (strcmp(topic->name, "sens2_temperature") != 0)
+    if (strcmp(topic->name, "s2") != 0)
     {
         ztimer_sleep(ZTIMER_MSEC, 113);
         return;
@@ -327,7 +294,7 @@ static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
         printf("\n");
     }
 
-    if (strcmp(topic->name, "sens1_temperature") == 0)
+    if (strcmp(topic->name, "s1") == 0)
     {
         if (sensor1_data == NULL) {
             sensor1_data = malloc(strlen(in) + 1);
@@ -335,7 +302,7 @@ static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
         }
 
     }
-    else if (strcmp(topic->name, "sens2_temperature") == 0)
+    else if (strcmp(topic->name, "s2") == 0)
     {
         if (sensor2_data == NULL) {
             sensor2_data = malloc(strlen(in) + 1);
@@ -825,22 +792,22 @@ int main(void)
     unsub_message[0] = "sub";
     cmd_con_count = 2;
 
-    unsub_message[1] = "sens1_temperature";
+    unsub_message[1] = "s1";
     cmd_unsub(cmd_con_count, unsub_message);
-    unsub_message[1] = "sens2_temperature";
+    unsub_message[1] = "s2";
     cmd_unsub(cmd_con_count, unsub_message);
-    unsub_message[1] = "sens3_temperature";
+    unsub_message[1] = "s3";
     cmd_unsub(cmd_con_count, unsub_message);
 
     char *sub_message[2];
     sub_message[0] = "sub";
     cmd_con_count = 2;
 
-    sub_message[1] = "sens1_temperature";
+    sub_message[1] = "s1";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_1);
-    sub_message[1] = "sens2_temperature";
+    sub_message[1] = "s2";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_2);
-    sub_message[1] = "sens3_temperature";
+    sub_message[1] = "s3";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_3);
 
     while (1)

@@ -509,36 +509,30 @@ flash_sensor() {
 }
 
 setup_and_check_sensor() {
-    local mqtt_client_node=$1
-    local emcute_id=$2
-    local client_topic=$3
-    local node_channel=$4
-    local file_to_check=$5
-    local prev_broker_ip=$6
-    local broker_ip=$7
-    local my_arch=$8
+    local my_arch=$1
 
-    export MQTT_CLIENT_NODE=$mqtt_client_node
-    export EMCUTE_ID=$emcute_id
-    export CLIENT_TOPIC=$client_topic
-    export NODE_CHANNEL=$node_channel
+    echo "DataStereamPilot: The file to check : $file_to_check."
+    echo "DataStereamPilot: My architecture $my_arch."
+    file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_${EMCUTE_ID}.elf
 
-    if [ "$prev_broker_ip" != "$broker_ip" ]; then
-        echo "DataStereamPilot: The broker IP has changed $broker_ip."
+    if [ ! -f "$file_to_check" ]; then
         source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+        echo "ELF NOT FOUND"
     else
-        echo "DataStereamPilot: The broker IP has not changed $broker_ip."
-
-        if [ ! -f "$file_to_check" ]; then
-            source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
-            echo "ELF NOT FOUND"
-        else
-            echo "File exists: $file_to_check"
-            ELF_FILE=$file_to_check
-            echo "Flashing sensor $emcute_id from root script"
-            flash_sensor "$my_arch" "$file_to_check" "$mqtt_client_node" "$emcute_id"
-        fi
+        echo "File exists: $file_to_check"
+        ELF_FILE=$file_to_check
+        echo "Flashing sensor $emcute_id from root script"
+        flash_sensor "$my_arch" "$file_to_check" "${MQTT_CLIENT_NODE}" "${EMCUTE_ID}"
     fi
+}
+
+write_and_print_variable() {
+    local var_name=$1
+    local var_value=$2
+    local print_prefix=$3
+
+    write_variable_to_file "$var_name" "$var_value"
+    printf "%-50s %s\n" "DataStereamPilot: $var_name:" "$print_prefix - $var_value"
 }
 
 export SENSE_FUNCTONS_ENV_UP=1

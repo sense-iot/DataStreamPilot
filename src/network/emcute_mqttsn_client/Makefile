@@ -22,32 +22,41 @@ USEMODULE += gnrc_ipv6_default
 USEMODULE += emcute
 # Add also the shell, some shell commands
 USEMODULE += shell
-USEMODULE += shell_cmds_default
-USEMODULE += ps
+#USEMODULE += shell_cmds_default
+#USEMODULE += ps
 # For testing we also include the ping command and some stats
-USEMODULE += gnrc_icmpv6_echo
+#USEMODULE += gnrc_icmpv6_echo
 # Optimize network stack to for use with a single network interface
 USEMODULE += gnrc_netif_single
 
-USEMODULE += gnrc_sixlowpan_router_default
+#USEMODULE += gnrc_sixlowpan_router_default
 
-# USEMODULE += ztimer_usec
+USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
-# USEMODULE += ztimer_sec
-# USEMODULE += ztimer_no_periph_rtt
+USEMODULE += ztimer_sec
+USEMODULE += ztimer_no_periph_rtt
+SEMODULE += gnrc_icmpv6_error
+USEMODULE += gnrc_icmpv6_echo
 
 USEMODULE += shell
-# USEMODULE += shell_cmds_default
-
-# # add routing support for sensor nodes
+# USEMODULE += gnrc_rpl
 # USEMODULE += auto_init_gnrc_rpl
+# USEMODULE += gnrc_ipv6_router_default
+# USEMODULE += gnrc_udp
 
-# SEMODULE += ps
-# USEMODULE += netstats_l2
-# USEMODULE += netstats_ipv6
-# USEMODULE += netstats_rpl
+USEMODULE += shell_commands
+USEMODULE += netstats_l2
+USEMODULE += netstats_ipv6
+USEMODULE += netstats_rpl
 
 USEMODULE += lps331ap
+USEMODULE += xtimer
+USEMODULE += od
+USEMODULE += fmt
+USEMODULE += shell
+USEMODULE += ps
+
+USEMODULE += random
 
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)
 ifneq (,$(EMCUTE_ID))

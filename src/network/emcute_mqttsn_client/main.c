@@ -101,7 +101,7 @@ int temp_sensor_reset(void)
     // LPSXXX_RATE_7HZ = 5,        /**< sample with 7Hz, default */
     //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
     //   LPSXXX_RATE_25HZ = 7
-
+    
     if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
     {
         puts("Sensor initialization failed");
@@ -112,7 +112,7 @@ int temp_sensor_reset(void)
     // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
     //  1      0000   1      0            0
     // 44
-    if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
+        if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
     {
         puts("Sensor reset failed");
         return 0;
@@ -128,6 +128,7 @@ int temp_sensor_reset(void)
         return 0;
     }
 
+    ztimer_sleep(ZTIMER_MSEC, 1000);
     if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
     {
         puts("Sensor enable failed");
@@ -320,32 +321,22 @@ void initizlize_mqtt_client(void)
     while (cmd_con(cmd_con_count, cmd_con_m))
     {
         printf("broker connection failed\n");
-        printf("Trying with a different broker\n");
+        printf("Trying again...\n");
 
         int randi = rand();
         float u1 = randi / RAND_MAX;                // Normalized to [0, 1]
-        int sleepDuration = (int)(u1 * 1000) + 500; // Convert to milliseconds (0 to 1000 ms range)
+        int sleepDuration = (int)(u1 * 5000) + 10000; // Convert to milliseconds (0 to 1000 ms range)
         printf("Sleeping for : %d ms\n", sleepDuration);
         ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }
     printf("connection okay\n");
-
-    char *will_m[3];
-    will_m[0] = "will";
-    will_m[1] = "dead_sensors";
-    will_m[2] = "I am dead";
-    int will_m_count = 3;
-
-    if (cmd_will(will_m_count, will_m))
-    {
-        printf("Last will failed\n");
-    }
-    printf("last will okay\n");
 }
 
 int main(void)
 {
     printf("Publish subscriber example - Group 12 MQTT\n");
+    printf("Emcute ID : %s\n", EMCUTE_ID);
+    printf("Topic : %s\n", CLIENT_TOPIC);
 
     initizlize_mqtt_client();
 
@@ -411,7 +402,7 @@ int main(void)
 
         int randi = rand();
         float u1 = randi / RAND_MAX;
-        int sleepDuration = (int)(u1 * 1000) + 1000; // delay of 1-2 seconds
+        int sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
         printf("Sleeping for : %d ms\n", sleepDuration);
         ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }

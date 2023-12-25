@@ -18,13 +18,11 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ${SENSE_HOME}/release/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
 
   if [ "$my_arch" = "iotlab-m3" ]; then
-      echo "Architecture is iotlab-m3."
       echo "Flashing new firmware for ${my_arch} node : ${MQTT_CLIENT_NODE}"
       flash_firmware ${EMCUTE_MQTSSN_CLIENT_EXE_NAME} ${MQTT_CLIENT_NODE}
       echo "nc m3-${MQTT_CLIENT_NODE} 20000"
   elif [ "$my_arch" = "iotlab-a8-m3" ]; then
       cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf
-      echo "Architecture is iotlab-a8-m3."
       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${MQTT_CLIENT_NODE} 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${EMCUTE_ID}.sh
       echo "ssh root@node-a8-${MQTT_CLIENT_NODE}"
   else

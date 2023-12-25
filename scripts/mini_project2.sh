@@ -4,7 +4,7 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=7
+M3_NODE_COUNT=8
 A8_NODE_COUNT=1
 EXPERIMENT_ID=0
 
@@ -40,25 +40,18 @@ export MQTT_CLIENT_NODE_2=${m3_nodes[3]}
 export MQTT_CLIENT_NODE_3=${m3_nodes[4]}
 export BROKER_DISCOVERY_NODE=${m3_nodes[5]}
 export COMPUTER_ENGINE_NODE=${m3_nodes[6]}
+export COAP_SERVER_NODE=${m3_nodes[7]}
 
-write_variable_to_file "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE"
-write_variable_to_file "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE"
-write_variable_to_file "DENOISER_NODE" "$DENOISER_NODE"
-write_variable_to_file "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1"
-write_variable_to_file "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2"
-write_variable_to_file "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3"
-write_variable_to_file "BROKER_DISCOVERY_NODE" "$BROKER_DISCOVERY_NODE"
-write_variable_to_file "COMPUTER_ENGINE_NODE" "$COMPUTER_ENGINE_NODE"
+write_and_print_variable "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE" "a8"
 
-printf "%-50s %s\n" "DataStereamPilot: GNRC_NETWORKING_NODE:" "a8 - $GNRC_NETWORKING_NODE"
-
-printf "%-50s %s\n" "DataStereamPilot: BORDER_ROUTER_NODE:" "m3 - $BORDER_ROUTER_NODE"
-printf "%-50s %s\n" "DataStereamPilot: DENOISER_NODE:" "m3 - $DENOISER_NODE"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_1:" "m3 - $MQTT_CLIENT_NODE_1"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_2:" "m3 - $MQTT_CLIENT_NODE_2"
-printf "%-50s %s\n" "DataStereamPilot: MQTT_CLIENT_NODE_3:" "m3 - $MQTT_CLIENT_NODE_3"
-printf "%-50s %s\n" "DataStereamPilot: BROKER_DISCOVERY_NODE:" "m3 - $BROKER_DISCOVERY_NODE"
-printf "%-50s %s\n" "DataStereamPilot: COMPUTER_ENGINE_NODE:" "m3 - $COMPUTER_ENGINE_NODE"
+write_and_print_variable "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE" "m3"
+write_and_print_variable "DENOISER_NODE" "$DENOISER_NODE" "m3"
+write_and_print_variable "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1" "m3"
+write_and_print_variable "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2" "m3"
+write_and_print_variable "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3" "m3"
+write_and_print_variable "BROKER_DISCOVERY_NODE" "$BROKER_DISCOVERY_NODE" "m3"
+write_and_print_variable "COMPUTER_ENGINE_NODE" "$COMPUTER_ENGINE_NODE" "m3"
+write_and_print_variable "COAP_SERVER_NODE" "$COAP_SERVER_NODE" "m3"
 
 echo "DataStereamPilot: I am sleeping for nodes to start..."
 sleep 5
@@ -69,13 +62,10 @@ source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
 echo "========= starting gnrc_networking node to flash broker ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-sleep 1
-echo "========= starting broker setup ========="
+sleep 4
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
-export BROKER_IP_2=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
-
 BROKER_DETAILS_FILE=~/shared/mqtt_broker_details.txt
 if [ ! -f "$BROKER_DETAILS_FILE" ]; then
     error_message="DataStereamPilot: ERROR: Broker failed"
@@ -90,10 +80,12 @@ fi
 
 echo "=============== Starting Denoiser ==================="
 
-export EMCUTE_ID="DENOISER"
 export DENOISER_NODE=${DENOISER_NODE}
 export EMCUTE_ID="DENOISER"
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
+
+
+# source ${SENSE_SCRIPTS_HOME}/coap_server.sh
 
 echo "=============== Starting sensors ==================="
 
@@ -103,26 +95,21 @@ echo "======== client 1 sensor ======================="
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
 export EMCUTE_ID="s1"
 export CLIENT_TOPIC="s1"
-file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_1.elf
-setup_and_check_sensor "${MQTT_CLIENT_NODE_1}" "${EMCUTE_ID}" "${CLIENT_TOPIC}" "${NODE_CHANNEL}" \
-"${file_to_check}" "$PREV_BROKER_IP" "$BROKER_IP" "$my_arch"
+export NODE_CHANNEL=${DEFAULT_CHANNEL}
+# setup_and_check_sensor "$my_arch"
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh.sh
 
-echo "======== client 2 sensor ======================="
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
 export EMCUTE_ID="s2"
 export CLIENT_TOPIC="s2"
-file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_2.elf
-setup_and_check_sensor "${MQTT_CLIENT_NODE_2}" "${EMCUTE_ID}" "${CLIENT_TOPIC}" "${NODE_CHANNEL}" \
-"${file_to_check}" "$PREV_BROKER_IP" "$BROKER_IP" "$my_arch"
+# setup_and_check_sensor "$my_arch"
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh.sh
 
-# echo "======== client 3 sensor ======================="
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
 export EMCUTE_ID="s3"
 export CLIENT_TOPIC="s3"
-export NODE_CHANNEL=${DEFAULT_CHANNEL}
-file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_SENSOR_3.elf
-setup_and_check_sensor "${MQTT_CLIENT_NODE_3}" "${EMCUTE_ID}" "${CLIENT_TOPIC}" "${NODE_CHANNEL}" \
-"${file_to_check}" "$PREV_BROKER_IP" "$BROKER_IP" "$my_arch"
+# setup_and_check_sensor "$my_arch"
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh.sh
 
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh

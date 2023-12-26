@@ -16,12 +16,176 @@
 #include "net/utils.h"
 #include "od.h"
 #include "ztimer.h"
+#include "net/emcute.h"
+#include "mutex.h"
 
 #include "gcoap_example.h"
 
 #define ENABLE_DEBUG 1
 #include "debug.h"
 
+#define EMCUTE_PRIO (THREAD_PRIORITY_MAIN - 1)
+#define NUMOFSUBS (16U)
+#define TOPIC_MAXLEN (64U)
+
+static char stack[THREAD_STACKSIZE_DEFAULT];
+static msg_t queue[8];
+
+static emcute_sub_t subscriptions[NUMOFSUBS];
+
+#define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
+
+#define EMCUTE_ID ("compute_engine")
+
+static char *server_ip = MQTT_BROKER_IP;
+
+static mutex_t cb_lock = MUTEX_INIT;
+
+char *denoised_data = NULL;
+
+static int cmd_sub_1(int argc, char **argv, emcute_cb_t cb)
+{
+  unsigned flags = EMCUTE_QOS_0;
+
+  if (argc < 2)
+  {
+    printf("usage: %s <topic name> [QoS level]\n", argv[0]);
+    return 1;
+  }
+
+  if (strlen(argv[1]) > TOPIC_MAXLEN)
+  {
+    puts("error: topic name exceeds maximum possible size");
+    return 1;
+  }
+  if (argc >= 3)
+  {
+    flags |= get_qos(argv[2]);
+  }
+
+  /* find empty subscription slot */
+  unsigned i = 0;
+  for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
+  {
+  }
+  if (i == NUMOFSUBS)
+  {
+    puts("error: no memory to store new subscriptions");
+    return 1;
+  }
+
+  subscriptions[i].cb = cb;
+  strcpy(topics[i], argv[1]);
+  subscriptions[i].topic.name = topics[i];
+  if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
+  {
+    printf("error: unable to subscribe to %s\n", argv[1]);
+    return 1;
+  }
+
+  printf("Now subscribed to %s\n", argv[1]);
+  return 0;
+}
+
+static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
+{
+  char *in = (char *)data;
+
+  printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
+  printf("Data : %s \n", in);
+
+  if (denoised_data == NULL)
+  {
+    denoised_data = malloc(len + 1);
+    strncpy(denoised_data, in, len);
+    denoised_data[len] = '\0';
+  }
+  else
+  {
+    free(denoised_data);
+    denoised_data = malloc(len + 1);
+    strncpy(denoised_data, in, len);
+    denoised_data[len] = '\0';
+  }
+
+  printf("Denoised data : %s \n", denoised_data);
+
+}
+
+static int cmd_sub_1(int argc, char **argv, emcute_cb_t cb)
+{
+  unsigned flags = EMCUTE_QOS_0;
+
+  if (argc < 2)
+  {
+    printf("usage: %s <topic name> [QoS level]\n", argv[0]);
+    return 1;
+  }
+
+  if (strlen(argv[1]) > TOPIC_MAXLEN)
+  {
+    puts("error: topic name exceeds maximum possible size");
+    return 1;
+  }
+  if (argc >= 3)
+  {
+    flags |= get_qos(argv[2]);
+  }
+
+  /* find empty subscription slot */
+  unsigned i = 0;
+  for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
+  {
+  }
+  if (i == NUMOFSUBS)
+  {
+    puts("error: no memory to store new subscriptions");
+    return 1;
+  }
+
+  subscriptions[i].cb = cb;
+  strcpy(topics[i], argv[1]);
+  subscriptions[i].topic.name = topics[i];
+  if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
+  {
+    printf("error: unable to subscribe to %s\n", argv[1]);
+    return 1;
+  }
+
+  printf("Now subscribed to %s\n", argv[1]);
+  return 0;
+}
+
+static int cmd_unsub(int argc, char **argv)
+{
+  if (argc < 2)
+  {
+    printf("usage %s <topic name>\n", argv[0]);
+    return 1;
+  }
+
+  /* find subscriptions entry */
+  for (unsigned i = 0; i < NUMOFSUBS; i++)
+  {
+    if (subscriptions[i].topic.name &&
+        (strcmp(subscriptions[i].topic.name, argv[1]) == 0))
+    {
+      if (emcute_unsub(&subscriptions[i]) == EMCUTE_OK)
+      {
+        memset(&subscriptions[i], 0, sizeof(emcute_sub_t));
+        printf("Unsubscribed from '%s'\n", argv[1]);
+      }
+      else
+      {
+        printf("Unsubscription form '%s' failed\n", argv[1]);
+      }
+      return 0;
+    }
+  }
+
+  printf("error: no subscription for topic '%s' found\n", argv[1]);
+  return 1;
+}
 
 typedef struct {
   char buffer[128];
@@ -78,10 +242,28 @@ struct LocationMapping locationMap[] = {
     {"strasbourg", 0b101},
     {NULL, 0}};
 
+  
+
+void unsubscribeFromTopics(void)
+{
+  char *unsub_message[2];
+  unsub_message[0] = "sub";
+  unsub_message[1] = "d";
+  cmd_unsub(2, unsub_message);
+}
+
+void subscribeToTopics(void)
+{
+  char *sub_message[2];
+  sub_message[0] = "sub";
+  sub_message[1] = "d";
+  cmd_sub_1(2, sub_message, on_pub);
+}
+
 int main(void) {
 
-  srand(evtimer_now_msec());
-  
+  unsubscribeFromTopics();
+  subscribeToTopics();
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
 
   int counter = 0;

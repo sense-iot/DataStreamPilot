@@ -13,9 +13,6 @@ ifneq (,$(EMCUTE_ID))
   CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
 endif
 
-ifneq (,$(CLIENT_TOPIC))
-  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
-endif
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
@@ -30,6 +27,7 @@ USEMODULE += ztimer_msec
 USEMODULE += shell
 USEMODULE += lps331ap
 USEMODULE += random
+USEMODULE += emcute
 
 DEVELHELP ?= 1
 

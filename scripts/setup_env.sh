@@ -78,8 +78,6 @@ else
     echo "Invalid SENSE_SITE value. Please set to 'grenoble' or 'paris'."
 fi
 
-export ARCH=iotlab-m3
-
 # values are from 11-26
 export DEFAULT_CHANNEL=22
 export DEFAULT_CHANNEL_2=23

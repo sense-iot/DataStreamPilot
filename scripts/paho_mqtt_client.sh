@@ -18,7 +18,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp ${PAHO_MQTT_HOME}/bin/${my_arch}/${PAHO_MQTT_EXE_NAME}.elf ${SENSE_HOME}/release/${PAHO_MQTT_EXE_NAME}_${EMCUTE_ID}.elf
 
   if [ "$my_arch" = "iotlab-m3" ]; then
-      echo "Flashing new firmware for ${my_arch} node : ${MQTT_CLIENT_NODE}"
+      echo "DataStreamPilot: Flashing new firmware for ${my_arch} node : ${MQTT_CLIENT_NODE}"
       flash_firmware ${PAHO_MQTT_EXE_NAME} ${MQTT_CLIENT_NODE}
       echo "nc m3-${MQTT_CLIENT_NODE} 20000"
   elif [ "$my_arch" = "iotlab-a8-m3" ]; then

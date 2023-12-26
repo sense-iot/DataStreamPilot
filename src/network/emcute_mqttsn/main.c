@@ -147,6 +147,29 @@ int filter_outliers(int readings[NUM_SENSORS], float z_threshold) {
     return (int)new_mean_reading;
 }
 
+static int cmd_pub_simple(char *data)
+{
+    emcute_topic_t t;
+    unsigned flags = EMCUTE_QOS_0;
+
+    t.name = my_topic;
+    if (emcute_reg(&t) != EMCUTE_OK)
+    {
+        printf("error: unable to obtain topic ID : %s\n", my_topic);
+        return 1;
+    }
+
+    // printf("pub with topic: %s and name %s and flags 0x%02x\n", my_topic, data, (int)flags);
+
+    /* step 2: publish data */
+    if (emcute_pub(&t, data, strlen(data), flags) != EMCUTE_OK)
+    {
+        printf("Failed\n");
+        return 1;
+    }
+    return 0;
+}
+
 static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
@@ -184,9 +207,10 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
         // cmd_pub_simple(avg_temp); Define this method
         char temp_str[10];
         sprintf(temp_str, "%d", avg_temp);
+        printf("Temp Str: %s\n", temp_str);
         if (cmd_pub_simple(temp_str))
         {
-            printf("No of ele: %i\n", numElements);
+            printf("Error publishing data\n");
         }
     }
 

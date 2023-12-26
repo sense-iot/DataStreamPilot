@@ -389,7 +389,7 @@ int main(void)
                 printf("Temp Str: %s\n", temp_str);
                 if (cmd_pub_simple(temp_str))
                 {
-                    printf("No of ele: %i\n", numElements);
+                    printf("Error publishing data\n");
                 }
 
                 for (int i = 0; i < array_length - 1; ++i)

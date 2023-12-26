@@ -5,7 +5,7 @@
 
 ## Overview
 
-This project implements a cloud-based solution for handling CoAP data. The server listens for CoAP data, writes it into an InfluxDB database, and visualizes the data using Grafana. The implementation utilizes **Docker for easy deployment**, and the entire system can be deployed on an AWS EC2 instance.
+This section explains the setup of the aws cloud server for handling CoAP data. The server listens for CoAP data, writes it into an InfluxDB database, and visualizes the data using Grafana. The implementation utilizes **Docker for easy deployment**, and the entire system can be deployed on an AWS EC2 instance.
 
 ## Prerequisites
 
@@ -57,8 +57,6 @@ This project implements a cloud-based solution for handling CoAP data. The serve
 
 ## Setting up the server
 
-## Running the CoAP Server using Docker
-
 1. **Clone the Repository and**
 
    ```bash
@@ -70,7 +68,8 @@ This project implements a cloud-based solution for handling CoAP data. The serve
 
    Run the below script to install docker
    ```bash
-   ./amazon_ubuntu_docker_install.sh
+   chmod +x install_docker.sh
+   ./install_docker.sh
    ```
 
 3. **Build and Deploy the CoAP Server, Influxdb and Grafana**

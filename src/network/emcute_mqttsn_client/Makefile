@@ -4,7 +4,7 @@ APPLICATION = emcute_mqttsn_client
 # If no BOARD is found in the environment, use this default:
 BOARD ?= iotlab-m3
 
-CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common 
+CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common -Wno-unused-function
 
 MQTT_BROKER_IP=${BROKER_IP}
 CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'

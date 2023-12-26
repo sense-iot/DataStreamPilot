@@ -104,7 +104,7 @@ int temp_sensor_reset(void)
     // 44
     if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
     {
-        print("Sensor reset failed\n");
+        printf("Sensor reset failed\n");
         return 0;
     }
 
@@ -112,7 +112,7 @@ int temp_sensor_reset(void)
 
     if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
     {
-        print("Sensor initialization failed\n");
+        printf("Sensor initialization failed\n");
         return 0;
     }
 
@@ -122,14 +122,14 @@ int temp_sensor_reset(void)
     // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
     if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
     {
-        print("Sensor enable failed\n");
+        printf("Sensor enable failed\n");
         return 0;
     }
 
     ztimer_sleep(ZTIMER_MSEC, 4000);
     if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
     {
-        print("Sensor enable failed\n");
+        printf("Sensor enable failed\n");
         return 0;
     }
 
@@ -331,10 +331,9 @@ int main(void)
         int16_t temp = 0;
         if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK)
         {
-            // DEBUG_PRINT("Temperature: %i.%u°C\n", (temp / 100), (temp % 100));
 
             int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-            DEBUG_PRINT("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+            printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
             if (array_length < 7)
             {
                 data.tempList[array_length++] = temp_n_noise;

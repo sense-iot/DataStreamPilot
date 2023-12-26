@@ -75,7 +75,7 @@ if [ ! -f "$BROKER_DETAILS_FILE" ]; then
     exit
 fi
 
-echo "=============== Starting Compute Enginer ==================="
+echo "=============== Starting Compute Engine ==================="
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 
 echo "=============== Starting Denoiser ==================="

@@ -392,6 +392,18 @@ static unsigned char readbuf[BUF_SIZE];
 static char *server_ip = MQTT_BROKER_IP;
 static char *my_topic = CLIENT_TOPIC;
 
+float generate_normal_random(float stddev)
+{
+    float M_PI = 3.1415926535;
+
+    // Box-Muller transform to generate random numbers with normal distribution
+    float u1 = rand() / (float)RAND_MAX;
+    float u2 = rand() / (float)RAND_MAX;
+    float z = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
+
+    return stddev * z;
+}
+
 float add_noise(float stddev)
 {
     int num;
@@ -450,7 +462,7 @@ int main(void)
     int cmd_pub_count = 3;
     char *cmd_pub[cmd_pub_count];
     cmd_pub[0] = "pub";
-    cmd_pub[1] = CLIENT_TOPIC;
+    cmd_pub[1] = my_topic;
     char temp_str[10];
     cmd_pub[2] = temp_str;
 

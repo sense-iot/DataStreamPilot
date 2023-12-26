@@ -80,11 +80,7 @@ int temp_sensor_reset(void)
   //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
   //   LPSXXX_RATE_25HZ = 7
 
-  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
-  {
-    puts("Sensor initialization failed");
-    return 0;
-  }
+  ztimer_sleep(ZTIMER_MSEC, 5000);
 
   // 7       6543    2          1      0
   // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
@@ -98,6 +94,12 @@ int temp_sensor_reset(void)
 
   ztimer_sleep(ZTIMER_MSEC, 5000);
 
+  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
+  {
+    puts("Sensor initialization failed");
+    return 0;
+  }
+
   // 0x40 -- 01000000
   // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
   if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
@@ -105,6 +107,7 @@ int temp_sensor_reset(void)
     puts("Sensor enable failed");
     return 0;
   }
+  ztimer_sleep(ZTIMER_MSEC, 5000);
 
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
@@ -112,7 +115,7 @@ int temp_sensor_reset(void)
     return 0;
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 1000);
+  ztimer_sleep(ZTIMER_MSEC, 5000);
   return 1;
 }
 
@@ -177,17 +180,16 @@ unsigned int getBinaryValue(const struct LocationMapping *mapping, const char *l
     return 0;
 }
 
-int main(void) {
+struct LocationMapping locationMap[] = {
+    {"UNKNOWN", 0b000},
+    {"grenoble", 0b001},
+    {"paris", 0b010},
+    {"lille", 0b011},
+    {"saclay", 0b100},
+    {"strasbourg", 0b101},
+    {NULL, 0}};
 
-  struct LocationMapping locationMap[] = {
-        {"UNKNOWN", 0b000},
-        {"grenoble", 0b001},
-        {"paris", 0b010},
-        {"lille", 0b011},
-        {"saclay", 0b100},
-        {"strasbourg", 0b101},
-        {NULL, 0}
-    };
+int main(void) {
 
   srand(evtimer_now_msec());
   

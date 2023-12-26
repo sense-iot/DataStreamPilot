@@ -268,7 +268,7 @@ submit_sensor_node_job() {
 wait_for_job() {
     local n_node_job_id="$1"
 
-    echo "DataStereamPilot: iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
+    echo "DataStreamPilot: iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
     iotlab-experiment wait --timeout "${JOB_WAIT_TIMEOUT}" --cancel-on-timeout -i "${n_node_job_id}" --state Running
 }
 
@@ -511,8 +511,8 @@ flash_sensor() {
 setup_and_check_sensor() {
     local my_arch=$1
 
-    echo "DataStereamPilot: The file to check : $file_to_check."
-    echo "DataStereamPilot: My architecture $my_arch."
+    echo "DataStreamPilot: The file to check : $file_to_check."
+    echo "DataStreamPilot: My architecture $my_arch."
     file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_${EMCUTE_ID}.elf
 
     if [ ! -f "$file_to_check" ]; then
@@ -532,7 +532,7 @@ write_and_print_variable() {
     local print_prefix=$3
 
     write_variable_to_file "$var_name" "$var_value"
-    printf "%-50s %s\n" "DataStereamPilot: $var_name:" "$print_prefix - $var_value"
+    printf "%-50s %s\n" "DataStreamPilot: $var_name:" "$print_prefix - $var_value"
 }
 
 export SENSE_FUNCTONS_ENV_UP=1

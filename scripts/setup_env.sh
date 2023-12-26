@@ -15,7 +15,7 @@ export EXPERIMENT_TIME=180
 # grenoble, paris, lille, saclay, strasbourg
 export SENSE_SITE=grenoble
 
-printf "%-50s %s\n" "DataStereamPilot: SENSE_SITE:" "$SENSE_SITE"
+printf "%-50s %s\n" "DataStreamPilot: SENSE_SITE:" "$SENSE_SITE"
 
 # Get the current hostname
 current_hostname=$(hostname)

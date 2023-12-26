@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -n "$SENSE_GNRC_NETWORKING_NODE_UP" ]; then
-  echo "DataStereamPilot: The broker bare bone node is already running."
+  echo "DataStreamPilot: The broker bare bone node is already running."
   exit 0
 fi
 
@@ -20,7 +20,7 @@ if [ ! -f "$file_to_check" ]; then
   fi
   ELF_FILE=${BORDER_ROUTER_HOME}/bin/${ARCH}/${BORDER_ROUTER_EXE_NAME}.elf
 else
-  echo "DataStereamPilot: File exists: $file_to_check"
+  echo "DataStreamPilot: File exists: $file_to_check"
   ELF_FILE=$file_to_check
 fi
 
@@ -29,12 +29,12 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
   cp $ELF_FILE ~/A8
 
-  echo "DataStereamPilot: Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"
+  echo "DataStreamPilot: Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"
   until ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/flash.sh; do
-    echo "DataStereamPilot: ------------------------------------------"
-    echo "DataStereamPilot: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/flash.sh"
-    echo "DataStereamPilot: Error: ssh failed to broker. Retrying...!"
-    echo "DataStereamPilot: ------------------------------------------"
+    echo "DataStreamPilot: ------------------------------------------"
+    echo "DataStreamPilot: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${GNRC_NETWORKING_NODE} 'bash -s' <${SENSE_HOME}/src/network/gnrc_networking_a8/flash.sh"
+    echo "DataStreamPilot: Error: ssh failed to broker. Retrying...!"
+    echo "DataStreamPilot: ------------------------------------------"
     sleep 10
   done
 

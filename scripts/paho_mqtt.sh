@@ -4,11 +4,11 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 if [ "$PREV_BROKER_IP" != "$BROKER_IP" ]; then
-    echo "DataStereamPilot: The broker IP has changed ${BROKER_IP}."
+    echo "DataStreamPilot: The broker IP has changed ${BROKER_IP}."
     export PREV_BROKER_IP=${BROKER_IP}
     build_wireless_firmware ${PAHO_MQTT_HOME} ${EMCUTE_MQTSSN_EXE_NAME} iotlab-a8-m3
 else
-    echo "DataStereamPilot: The broker IP has not changed ${BROKER_IP}."
+    echo "DataStreamPilot: The broker IP has not changed ${BROKER_IP}."
     export PREV_BROKER_IP=${BROKER_IP}
     build_wireless_firmware_cached ${PAHO_MQTT_HOME} ${EMCUTE_MQTSSN_EXE_NAME} iotlab-a8-m3
 fi

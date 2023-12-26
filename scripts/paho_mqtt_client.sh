@@ -6,6 +6,8 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 my_arch=${ARCH}
 
 echo "============== Building on channel ${NODE_CHANNEL} ================="
+echo "DataStreamPilot: Building PAHO MQTT Client for ${my_arch} node : ${MQTT_CLIENT_NODE}"
+echo "DataStreamPilot EMCUTE_ID: ${EMCUTE_ID}"
 
 build_wireless_firmware ${PAHO_MQTT_HOME} ${PAHO_MQTT_EXE_NAME} ${my_arch} ${NODE_CHANNEL}
 build_status=$?

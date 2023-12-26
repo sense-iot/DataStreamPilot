@@ -11,14 +11,14 @@ A8_NODE_COUNT=1
 EXPERIMENT_ID=0
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
-    echo "DataStereamPilot: submitting a new experiment"
+    echo "DataStreamPilot: submitting a new experiment"
     experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
     wait_for_job "${EXPERIMENT_ID}"
     # iotlab-ssh --verbose wait-for-boot
 else
     EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
-    echo "DataStereamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
+    echo "DataStreamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
     wait_for_job "${EXPERIMENT_ID}"
 fi
 
@@ -27,7 +27,7 @@ nodes_list=$(iotlab-experiment get -i ${EXPERIMENT_ID} -p)
 extract_and_categorize_nodes "$nodes_list"
 
 if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
-    echo "DataStereamPilot: [Error] Not enough m3 nodes."
+    echo "DataStreamPilot: [Error] Not enough m3 nodes."
     exit 1
 fi
 
@@ -56,7 +56,7 @@ write_and_print_variable "BROKER_DISCOVERY_NODE" "$BROKER_DISCOVERY_NODE" "m3"
 write_and_print_variable "COMPUTER_ENGINE_NODE" "$COMPUTER_ENGINE_NODE" "m3"
 write_and_print_variable "COAP_SERVER_NODE" "$COAP_SERVER_NODE" "m3"
 
-echo "DataStereamPilot: I am sleeping for nodes to start..."
+echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5
 
 echo "================ Border Router and Broker node =========================="
@@ -71,7 +71,7 @@ export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
 BROKER_DETAILS_FILE=~/shared/mqtt_broker_details.txt
 if [ ! -f "$BROKER_DETAILS_FILE" ]; then
-    error_message="DataStereamPilot: ERROR: Broker failed"
+    error_message="DataStreamPilot: ERROR: Broker failed"
     # Displaying the Error Message in a Box
     echo "****************************************************"
     echo "*                                                  *"

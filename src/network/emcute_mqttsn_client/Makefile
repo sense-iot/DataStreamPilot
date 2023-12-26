@@ -14,29 +14,30 @@ RIOTBASE ?= $(CURDIR)/../../../external/RIOT
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
-USEMODULE += netdev_default
+USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif
+USEMODULE += gnrc_sock_udp
 # Specify the mandatory networking modules for IPv6
 USEMODULE += gnrc_ipv6_default
 # Include MQTT-SN
 USEMODULE += emcute
 # Add also the shell, some shell commands
-USEMODULE += shell
-#USEMODULE += shell_cmds_default
+# USEMODULE += shell
+# USEMODULE += shell_commands
 #USEMODULE += ps
 # For testing we also include the ping command and some stats
 #USEMODULE += gnrc_icmpv6_echo
 # Optimize network stack to for use with a single network interface
-USEMODULE += gnrc_netif_single
+# USEMODULE += gnrc_netif_single
 
 #USEMODULE += gnrc_sixlowpan_router_default
 
-USEMODULE += ztimer_usec
+# USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
 USEMODULE += ztimer_sec
-USEMODULE += ztimer_no_periph_rtt
-SEMODULE += gnrc_icmpv6_error
-USEMODULE += gnrc_icmpv6_echo
+# USEMODULE += ztimer_no_periph_rtt
+# SEMODULE += gnrc_icmpv6_error
+# USEMODULE += gnrc_icmpv6_echo
 
 USEMODULE += shell
 # USEMODULE += gnrc_rpl
@@ -44,18 +45,7 @@ USEMODULE += shell
 # USEMODULE += gnrc_ipv6_router_default
 # USEMODULE += gnrc_udp
 
-USEMODULE += shell_commands
-USEMODULE += netstats_l2
-USEMODULE += netstats_ipv6
-USEMODULE += netstats_rpl
-
 USEMODULE += lps331ap
-USEMODULE += xtimer
-USEMODULE += od
-USEMODULE += fmt
-USEMODULE += shell
-USEMODULE += ps
-
 USEMODULE += random
 
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)

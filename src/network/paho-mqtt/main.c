@@ -518,7 +518,7 @@ int main(void)
 
         int randi = rand();
         float u1 = randi / RAND_MAX;
-        int sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
+        int sleepDuration = (int)(u1 * 5000) + 30000; // delay of 1-2 seconds
         printf("Sleeping for : %d ms\n", sleepDuration);
         ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }

@@ -96,20 +96,20 @@ export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
 export EMCUTE_ID="s1"
 export CLIENT_TOPIC="s1"
 export NODE_CHANNEL=${DEFAULT_CHANNEL}
-# setup_and_check_sensor "$my_arch"
-source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
+setup_and_check_sensor "$my_arch"
+# source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
 export EMCUTE_ID="s2"
 export CLIENT_TOPIC="s2"
-# setup_and_check_sensor "$my_arch"
-source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
+setup_and_check_sensor "$my_arch"
+# source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
 export EMCUTE_ID="s3"
 export CLIENT_TOPIC="s3"
-# setup_and_check_sensor "$my_arch"
-source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
+setup_and_check_sensor "$my_arch"
+# source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh

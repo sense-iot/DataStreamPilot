@@ -204,7 +204,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "temperature",
+          "measurement": "saclay",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",

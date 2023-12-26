@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/krv/projects/DataStreamPilot/external/RIOT/examples/network/gcoap",
-      "program": "/home/krv/projects/DataStreamPilot/external/RIOT/examples/network/gcoap/build/Debug/outDebug",
+      "cwd": "/home/krv/projects/DataStreamPilot/src/network/paho-mqtt",
+      "program": "/home/krv/projects/DataStreamPilot/src/network/paho-mqtt/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

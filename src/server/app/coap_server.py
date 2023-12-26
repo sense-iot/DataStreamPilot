@@ -28,10 +28,10 @@ class Temperature(resource.Resource):
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"Received message: {payload}")
 
-        decodedValues, filteredValues = await decodeTemperature(payload['site'], payload['temperature'])
+        decodedValues, filteredValues = await decodeTemperature(payload['s'], payload['t'], payload['b'])
         logger.debug(f"Decoded values: {decodedValues}, Filtered values: {filteredValues}")
 
-        recordedFlag = await sendInfluxdb(decodedValues, payload['site'], filteredValues)
+        recordedFlag = await sendInfluxdb(decodedValues, payload['s'], filteredValues)
         logger.debug(f"Recorded flag: {recordedFlag}")
 
         return aiocoap.Message(content_format=0,

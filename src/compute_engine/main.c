@@ -205,7 +205,8 @@ int main(void) {
   while (1) {
     
     int16_t temp = 0;
-    
+    int is_base = 0;
+
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK) {
 
       char temp_str[10];
@@ -214,15 +215,18 @@ int main(void) {
       temp += (int) add_noise(789.2);
 
       DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
+      
+      counter = counter % 10;
 
       if (counter == 0) {
         base_value = temp;
         sprintf(temp_str, "%i,", temp);
         strcat(data.buffer, temp_str);
+        is_base = 1;
       }
       else {
-        temp -= base_value;// threshold = 128
-        temp = (temp < -128) ? -128 : (temp > 127) ? 127 : temp;
+        temp -= base_value;
+        temp = (temp < -128) ? -128 : (temp > 127) ? 127 : temp; // threshold = 128
         sprintf(temp_str, "%i,", temp);
         strcat(data.buffer, temp_str);
       }
@@ -231,12 +235,6 @@ int main(void) {
       sprintf(parity_bit, "%i,", parity);
       strcat(data.buffer, parity_bit);
 
-      counter++;
-
-    }
-
-    if (counter == 10) {
-
       DEBUG_PRINT("Data: %s\n", data.buffer);
       DEBUG_PRINT("site: %d\n", site_name);
       ztimer_sleep(ZTIMER_MSEC, 1000);
@@ -244,8 +242,8 @@ int main(void) {
       // Create a JSON-like string manually
       char json_payload[MAX_JSON_PAYLOAD_SIZE];
       int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                   "{\"site\": \"%d\", \"temperature\": \"%s\"}",
-                                   site_name, data.buffer);
+                                   "{\"s\": \"%d\", \"t\": \"%s\", \"b\": \"%d\"}",
+                                   site_name, data.buffer, is_base);
 
       // Check if snprintf was successful
       if (snprintf_result < 0 || snprintf_result >= (int) sizeof(json_payload)) {
@@ -259,7 +257,8 @@ int main(void) {
 
       gcoap_post(json_payload, TEMP);
       memset(data.buffer, 0, sizeof(data.buffer));
-      counter = 0;
+
+      counter++;
     }
 
     ztimer_sleep(ZTIMER_MSEC, 1000);

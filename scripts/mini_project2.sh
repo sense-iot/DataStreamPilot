@@ -3,6 +3,8 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
+export ARCH=native
+
 EXPERIMENT_NAME="mini-project-2-group-12"
 M3_NODE_COUNT=8
 A8_NODE_COUNT=1
@@ -29,6 +31,7 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
     exit 1
 fi
 
+export my_arch=${ARCH}
 # assign a8 nodes
 export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 
@@ -89,27 +92,24 @@ source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
 
 echo "=============== Starting sensors ==================="
 
-my_arch=iotlab-m3
-
-echo "======== client 1 sensor ======================="
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
 export EMCUTE_ID="s1"
 export CLIENT_TOPIC="s1"
 export NODE_CHANNEL=${DEFAULT_CHANNEL}
 # setup_and_check_sensor "$my_arch"
-source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh.sh
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
 export EMCUTE_ID="s2"
 export CLIENT_TOPIC="s2"
 # setup_and_check_sensor "$my_arch"
-source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh.sh
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
 export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
 export EMCUTE_ID="s3"
 export CLIENT_TOPIC="s3"
 # setup_and_check_sensor "$my_arch"
-source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh.sh
+source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
 echo "======================================================== $ARCH"
 # source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh

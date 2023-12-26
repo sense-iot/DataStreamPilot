@@ -51,7 +51,7 @@
   "graphTooltip": 0,
   "id": null,
   "links": [],
-  "liveNow": false,
+  "liveNow": true,
   "panels": [
     {
       "datasource": {
@@ -185,23 +185,23 @@
       },
       "targets": [
         {
-          "alias": "temperature",
+          "alias": "saclay",
           "datasource": {
-            "uid": "ds_influxdb",
-            "type": "influxdb"
+            "type": "influxdb",
+            "uid": "${DS_iotdb}"
           },
           "groupBy": [
             {
-              "type": "time",
               "params": [
-                "$__interval"
-              ]
+                "10s"
+              ],
+              "type": "time"
             },
             {
-              "type": "fill",
               "params": [
-                "none"
-              ]
+                "previous"
+              ],
+              "type": "fill"
             }
           ],
           "measurement": "saclay",
@@ -209,7 +209,6 @@
           "policy": "default",
           "refId": "A",
           "resultFormat": "time_series",
-          "tags": [],
           "select": [
             [
               {
@@ -223,6 +222,8 @@
                 "type": "mean"
               }
             ]
+          ],
+          "tags": [
           ]
         }
       ],

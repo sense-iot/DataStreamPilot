@@ -122,7 +122,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "temperature"
+              "options": "saclay"
             },
             "properties": [
               {
@@ -204,7 +204,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "temperature",
+          "measurement": "saclay",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -227,7 +227,7 @@
             {
               "key": "place::tag",
               "operator": "=",
-              "value": "testbed_sensor1"
+              "value": "saclay"
             }
           ]
         }

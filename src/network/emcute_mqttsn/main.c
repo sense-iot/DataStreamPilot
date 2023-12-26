@@ -47,6 +47,9 @@ static msg_t queue[8];
 static emcute_sub_t subscriptions[NUMOFSUBS];
 static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
+static char *server_ip = MQTT_BROKER_IP;
+static char *my_topic = CLIENT_TOPIC;
+
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
 #define NUM_SENSORS 3
 
@@ -179,8 +182,12 @@ static void on_pub_1(const emcute_topic_t *topic, void *data, size_t len)
 
         int avg_temp = filter_outliers(sensor_readings, z_threshold);
         // cmd_pub_simple(avg_temp); Define this method
-
-
+        char temp_str[10];
+        sprintf(temp_str, "%d", avg_temp);
+        if (cmd_pub_simple(temp_str))
+        {
+            printf("No of ele: %i\n", numElements);
+        }
     }
 
     if (sensor1_data == NULL)
@@ -664,13 +671,12 @@ static const shell_command_t shell_commands[] = {
 
 static char *server_ip = MQTT_BROKER_IP;
 
-int main(void)
+void initizlize_mqtt_client(void)
 {
-    printf("Publish subscriber example - Group 12 MQTT\n");
     msg_init_queue(queue, ARRAY_SIZE(queue));
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
-
     printf("memset okay\n");
+
     char *cmd_con_m[3];
     cmd_con_m[0] = "con";
     cmd_con_m[1] = server_ip;
@@ -686,13 +692,18 @@ int main(void)
     while (cmd_con(cmd_con_count, cmd_con_m))
     {
         printf("broker connection failed\n");
-        float u1 = (float)rand() / RAND_MAX;        // Normalized to [0, 1]
-        int sleepDuration = (int)(u1 * 1000) + 500; // Convert to milliseconds (0 to 1000 ms range)
+        printf("Trying again...\n");
+
+        int randi = rand();
+        float u1 = randi / RAND_MAX;                  // Normalized to [0, 1]
+        int sleepDuration = (int)(u1 * 5000) + 10000; // Convert to milliseconds (0 to 1000 ms range)
         printf("Sleeping for : %d ms\n", sleepDuration);
         ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }
     printf("connection okay\n");
+}
 
+void unsubscribeFromTopics(void) {
     char *unsub_message[2];
     unsub_message[0] = "sub";
     cmd_con_count = 2;
@@ -703,22 +714,38 @@ int main(void)
     cmd_unsub(cmd_con_count, unsub_message);
     unsub_message[1] = "s3";
     cmd_unsub(cmd_con_count, unsub_message);
+}
 
+void subscribeToTopics(void) {
     char *sub_message[2];
     sub_message[0] = "sub";
     cmd_con_count = 2;
-
     sub_message[1] = "s1";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_1);
     sub_message[1] = "s2";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_2);
     sub_message[1] = "s3";
     cmd_sub_1(cmd_con_count, sub_message, on_pub_3);
+}
 
-    while (1)
-    {
-        ztimer_sleep(ZTIMER_MSEC, 1000);
-    }
+int main(void)
+{
+    printf("Denoiser - Group 12 MQTT\n");
+
+    initizlize_mqtt_client();
+
+    ztimer_sleep(ZTIMER_MSEC, 4000);
+
+    unsubscribeFromTopics();
+
+    ztimer_sleep(ZTIMER_MSEC, 4000);
+
+    subscribeToTopics();
+
+    // while (1)
+    // {
+    //     ztimer_sleep(ZTIMER_MSEC, 1000);
+    // }
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

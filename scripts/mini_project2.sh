@@ -84,9 +84,9 @@ fi
 echo "=============== Starting Denoiser ==================="
 
 export DENOISER_NODE=${DENOISER_NODE}
-export EMCUTE_ID="DENOISER"
+export EMCUTE_ID="d"
+export CLIENT_TOPIC="d"
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-
 
 # source ${SENSE_SCRIPTS_HOME}/coap_server.sh
 

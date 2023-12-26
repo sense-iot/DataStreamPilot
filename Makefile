@@ -75,20 +75,14 @@ sub_dead_sensors:
 sub_sensor1:
 	./scripts/broker_sub_sensor1.sh
 
-sub_sensor1_2:
-	./scripts/broker_sub_sensor1_2.sh
-
 sub_sensor2:
 	./scripts/broker_sub_sensor2.sh
-
-sub_sensor2_2:
-	./scripts/broker_sub_sensor2_2.sh
 
 sub_sensor3:
 	./scripts/broker_sub_sensor3.sh
 
-sub_sensor3_2:
-	./scripts/broker_sub_sensor3_2.sh
+sub_denoiser:
+	./scripts/broker_sub_denoiser.sh
 
 broker_pub:
 	./scripts/broker_pub.sh $(filter-out $@,$(MAKECMDGOALS))

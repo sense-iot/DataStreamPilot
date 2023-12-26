@@ -5,10 +5,10 @@ datasources:
     type: influxdb
     uid: ds_influxdb
     access: proxy
-    user: miniproject1_user
+    user: iotmini2
     url: http://influxdb:8086
     jsonData:
       dbName: iotdb
       httpMode: GET
     secureJsonData:
-      password: miniproject1_pass
+      password: sense

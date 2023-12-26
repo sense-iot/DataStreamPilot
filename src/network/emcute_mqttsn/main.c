@@ -669,8 +669,6 @@ static const shell_command_t shell_commands[] = {
     {"will", "register a last will", cmd_will},
     {NULL, NULL, NULL}};
 
-static char *server_ip = MQTT_BROKER_IP;
-
 void initizlize_mqtt_client(void)
 {
     msg_init_queue(queue, ARRAY_SIZE(queue));
@@ -706,26 +704,23 @@ void initizlize_mqtt_client(void)
 void unsubscribeFromTopics(void) {
     char *unsub_message[2];
     unsub_message[0] = "sub";
-    cmd_con_count = 2;
-
     unsub_message[1] = "s1";
-    cmd_unsub(cmd_con_count, unsub_message);
+    cmd_unsub(2, unsub_message);
     unsub_message[1] = "s2";
-    cmd_unsub(cmd_con_count, unsub_message);
+    cmd_unsub(2, unsub_message);
     unsub_message[1] = "s3";
-    cmd_unsub(cmd_con_count, unsub_message);
+    cmd_unsub(2, unsub_message);
 }
 
 void subscribeToTopics(void) {
     char *sub_message[2];
     sub_message[0] = "sub";
-    cmd_con_count = 2;
     sub_message[1] = "s1";
-    cmd_sub_1(cmd_con_count, sub_message, on_pub_1);
+    cmd_sub_1(2, sub_message, on_pub_1);
     sub_message[1] = "s2";
-    cmd_sub_1(cmd_con_count, sub_message, on_pub_2);
+    cmd_sub_1(2, sub_message, on_pub_2);
     sub_message[1] = "s3";
-    cmd_sub_1(cmd_con_count, sub_message, on_pub_3);
+    cmd_sub_1(2, sub_message, on_pub_3);
 }
 
 int main(void)

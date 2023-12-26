@@ -33,7 +33,7 @@ USEMODULE += gnrc_netif_single
 # USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
 # USEMODULE += ztimer_sec
-# USEMODULE += ztimer_no_periph_rtt
+USEMODULE += ztimer_no_periph_rtt
 
 # USEMODULE += netstats_l2
 # USEMODULE += netstats_ipv6

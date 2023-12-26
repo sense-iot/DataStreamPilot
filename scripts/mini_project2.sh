@@ -3,7 +3,7 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-export ARCH=native
+export ARCH=iotlab-m3
 
 EXPERIMENT_NAME="mini-project-2-group-12"
 M3_NODE_COUNT=8

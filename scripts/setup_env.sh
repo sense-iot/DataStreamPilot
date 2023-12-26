@@ -41,7 +41,7 @@ source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
     # If not set, then export it with the specified value
-    export COAP_SERVER_IP="[2a05:d016:1bb:3e00:2fbe:1fb4:63f9:eb4b]:5683"
+    export COAP_SERVER_IP="[2600:1f16:15a8:3d9:6df4:e087:ae99:27cc]:5683"
 fi
 export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 

@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  influxdb:
+    image: influxdb:1.6.7
+    ports:
+    - "8086:8086"
+    environment:
+    - INFLUXDB_DB=dht
+    - INFLUXDB_ADMIN_USER=iotmini2
+    - INFLUXDB_ADMIN_PASSWORD=sense
+    - INFLUXDB_HTTP_AUTH_ENABLED=true
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    ports:
+    - "3000:3000"
+    environment:
+    - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+    - influxdb
+    volumes:
+    - ./datasources:/etc/grafana/provisioning/datasources/
+    - ./dashboards:/etc/grafana/provisioning/dashboards/
+
+  coap_server:
+    image: coap_server
+    ports:
+     - "5683:5683"
+     - target: 5683
+       published: 5683
+       protocol: udp
+       mode: bridge
+    depends_on:
+    - influxdb
+    build:
+      context: ./app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -79,15 +79,15 @@ else
 fi
 
 # values are from 11-26
-export DEFAULT_CHANNEL=22
-export DEFAULT_CHANNEL_2=23
+# export DEFAULT_CHANNEL=22
+# export DEFAULT_CHANNEL_2=23
 #export DEFAULT_CHANNEL=23 - dilan
 export DEFAULT_CHANNEL=24 #- waas
 #export DEFAULT_CHANNEL=25 - rukshan
 
 export ETHOS_BAUDRATE=500000
-export TAP_INTERFACE=tap23
-export TAP_INTERFACE_2=tap13
+# export TAP_INTERFACE=tap23
+# export TAP_INTERFACE_2=tap13
 # export TAP_INTERFACE=tap4 - dilan
 export TAP_INTERFACE=tap5 #- waas
 # export TAP_INTERFACE=tap6 - rukshan

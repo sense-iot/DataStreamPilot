@@ -37,7 +37,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
     wait_for_job "${border_router_job_id}"
     wait_for_job "${compute_engine_node_job_id}"
 
-    create_tap_interface "${BORDER_ROUTER_NODE}" &
+    create_tap_interface "${BORDER_ROUTER_NODE}" "${TAP_INTERFACE}" "${BORDER_ROUTER_IP}" &
 
     echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"
     echo "coap info"

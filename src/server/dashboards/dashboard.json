@@ -58,7 +58,7 @@
         "type": "influxdb",
         "uid": "ds_influxdb"
       },
-      "description": "Temperature of Testbed sensor",
+      "description": "Temperature of Saclay",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -227,12 +227,12 @@
             {
               "key": "place::tag",
               "operator": "=",
-              "value": "testbed_sensor1"
+              "value": "saclay"
             }
           ]
         }
       ],
-      "title": "Temperature of Testbed Sensor",
+      "title": "Temperature of Saclay",
       "type": "timeseries"
     }
   ],

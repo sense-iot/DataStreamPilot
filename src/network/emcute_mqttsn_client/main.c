@@ -96,46 +96,44 @@ int temp_sensor_reset(void)
     lpsxxx_params_t paramts = {
         .i2c = lpsxxx_params[0].i2c,
         .addr = lpsxxx_params[0].addr,
-        .rate = LPSXXX_RATE_7HZ};
-    // .rate = lpsxxx_params[0].rate
-    // LPSXXX_RATE_7HZ = 5,        /**< sample with 7Hz, default */
-    //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
-    //   LPSXXX_RATE_25HZ = 7
-    
-    if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
-    {
-        puts("Sensor initialization failed");
-        return 0;
-    }
+        .rate = LPSXXX_RATE_1HZ};
 
     // 7       6543    2          1      0
     // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
     //  1      0000   1      0            0
     // 44
-        if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
+    if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
     {
-        puts("Sensor reset failed");
+        print("Sensor reset failed\n");
         return 0;
     }
 
-    ztimer_sleep(ZTIMER_MSEC, 5000);
+    ztimer_sleep(ZTIMER_MSEC, 4000);
+
+    if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
+    {
+        print("Sensor initialization failed\n");
+        return 0;
+    }
+
+    ztimer_sleep(ZTIMER_MSEC, 4000);
 
     // 0x40 -- 01000000
     // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
     if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
     {
-        puts("Sensor enable failed");
+        print("Sensor enable failed\n");
         return 0;
     }
 
-    ztimer_sleep(ZTIMER_MSEC, 1000);
+    ztimer_sleep(ZTIMER_MSEC, 4000);
     if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
     {
-        puts("Sensor enable failed");
+        print("Sensor enable failed\n");
         return 0;
     }
 
-    ztimer_sleep(ZTIMER_MSEC, 1000);
+    ztimer_sleep(ZTIMER_MSEC, 4000);
     return 1;
 }
 
@@ -163,28 +161,6 @@ float add_noise(float stddev)
         noise_val = generate_normal_random(stddev);
     }
     return noise_val;
-}
-
-void puts_append(const char *data)
-{
-    // File path
-    const char *filepath = "mqtt_client.log";
-
-    // Open the file in append mode
-    FILE *file = fopen(filepath, "a");
-    if (file == NULL)
-    {
-        return;
-    }
-
-    // Write data to the file
-    if (fputs(data, file) == EOF)
-    {
-        perror("Error writing to file");
-    }
-
-    // Close the file
-    fclose(file);
 }
 
 static void *emcute_thread(void *arg)
@@ -239,15 +215,15 @@ static int cmd_discon_simple(void)
     int res = emcute_discon();
     if (res == EMCUTE_NOGW)
     {
-        puts("error: not connected to any broker");
+        printf("error: not connected to any broker\n");
         return 1;
     }
     else if (res != EMCUTE_OK)
     {
-        puts("error: unable to disconnect");
+        printf("error: unable to disconnect\n");
         return 1;
     }
-    puts("Disconnect successful");
+    printf("Disconnect successful\n");
     return 0;
 }
 
@@ -261,16 +237,16 @@ static int cmd_will(int argc, char **argv)
 
     if (emcute_willupd_topic(argv[1], 0) != EMCUTE_OK)
     {
-        puts("error: unable to update the last will topic");
+        printf("error: unable to update the last will topic\n");
         return 1;
     }
     if (emcute_willupd_msg(argv[2], strlen(argv[2])) != EMCUTE_OK)
     {
-        puts("error: unable to update the last will message");
+        printf("error: unable to update the last will message\n");
         return 1;
     }
 
-    puts("Successfully updated last will topic and message");
+    printf("Successfully updated last will topic and message\n");
     return 0;
 }
 
@@ -330,6 +306,7 @@ void initizlize_mqtt_client(void)
         ztimer_sleep(ZTIMER_MSEC, sleepDuration);
     }
     printf("connection okay\n");
+    ztimer_sleep(ZTIMER_MSEC, 5000);
 }
 
 int main(void)
@@ -342,7 +319,7 @@ int main(void)
 
     if (temp_sensor_reset() == 0)
     {
-        puts("Sensor failed");
+        printf("Sensor failed\n");
         return 1;
     }
 

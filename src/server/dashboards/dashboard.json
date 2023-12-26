@@ -122,7 +122,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "saclay"
+              "options": "temperature"
             },
             "properties": [
               {
@@ -185,23 +185,23 @@
       },
       "targets": [
         {
-          "alias": "saclay",
+          "alias": "temperature",
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_iotdb}"
+            "uid": "ds_influxdb",
+            "type": "influxdb"
           },
           "groupBy": [
             {
+              "type": "time",
               "params": [
-                "10s"
-              ],
-              "type": "time"
+                "$__interval"
+              ]
             },
             {
+              "type": "fill",
               "params": [
-                "previous"
-              ],
-              "type": "fill"
+                "none"
+              ]
             }
           ],
           "measurement": "saclay",
@@ -209,6 +209,7 @@
           "policy": "default",
           "refId": "A",
           "resultFormat": "time_series",
+          "tags": [],
           "select": [
             [
               {
@@ -222,8 +223,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
           ]
         }
       ],

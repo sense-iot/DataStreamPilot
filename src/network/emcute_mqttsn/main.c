@@ -34,7 +34,7 @@
 #include "debug.h"
 
 #ifndef EMCUTE_ID
-#define EMCUTE_ID ("gertrud")
+#define EMCUTE_ID ("denoiser")
 #endif
 #define EMCUTE_PRIO (THREAD_PRIORITY_MAIN - 1)
 
@@ -52,28 +52,6 @@ static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
 // Set z-score threshold (adjust based on your requirements)
 float z_threshold = 1.3;
-
-void puts_append(const char *data)
-{
-    // File path
-    const char *filepath = "mqtt_client.log";
-
-    // Open the file in append mode
-    FILE *file = fopen(filepath, "a");
-    if (file == NULL)
-    {
-        return;
-    }
-
-    // Write data to the file
-    if (fputs(data, file) == EOF)
-    {
-        perror("Error writing to file");
-    }
-
-    // Close the file
-    fclose(file);
-}
 
 static void *emcute_thread(void *arg)
 {
@@ -334,49 +312,6 @@ static unsigned get_qos(const char *str)
     }
 }
 
-static unsigned get_qos_i(int qos)
-{
-    switch (qos)
-    {
-    case 1:
-        return EMCUTE_QOS_1;
-    case 2:
-        return EMCUTE_QOS_2;
-    default:
-        return EMCUTE_QOS_0;
-    }
-}
-
-static int cmd_con_i(int port, char *topic, char *message, char *ipv6_addr)
-{
-    sock_udp_ep_t gw = {.family = AF_INET6, .port = CONFIG_EMCUTE_DEFAULT_PORT};
-
-    puts_append(ipv6_addr);
-    // puts("error: unable to obtain topic ID");
-    if (ipv6_addr_from_str((ipv6_addr_t *)&gw.addr.ipv6, ipv6_addr) == NULL)
-    {
-        puts_append("error parsing IPv6 address\n");
-        return 1;
-    }
-
-    if (port != -1)
-    {
-        gw.port = port;
-    }
-
-    size_t len = strlen(message);
-
-    if (emcute_con(&gw, true, topic, message, len, 0) != EMCUTE_OK)
-    {
-        printf("error: unable to connect to [%s]:%i\n", ipv6_addr, (int)gw.port);
-        return 1;
-    }
-    printf("Successfully connected to gateway at [%s]:%i\n",
-           ipv6_addr, (int)gw.port);
-
-    return 0;
-}
-
 static int cmd_con(int argc, char **argv)
 {
     sock_udp_ep_t gw = {.family = AF_INET6, .port = 1885U};
@@ -484,36 +419,6 @@ static int cmd_pub(int argc, char **argv)
 
     printf("Published %i bytes to topic '%s [%i]'\n",
            (int)strlen(argv[2]), t.name, t.id);
-
-    return 0;
-}
-
-static int cmd_pub_i(int qos, char *data, char *topic)
-{
-    emcute_topic_t t;
-    unsigned flags = EMCUTE_QOS_0;
-
-    flags |= get_qos_i(qos);
-
-    // printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, data, (int)flags);
-
-    /* step 1: get topic id */
-    t.name = topic;
-    if (emcute_reg(&t) != EMCUTE_OK)
-    {
-        puts("error: unable to obtain topic ID");
-        return 1;
-    }
-
-    /* step 2: publish data */
-    if (emcute_pub(&t, data, strlen(data), flags) != EMCUTE_OK)
-    {
-        printf("error: unable to publish data to topic '%s [%i]'\n",
-               t.name, (int)t.id);
-        return 1;
-    }
-
-    // printf("Published %i bytes to topic '%s [%i]'\n", data(int) strlen(data), t.name, t.id);
 
     return 0;
 }

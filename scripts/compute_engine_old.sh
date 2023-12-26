@@ -7,13 +7,15 @@ if [ $ERROR_WRONG_SITE -ne 0]; then
     exit $ERROR_WRONG_SITE
 fi
 
-build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME}
+export ARCH=iotlab-m3
+
+build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} ${ARCH}
 build_status=$?
 if [ $build_status -ne 0 ]; then
     exit $build_status
 fi
 
-build_wireless_firmware ${COMPUTE_ENGINE_HOME} ${COMPUTE_ENGINE_EXE_NAME}
+build_wireless_firmware ${COMPUTE_ENGINE_HOME} ${COMPUTE_ENGINE_EXE_NAME} ${ARCH}
 build_status=$?
 if [ $build_status -ne 0 ]; then
     exit $build_status

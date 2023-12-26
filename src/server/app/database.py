@@ -32,7 +32,7 @@ async def sendInfluxdb(decodedValues, site, filteredValues):
     base_timestamp = datetime.utcnow() - timedelta(seconds=len(decodedValues))
 
     for i in range(len(decodedValues)):
-        fields      = { "value" : decodedValues[i], "filtered" : filteredValues[i] }
+        fields      = { "value" : 0 if len(decodedValues) == 0 else decodedValues[i], "filtered" : 0 if len(filteredValues) == 0 else filteredValues[i] }
         await save(db_client, sites[site], fields, tags=tags, timestamp=base_timestamp + timedelta(seconds=i))    
     return True
 

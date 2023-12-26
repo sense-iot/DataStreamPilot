@@ -38,11 +38,14 @@ async def decodeTemperature(site, message, isBaseValue):
         initial_value = message[0] / 100.0
         kf[site_name] = await initializeKalmanFilter(initial_value)
 
+    if int(isBaseValue) == 0 and len(buffer) == 0:
+        return [], []
+    
     for i in range(0, len(message), 2):
         value, parity = message[i], message[i + 1]
 
         if (parityCheck(value, parity)):
-            value= (value + base_value)/100.0 if int(base_value) == 0 else value/100.0
+            value= (value + base_value)/100.0 if int(isBaseValue) == 0 else value/100.0
             data_out.append(value)
         else:
             if 2 < len(buffer):

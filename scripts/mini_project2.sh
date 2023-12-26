@@ -6,7 +6,7 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 export ARCH=iotlab-m3
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=8
+M3_NODE_COUNT=6
 A8_NODE_COUNT=1
 EXPERIMENT_ID=0
 
@@ -41,9 +41,9 @@ export DENOISER_NODE=${m3_nodes[1]}
 export MQTT_CLIENT_NODE_1=${m3_nodes[2]}
 export MQTT_CLIENT_NODE_2=${m3_nodes[3]}
 export MQTT_CLIENT_NODE_3=${m3_nodes[4]}
-export BROKER_DISCOVERY_NODE=${m3_nodes[5]}
-export COMPUTER_ENGINE_NODE=${m3_nodes[6]}
-export COAP_SERVER_NODE=${m3_nodes[7]}
+export COMPUTER_ENGINE_NODE=${m3_nodes[5]}
+# export BROKER_DISCOVERY_NODE=${m3_nodes[6]}
+# export COAP_SERVER_NODE=${m3_nodes[7]}
 
 write_and_print_variable "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE" "a8"
 
@@ -52,9 +52,9 @@ write_and_print_variable "DENOISER_NODE" "$DENOISER_NODE" "m3"
 write_and_print_variable "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1" "m3"
 write_and_print_variable "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2" "m3"
 write_and_print_variable "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3" "m3"
-write_and_print_variable "BROKER_DISCOVERY_NODE" "$BROKER_DISCOVERY_NODE" "m3"
 write_and_print_variable "COMPUTER_ENGINE_NODE" "$COMPUTER_ENGINE_NODE" "m3"
-write_and_print_variable "COAP_SERVER_NODE" "$COAP_SERVER_NODE" "m3"
+# write_and_print_variable "BROKER_DISCOVERY_NODE" "$BROKER_DISCOVERY_NODE" "m3"
+# write_and_print_variable "COAP_SERVER_NODE" "$COAP_SERVER_NODE" "m3"
 
 echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5

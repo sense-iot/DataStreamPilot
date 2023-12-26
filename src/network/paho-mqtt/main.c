@@ -57,7 +57,7 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 /**
  * @brief Default MQTT port
  */
-#define DEFAULT_MQTT_PORT               1886
+#define DEFAULT_MQTT_PORT               1885
 
 /**
  * @brief Keepalive timeout in seconds

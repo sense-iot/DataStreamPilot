@@ -8,7 +8,6 @@ USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
 USEMODULE += ztimer_sec
 USEMODULE += ztimer_no_periph_rtt
-USEMODULE += lps331ap
 USEMODULE += xtimer
 
 USEMODULE += netdev_default
@@ -60,7 +59,6 @@ USEMODULE += gcoap
 USEMODULE += od
 USEMODULE += fmt
 USEMODULE += netutils
-USEMODULE += random
 # Add also the shell, some shell commands
 USEMODULE += shell
 USEMODULE += shell_cmds_default

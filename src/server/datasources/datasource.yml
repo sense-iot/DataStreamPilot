@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  - name: ds_influxdb
+    type: influxdb
+    uid: ds_influxdb
+    access: proxy
+    user: iotmini2
+    url: http://172.17.0.1:8086
+    jsonData:
+      dbName: dht
+      httpMode: GET
+    secureJsonData:
+      password: sense

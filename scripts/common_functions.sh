@@ -265,6 +265,18 @@ submit_sensor_node_job() {
     echo $n_connected_sensor_job_id
 }
 
+submit_compute_node_job() {
+    local sensor_connected_node="$1"
+
+    iotlab-profile del -n group12
+    iotlab-profile addm3 -n group12 -voltage -current -power -period 8244 -avg 4
+
+    local n_connected_sensor=$(iotlab-experiment submit -n ${COMPUTE_ENGINE_EXE_NAME} -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${sensor_connected_node},${SENSE_FIRMWARE_HOME}/${COMPUTE_ENGINE_EXE_NAME}.elf,group12)
+    local n_connected_sensor_job_id=$(echo $n_connected_sensor | jq '.id')
+
+    echo $n_connected_sensor_job_id
+}
+
 wait_for_job() {
     local n_node_job_id="$1"
 

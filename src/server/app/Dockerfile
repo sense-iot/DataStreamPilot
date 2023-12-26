@@ -11,4 +11,6 @@ COPY coap_server.py .
 COPY configuration.py .
 COPY decoder.py .
 
+EXPOSE 5683
+
 CMD ["python", "coap_server.py"]

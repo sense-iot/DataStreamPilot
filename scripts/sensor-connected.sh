@@ -28,7 +28,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /temperature"
 
   echo "nc m3-${SENSOR_CONNECTED_NODE} 20000"
-  # nc m3-${SENSOR_CONNECTED_NODE} 20000
+  nc m3-${SENSOR_CONNECTED_NODE} 20000
 
   # stop_jobs "${n_node_job_id}"
 fi

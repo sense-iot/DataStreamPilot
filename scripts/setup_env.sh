@@ -13,7 +13,7 @@ export JOB_WAIT_TIMEOUT=150
 export EXPERIMENT_TIME=180
 
 # grenoble, paris, lille, saclay, strasbourg
-export SENSE_SITE=grenoble
+export SENSE_SITE=paris
 
 printf "%-50s %s\n" "DataStreamPilot: SENSE_SITE:" "$SENSE_SITE"
 
@@ -41,7 +41,7 @@ source ${SENSE_SCRIPTS_HOME}/common_functions.sh
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
     # If not set, then export it with the specified value
-    export COAP_SERVER_IP="[2001:660:5307:3108:ec1b:fa40:6a45:de4d]:5683"
+    export COAP_SERVER_IP="[2a05:d016:1bb:3e00:2fbe:1fb4:63f9:eb4b]:5683"
 fi
 export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 
@@ -79,17 +79,17 @@ else
 fi
 
 # values are from 11-26
-export DEFAULT_CHANNEL=22
-export DEFAULT_CHANNEL_2=23
+# export DEFAULT_CHANNEL=22
+# export DEFAULT_CHANNEL_2=23
 #export DEFAULT_CHANNEL=23 - dilan
-#export DEFAULT_CHANNEL=24 - waas
+export DEFAULT_CHANNEL=24 #- waas
 #export DEFAULT_CHANNEL=25 - rukshan
 
 export ETHOS_BAUDRATE=500000
-export TAP_INTERFACE=tap23
-export TAP_INTERFACE_2=tap13
+# export TAP_INTERFACE=tap23
+# export TAP_INTERFACE_2=tap13
 # export TAP_INTERFACE=tap4 - dilan
-# export TAP_INTERFACE=tap5 - waas
+export TAP_INTERFACE=tap5 #- waas
 # export TAP_INTERFACE=tap6 - rukshan
 
 
@@ -146,8 +146,16 @@ export SENSOR_2_CONNECTED_FOLDER_NAME=sensor2
 export SENSOR_2_CONNECTED_EXE_NAME=${SENSOR_2_CONNECTED_FOLDER_NAME}
 export SENSOR_2_CONNECTED_HOME=${SENSE_HOME}/src/sensor/${SENSOR_2_CONNECTED_FOLDER_NAME}
 
+export COMPUTE_ENGINE_FOLDER_NAME=compute_engine
+export COMPUTE_ENGINE_EXE_NAME=${COMPUTE_ENGINE_FOLDER_NAME}
+export COMPUTE_ENGINE_HOME=${SENSE_HOME}/src/${COMPUTE_ENGINE_FOLDER_NAME}
+
 #SENSE_SCRIPTS_HOME="${SENSE_HOME}/${SCRIPTS}"
 #SENSE_STOPPERS_HOME="${SENSE_SCRIPTS_HOME}/stoppers"
 #SENSE_FIRMWARE_HOME="${HOME}/bin"
 
 export SENSE_SETUP_ENV_UP=1
+
+
+export BORDER_ROUTER_NODE=60
+export COMPUTE_ENGINE_NODE=61

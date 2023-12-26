@@ -32,6 +32,9 @@
 #include "lpsxxx.h"
 #include "lpsxxx_params.h"
 
+#define ENABLE_DEBUG 0
+#include "debug.h"
+
 #define MAIN_QUEUE_SIZE     (8)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
@@ -388,6 +391,20 @@ static unsigned char readbuf[BUF_SIZE];
 
 static char *server_ip = MQTT_BROKER_IP;
 static char *my_topic = CLIENT_TOPIC;
+
+float add_noise(float stddev)
+{
+    int num;
+    float noise_val = 0;
+
+    num = rand() % 100 + 1; // use rand() function to get the random number
+    if (num >= 50)
+    {
+        // Generate a random number with normal distribution based on a stddev
+        noise_val = generate_normal_random(stddev);
+    }
+    return noise_val;
+}
 
 int main(void)
 {

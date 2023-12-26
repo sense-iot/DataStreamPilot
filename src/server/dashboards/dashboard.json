@@ -58,7 +58,7 @@
         "type": "influxdb",
         "uid": "ds_influxdb"
       },
-      "description": "Temperature of Saclay",
+      "description": "Temperature of Testbed sensor",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -187,29 +187,28 @@
         {
           "alias": "temperature",
           "datasource": {
-            "uid": "ds_influxdb",
-            "type": "influxdb"
+            "type": "influxdb",
+            "uid": "${DS_iotdb}"
           },
           "groupBy": [
             {
-              "type": "time",
               "params": [
-                "$__interval"
-              ]
+                "10s"
+              ],
+              "type": "time"
             },
             {
-              "type": "fill",
               "params": [
-                "none"
-              ]
+                "previous"
+              ],
+              "type": "fill"
             }
           ],
-          "measurement": "saclay",
+          "measurement": "temperature",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
           "resultFormat": "time_series",
-          "tags": [],
           "select": [
             [
               {
@@ -223,10 +222,17 @@
                 "type": "mean"
               }
             ]
+          ],
+          "tags": [
+            {
+              "key": "place::tag",
+              "operator": "=",
+              "value": "testbed_sensor1"
+            }
           ]
         }
       ],
-      "title": "Temperature of Saclay",
+      "title": "Temperature of Testbed Sensor",
       "type": "timeseries"
     }
   ],

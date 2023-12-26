@@ -44,6 +44,7 @@ USEPKG += paho-mqtt
 USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_icmpv6_error
 USEMODULE += netstats_ipv6
+USEMODULE += lps331ap
 
 # paho-mqtt depends on TCP support, choose which stacks you want
 GNRC_IPV6 ?= 1

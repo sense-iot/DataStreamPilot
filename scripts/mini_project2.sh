@@ -15,7 +15,6 @@ if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
     wait_for_job "${EXPERIMENT_ID}"
-    # iotlab-ssh --verbose wait-for-boot
 else
     EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
     echo "DataStreamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
@@ -41,9 +40,7 @@ export DENOISER_NODE=${m3_nodes[1]}
 export MQTT_CLIENT_NODE_1=${m3_nodes[2]}
 export MQTT_CLIENT_NODE_2=${m3_nodes[3]}
 export MQTT_CLIENT_NODE_3=${m3_nodes[4]}
-export COMPUTER_ENGINE_NODE=${m3_nodes[5]}
-# export BROKER_DISCOVERY_NODE=${m3_nodes[6]}
-# export COAP_SERVER_NODE=${m3_nodes[7]}
+export COMPUTE_ENGINE_NODE=${m3_nodes[5]}
 
 write_and_print_variable "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE" "a8"
 
@@ -52,9 +49,7 @@ write_and_print_variable "DENOISER_NODE" "$DENOISER_NODE" "m3"
 write_and_print_variable "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1" "m3"
 write_and_print_variable "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2" "m3"
 write_and_print_variable "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3" "m3"
-write_and_print_variable "COMPUTER_ENGINE_NODE" "$COMPUTER_ENGINE_NODE" "m3"
-# write_and_print_variable "BROKER_DISCOVERY_NODE" "$BROKER_DISCOVERY_NODE" "m3"
-# write_and_print_variable "COAP_SERVER_NODE" "$COAP_SERVER_NODE" "m3"
+write_and_print_variable "COMPUTE_ENGINE_NODE" "$COMPUTE_ENGINE_NODE" "m3"
 
 echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5
@@ -72,7 +67,6 @@ PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
 BROKER_DETAILS_FILE=~/shared/mqtt_broker_details.txt
 if [ ! -f "$BROKER_DETAILS_FILE" ]; then
     error_message="DataStreamPilot: ERROR: Broker failed"
-    # Displaying the Error Message in a Box
     echo "****************************************************"
     echo "*                                                  *"
     printf "* %-36s*\n" "$error_message"
@@ -81,14 +75,15 @@ if [ ! -f "$BROKER_DETAILS_FILE" ]; then
     exit
 fi
 
+echo "=============== Starting Compute Enginer ==================="
+source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
+
 echo "=============== Starting Denoiser ==================="
 
 export DENOISER_NODE=${DENOISER_NODE}
 export EMCUTE_ID="d"
 export CLIENT_TOPIC="d"
 source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-
-# source ${SENSE_SCRIPTS_HOME}/coap_server.sh
 
 echo "=============== Starting sensors ==================="
 
@@ -111,13 +106,9 @@ export CLIENT_TOPIC="s3"
 setup_and_check_sensor "$my_arch"
 # source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
 
-echo "======================================================== $ARCH"
-# source ${SENSE_SCRIPTS_HOME}/sensor-connected.sh
-echo "======================================================== $ARCH"
+echo "=============== Starting Compute Enginer ==================="
 
 export PREV_BROKER_IP=${BROKER_IP}
 write_variable_to_file "PREV_BROKER_IP" "$PREV_BROKER_IP"
-
-# source ${SENSE_SCRIPTS_HOME}/gnrc_border_router_a8.sh
 
 create_tap_interface "${BORDER_ROUTER_NODE}" "${TAP_INTERFACE}" "${BORDER_ROUTER_IP}"

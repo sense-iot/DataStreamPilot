@@ -6,9 +6,9 @@ datasources:
     uid: ds_influxdb
     access: proxy
     user: iotmini2
-    url: http://influxdb:8086
+    url: http://172.17.0.1:8086
     jsonData:
-      dbName: iotdb
+      dbName: dht
       httpMode: GET
     secureJsonData:
       password: sense

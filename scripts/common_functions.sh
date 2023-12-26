@@ -34,6 +34,15 @@ extract_and_categorize_nodes() {
     done
 }
 
+flash_elf() {
+    local firmware_path=$1
+    local node=$2
+    local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
+
+    # Execute the command
+    echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node""
+    iotlab-node --flash "$firmware_path" -l "${site},m3,$node"
+}
 
 # Function to execute the iotlab-node command with given parameters
 flash_firmware() {
@@ -76,6 +85,27 @@ read_variable_from_file() {
 
 extract_global_ipv6() {
     local file_path="$HOME/shared/mqtt_broker_details.txt"
+    
+    # Check if the file exists
+    if [ ! -f "$file_path" ]; then
+        echo "File does not exist: $file_path"
+        return 1
+    fi
+
+    # Extract the global IPv6 address
+    local ipv6_addr=$(grep -o 'inet6 addr: 2001:[^ ]*' "$file_path" | awk '{print $3}')
+    
+    if [ -z "$ipv6_addr" ]; then
+        echo "Global IPv6 address not found in the file."
+        return 1
+    fi
+
+    ipv6_addr=${ipv6_addr%???}
+    echo "$ipv6_addr"
+}
+
+extract_global_ipv6_2() {
+    local file_path="$HOME/shared/mqtt_broker_details_2.txt"
     
     # Check if the file exists
     if [ ! -f "$file_path" ]; then
@@ -250,16 +280,19 @@ submit_compute_node_job() {
 wait_for_job() {
     local n_node_job_id="$1"
 
-    echo "DataStereamPilot: iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
+    echo "DataStreamPilot: iotlab-experiment wait --timeout ${JOB_WAIT_TIMEOUT} --cancel-on-timeout -i ${n_node_job_id} --state Running"
     iotlab-experiment wait --timeout "${JOB_WAIT_TIMEOUT}" --cancel-on-timeout -i "${n_node_job_id}" --state Running
 }
 
 create_tap_interface() {
     local node_id="$1"
-    echo "Create tap interface ${TAP_INTERFACE}"
+    local tap_interface="$2"
+    local border_router_ip="$3"
+    echo "Create tap interface ${tap_interface}"
     echo "nib neigh"
     echo "Creating tap interface..."
-    sudo ethos_uhcpd.py m3-${node_id} ${TAP_INTERFACE} ${BORDER_ROUTER_IP}
+    echo "sudo ethos_uhcpd.py m3-${node_id} ${tap_interface} ${border_router_ip}"
+    sudo ethos_uhcpd.py m3-${node_id} ${tap_interface} ${border_router_ip}
     sleep 5
     echo "Done creating tap interface..."
 }
@@ -298,10 +331,11 @@ build_wireless_firmware() {
     local firmware_source_folder="$1"
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
+    local channel="${4:-$DEFAULT_CHANNEL}"
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" UPLINK=ethernet DEFAULT_CHANNEL="${channel}" BOARD=${ARCH} -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -322,10 +356,11 @@ build_wireless_firmware_forced() {
     local firmware_source_folder="$1"
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
+    local channel="${4:-$DEFAULT_CHANNEL}"
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" BOARD="${ARCH}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD="${ARCH}" -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -346,6 +381,7 @@ build_wireless_firmware_cached() {
     local firmware_source_folder="$1"
     local exe_name="$2"
     local ARCH="${3:-$ARCH}"
+    local channel="${4:-$DEFAULT_CHANNEL}"
 
     if are_files_new "${firmware_source_folder}/bin/${ARCH}/${exe_name}.elf" "${firmware_source_folder}"; then
         echo "No need to build"
@@ -353,8 +389,8 @@ build_wireless_firmware_cached() {
     fi
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${DEFAULT_CHANNEL} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${DEFAULT_CHANNEL}" BOARD="${ARCH}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD="${ARCH}" -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -456,6 +492,59 @@ extract_ip() {
     # Extracting IP address, assuming it ends 6 characters before the end
     ip="${server_ip:1:${#server_ip}-7}"
     echo "$ip"
+}
+
+
+flash_sensor() {
+    local architecture=$1
+    local file_to_flash=$2
+    local mqtt_client_node=$3
+    local emcute_id=$4
+
+    echo "Flashing sensor based on architecture: $architecture"
+
+    if [ "$architecture" = "iotlab-m3" ]; then
+        cp $file_to_flash ${SENSE_FIRMWARE_HOME}
+        echo "Architecture is iotlab-m3."
+        flash_elf $file_to_flash $mqtt_client_node
+
+    elif [ "$architecture" = "iotlab-a8-m3" ]; then
+        local remote_file=~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${emcute_id}.elf
+        cp $file_to_flash $remote_file
+        echo "Architecture is iotlab-a8-m3."
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-$mqtt_client_node 'bash -s' <${SENSE_HOME}/src/network/emcute_mqttsn_client/mqute_client_${emcute_id}.sh
+        echo "ssh root@node-a8-$mqtt_client_node"
+
+    else
+        echo "Architecture is something else."
+    fi
+}
+
+setup_and_check_sensor() {
+    local my_arch=$1
+
+    echo "DataStreamPilot: The file to check : $file_to_check."
+    echo "DataStreamPilot: My architecture $my_arch."
+    file_to_check=${SENSE_HOME}/release/emcute_mqttsn_client_${EMCUTE_ID}.elf
+
+    if [ ! -f "$file_to_check" ]; then
+        source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn_client.sh
+        echo "ELF NOT FOUND"
+    else
+        echo "File exists: $file_to_check"
+        ELF_FILE=$file_to_check
+        echo "Flashing sensor $emcute_id from root script"
+        flash_sensor "$my_arch" "$file_to_check" "${MQTT_CLIENT_NODE}" "${EMCUTE_ID}"
+    fi
+}
+
+write_and_print_variable() {
+    local var_name=$1
+    local var_value=$2
+    local print_prefix=$3
+
+    write_variable_to_file "$var_name" "$var_value"
+    printf "%-50s %s\n" "DataStreamPilot: $var_name:" "$print_prefix - $var_value"
 }
 
 export SENSE_FUNCTONS_ENV_UP=1

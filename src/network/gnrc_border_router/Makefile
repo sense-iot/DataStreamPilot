@@ -83,7 +83,7 @@ DEVELHELP ?= 1
 QUIET ?= 1
 
 # Ethos/native TAP interface and UHCP prefix can be configured from make command
-TAP ?= tap7
+TAP ?= tap23
 ifneq (,$(filter dhcpv6 auto_subnets,$(PREFIX_CONF)))
   # with DHCPv6 the 64-bit delegated prefixes are generated from a shorter
   # configured prefix.
@@ -98,6 +98,7 @@ endif
 # use ethos (ethernet over serial) or SLIP (serial-line IP) for network
 # communication and stdio over UART, but not on native, as native has a tap
 # interface towards the host.
+ETHOS_BAUDRATE ?= 500000
 ifeq (,$(filter native,$(BOARD)))
   ifeq (slip,$(UPLINK))
     # SLIP baudrate and UART device can be configured from make command

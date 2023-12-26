@@ -1,4 +1,4 @@
-APPLICATION = sensor-m3-temperature
+APPLICATION = sensor-m3-temperature_gp12
 
 BOARD ?= iotlab-m3
 

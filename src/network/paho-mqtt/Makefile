@@ -14,8 +14,11 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-WIFI_SSID ?= "Your_WiFi_name"
-WIFI_PASS ?= "Your_secure_password"
+WIFI_SSID ?= "group12_ssid"
+WIFI_PASS ?= "group12_secure_123"
+
+MQTT_BROKER_IP=${BROKER_IP}
+CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'
 
 # Optionally include remoteDNS support. This includes resolution of names at an
 # upstream DNS server and the handling of RDNSS options in Router Advertisements
@@ -33,10 +36,15 @@ ifneq (,$(DEFAULT_MQTT_PWD))
   CFLAGS += -DDEFAULT_MQTT_PWD=\"$(DEFAULT_MQTT_PWD)\"
 endif
 
-USEMODULE += shell_cmds_default
+# USEMODULE += shell_cmds_default
 USEMODULE += ps
 USEMODULE += netdev_default
 USEPKG += paho-mqtt
+
+USEMODULE += auto_init_gnrc_netif
+USEMODULE += gnrc_icmpv6_error
+USEMODULE += netstats_ipv6
+USEMODULE += lps331ap
 
 # paho-mqtt depends on TCP support, choose which stacks you want
 GNRC_IPV6 ?= 1
@@ -51,10 +59,21 @@ USEMODULE += sock_ip
 USEMODULE += sock_udp
 USEMODULE += sock_tcp
 
-USEMODULE += ztimer
+USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
+USEMODULE += ztimer_sec
+USEMODULE += ztimer_no_periph_rtt
 
 ####
+
+ifneq (,$(EMCUTE_ID))
+  CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
+endif
+
+ifneq (,$(CLIENT_TOPIC))
+  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
+endif
+
 
 include $(RIOTBASE)/Makefile.include
 
@@ -62,3 +81,6 @@ ifneq (,$(filter arch_esp,$(FEATURES_USED)))
   CFLAGS += -DWIFI_SSID=\"$(WIFI_SSID)\"
   CFLAGS += -DWIFI_PASS=\"$(WIFI_PASS)\"
 endif
+
+# Set a custom channel if needed
+include $(RIOTMAKE)/default-radio-settings.inc.mk

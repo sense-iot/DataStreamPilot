@@ -7,6 +7,9 @@ run_aws_server:
 status:
 	./scripts/status.sh
 
+tap:
+	./scripts/gnrc_border_router_tap.sh
+
 broker:
 	./scripts/mqtt_broker_setup.sh
 
@@ -32,9 +35,6 @@ stop:
 stop_one:
 	iotlab-experiment stop
 
-test_coap_server:
-	aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board iotlab-m3
-
 # run border router and network node, you get a shell to the network node where you can ping public ipv6 addresses
 ping_to_google:
 	./scripts/ping_to_google.sh
@@ -55,18 +55,13 @@ compute_engine_old:
 # run border router and coap server in the same network
 coap_server:
 	./scripts/coap_server.sh
-
-# run coap_server in separate shell
-coap_test:
-	./scripts/coap_test.sh
-
-# Current test carried out after running coap_server in separate shell
-coap_client_test:
-	./scripts/coap_client_test.sh
-
-# same as about shortenned work for faster dev
+	
 coap:
-	./scripts/coap_client_test.sh
+	./scripts/coap_testing.sh
+
+	coap:
+	./scripts/coap_testing.sh
+
 
 clean_all: clean
 	./scripts/clean_all.sh
@@ -75,10 +70,37 @@ clean:
 	find ./src -type d -name bin -exec rm -rf {} +
 	rm -Rf bin
 	rm -Rf ~/shared/logs
-	rm ~/A8/*.elf
+	rm -f ~/A8/*.elf
+	rm -f ~/A8/*.txt
+	rm -f ~/A8/*.conf
+	rm -f ~/shared/*.elf
+	rm -f ~/shared/*.txt
+	rm -f ~/shared/*.conf
+	
 
 broker_sub:
 	./scripts/broker_sub.sh
+
+sub_dead_sensors:
+	./scripts/broker_sub_dead_sensors.sh
+
+sub_sensor1:
+	./scripts/broker_sub_sensor1.sh
+
+sub_sensor1_2:
+	./scripts/broker_sub_sensor1_2.sh
+
+sub_sensor2:
+	./scripts/broker_sub_sensor2.sh
+
+sub_sensor2_2:
+	./scripts/broker_sub_sensor2_2.sh
+
+sub_sensor3:
+	./scripts/broker_sub_sensor3.sh
+
+sub_sensor3_2:
+	./scripts/broker_sub_sensor3_2.sh
 
 broker_pub:
 	./scripts/broker_pub.sh $(filter-out $@,$(MAKECMDGOALS))

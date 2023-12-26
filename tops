@@ -1,0 +1,46 @@
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 15:46 ?        00:00:01 init [5]
+root         2     0  0 15:46 ?        00:00:00 [kthreadd]
+root         4     2  0 15:46 ?        00:00:00 [kworker/0:0H]
+root         6     2  0 15:46 ?        00:00:00 [mm_percpu_wq]
+root         7     2  0 15:46 ?        00:00:01 [ksoftirqd/0]
+root         8     2  0 15:46 ?        00:00:00 [kdevtmpfs]
+root       106     2  0 15:46 ?        00:00:00 [khungtaskd]
+root       266     2  0 15:46 ?        00:00:00 [oom_reaper]
+root       267     2  0 15:46 ?        00:00:00 [writeback]
+root       269     2  0 15:46 ?        00:00:00 [kcompactd0]
+root       298     2  0 15:46 ?        00:00:00 [kblockd]
+root       406     2  0 15:46 ?        00:00:00 [irq/72-48070000]
+root       421     2  0 15:46 ?        00:00:00 [irq/73-48072000]
+root       424     2  0 15:46 ?        00:00:00 [irq/77-48060000]
+root       435     2  0 15:46 ?        00:00:00 [watchdogd]
+root       520     2  0 15:46 ?        00:00:00 [rpciod]
+root       521     2  0 15:46 ?        00:00:00 [kworker/u3:0-xprtiod]
+root       522     2  0 15:46 ?        00:00:00 [xprtiod]
+root       525     2  0 15:46 ?        00:00:00 [cfg80211]
+root       535     2  0 15:46 ?        00:00:00 [kswapd0]
+root       537     2  0 15:46 ?        00:00:00 [nfsiod]
+root      1234     2  0 15:46 ?        00:00:00 [ipv6_addrconf]
+root      1246     2  0 15:46 ?        00:00:01 [kworker/u3:1-xprtiod]
+root      1291     1  0 15:46 ?        00:00:00 /sbin/udevd -d
+root      1293     2  0 15:46 ?        00:00:00 [kworker/u2:5-nfsiod]
+message+  1520     1  0 15:47 ?        00:00:00 /usr/bin/dbus-daemon --system
+root      1523     1  3 15:47 ?        00:00:59 /usr/sbin/rngd -r /dev/hwrng
+root      1534     1  0 15:47 ?        00:00:00 sshd: /usr/sbin/sshd -f /etc/ssh/sshd_config_readonly [listener] 0 of 10-100 startups
+rpc       1539     1  0 15:47 ?        00:00:00 /usr/sbin/rpcbind
+rpcuser   1544     1  0 15:47 ?        00:00:00 /usr/sbin/rpc.statd
+ntp       1551     1  0 15:47 ?        00:00:00 /usr/sbin/ntpd -u ntp:ntp -p /var/run/ntpd.pid -g
+root      1556     1  0 15:47 ?        00:00:00 /usr/sbin/rsyslogd
+avahi     1568     1  0 15:47 ?        00:00:00 avahi-daemon: running [node-a8-104.local]
+avahi     1569  1568  0 15:47 ?        00:00:00 avahi-daemon: chroot helper
+root      1586     1  0 15:47 ?        00:00:00 /usr/sbin/crond
+root      1592     1  0 15:47 ?        00:00:00 /bin/sh /bin/start_getty 115200 ttyO2 vt102
+root      1610  1592  0 15:47 ttyO2    00:00:00 /sbin/getty -L 115200 ttyO2 vt102
+root      1624     2  0 16:05 ?        00:00:00 [kworker/u2:6-nfsiod]
+root      1647     2  0 16:07 ?        00:00:00 [kworker/0:2-events]
+root      1670     2  0 16:12 ?        00:00:00 [kworker/0:1-events_power_efficient]
+root      1674     2  0 16:13 ?        00:00:00 [kworker/u2:0-events_unbound]
+root      1675  1534  0 16:13 ?        00:00:00 sshd: root@pts/0
+root      1677  1675  0 16:13 pts/0    00:00:00 -sh
+root      1709     2  0 16:17 ?        00:00:00 [kworker/0:0-events_power_efficient]
+root      1720  1677  0 16:18 pts/0    00:00:00 ps -ef

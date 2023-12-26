@@ -8,11 +8,14 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     fi
 fi
 
-source ${SENSE_SCRIPTS_HOME}/common_functions.sh
+# this is seconds
+export JOB_WAIT_TIMEOUT=150
+export EXPERIMENT_TIME=180
+
 # grenoble, paris, lille, saclay, strasbourg
 export SENSE_SITE=paris
 
-printf "%-50s %s\n" "DataStereamPilot: SENSE_SITE:" "$SENSE_SITE"
+printf "%-50s %s\n" "DataStreamPilot: SENSE_SITE:" "$SENSE_SITE"
 
 # Get the current hostname
 current_hostname=$(hostname)
@@ -33,6 +36,8 @@ if [ "$current_hostname" != "$SENSE_SITE" ]; then
     exit $ERROR_WRONG_SITE
 fi
 
+source ${SENSE_SCRIPTS_HOME}/common_functions.sh
+
 # comment this out in production
 if [ -z "$COAP_SERVER_IP" ]; then
     # If not set, then export it with the specified value
@@ -52,39 +57,42 @@ export COAP_SERVER_IP_ONLY=$(extract_ip "$COAP_SERVER_IP")
 if [ "$SENSE_SITE" = "grenoble" ]; then
     # 2001:660:5307:3100::/64	2001:660:5307:317f::/64
     export BORDER_ROUTER_IP=2001:660:5307:313f::1/64
+    export BORDER_ROUTER_IP_2=2001:660:5307:313a::1/64
 elif [ "$SENSE_SITE" = "paris" ]; then
     # 2001:660:330f:a280::/64   2001:660:330f:a2ff::/64
     export BORDER_ROUTER_IP=2001:660:330f:a293::1/64
+    export BORDER_ROUTER_IP_2=2001:660:330f:a29f::1/64
 elif [ "$SENSE_SITE" = "lille" ]; then
     # 2001:660:4403:0480::/64	2001:660:4403:04ff::/64
     export BORDER_ROUTER_IP=2001:660:4403:0493::1/64
+    export BORDER_ROUTER_IP_2=2001:660:4403:049f::1/64
 elif [ "$SENSE_SITE" = "saclay" ]; then
     # 2001:660:3207:04c0::/64	2001:660:3207:04ff::/64
     export BORDER_ROUTER_IP=2001:660:3207:04de::1/64
+    export BORDER_ROUTER_IP_2=2001:660:3207:04df::1/64
 elif [ "$SENSE_SITE" = "strasbourg" ]; then
     # 2001:660:4701:f0a0::/64	2001:660:4701:f0bf::/64
     export BORDER_ROUTER_IP=2001:660:4701:f0af::1/64
+    export BORDER_ROUTER_IP_2=2001:660:4701:f0ae::1/64
 else
     echo "Invalid SENSE_SITE value. Please set to 'grenoble' or 'paris'."
 fi
 
-export ARCH=iotlab-m3
-
 # values are from 11-26
-# export DEFAULT_CHANNEL=22
+export DEFAULT_CHANNEL=22
+export DEFAULT_CHANNEL_2=23
 #export DEFAULT_CHANNEL=23 - dilan
 export DEFAULT_CHANNEL=24 #- waas
 #export DEFAULT_CHANNEL=25 - rukshan
 
 export ETHOS_BAUDRATE=500000
-# export TAP_INTERFACE=tap7
+export TAP_INTERFACE=tap23
+export TAP_INTERFACE_2=tap13
 # export TAP_INTERFACE=tap4 - dilan
 export TAP_INTERFACE=tap5 #- waas
 # export TAP_INTERFACE=tap6 - rukshan
 
-# this is seconds
-export JOB_WAIT_TIMEOUT=120
-export EXPERIMENT_TIME=20
+
 
 export BORDER_ROUTER_FOLDER_NAME=gnrc_border_router
 export BORDER_ROUTER_EXE_NAME=${BORDER_ROUTER_FOLDER_NAME}
@@ -97,6 +105,22 @@ export GNRC_NETWORKING_HOME=${SENSE_HOME}/src/network/${GNRC_NETWORKING_FOLDER_N
 export EMCUTE_MQTSSN_FOLDER_NAME=emcute_mqttsn
 export EMCUTE_MQTSSN_EXE_NAME=${EMCUTE_MQTSSN_FOLDER_NAME}
 export EMCUTE_MQTSSN_HOME=${SENSE_HOME}/src/network/${EMCUTE_MQTSSN_FOLDER_NAME}
+
+export EMCUTE_MQTSSN_CLIENT_FOLDER_NAME=emcute_mqttsn_client
+export EMCUTE_MQTSSN_CLIENT_EXE_NAME=${EMCUTE_MQTSSN_CLIENT_FOLDER_NAME}
+export EMCUTE_MQTSSN_CLIENT_HOME=${SENSE_HOME}/src/network/${EMCUTE_MQTSSN_CLIENT_FOLDER_NAME}
+
+export DENOISER_FOLDER_NAME=denoiser
+export DENOISER_EXE_NAME=${DENOISER_FOLDER_NAME}
+export DENOISER_HOME=${SENSE_HOME}/src/network/${DENOISER_FOLDER_NAME}
+
+export ASYMCUTE_MQTTSN_FOLDER_NAME=asymcute_mqttsn
+export ASYMCUTE_MQTTSN_EXE_NAME=${ASYMCUTE_MQTTSN_FOLDER_NAME}
+export ASYMCUTE_MQTTSN_HOME=${SENSE_HOME}/src/network/${ASYMCUTE_MQTTSN_FOLDER_NAME}
+
+export PAHO_MQTT_FOLDER_NAME=paho-mqtt
+export PAHO_MQTT_EXE_NAME=${PAHO_MQTT_FOLDER_NAME}
+export PAHO_MQTT_HOME=${SENSE_HOME}/src/network/${PAHO_MQTT_FOLDER_NAME}
 
 export COAP_SERVER_FOLDER_NAME=nanocoap_server
 export COAP_SERVER_EXE_NAME=${COAP_SERVER_FOLDER_NAME}

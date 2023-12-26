@@ -42,7 +42,7 @@ async def decodeTemperature(site, message, isBaseValue):
         value, parity = message[i], message[i + 1]
 
         if (parityCheck(value, parity)):
-            value= (value + base_value)/100.0 if base_value else value/100.0
+            value= (value + base_value)/100.0 if int(base_value) == 0 else value/100.0
             data_out.append(value)
         else:
             if 2 < len(buffer):
@@ -54,7 +54,7 @@ async def decodeTemperature(site, message, isBaseValue):
 
     # filtered_data, kf[site_name] = await kalmanfilter(np.array(data_out), kf[site_name])
     buffer.extend(data_out)
-    return data_out, []
+    return data_out, data_out
 
 #checking odd parity
 def calculate_odd_parity(num):

@@ -98,8 +98,6 @@ int main(void) {
       char temp_str[10];
       char parity_bit[4];
 
-      temp += (int) add_noise(789.2);
-
       DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
       
       counter = counter % 10;

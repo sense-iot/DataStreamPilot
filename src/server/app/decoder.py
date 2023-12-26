@@ -32,6 +32,9 @@ async def decodeTemperature(site, message, isBaseValue):
     message = list(map(int, message[:-1].strip().split(',')))
     logger.debug(f"Message {message}")
 
+    if int(isBaseValue) == 1:
+        base_value = message[0] / 100.0
+
     if site_name not in kf.keys():
         # Initialize Kalman filter with the initial value from the first request
         logger.debug(f"Initializing Kalman filter for site {site_name}")

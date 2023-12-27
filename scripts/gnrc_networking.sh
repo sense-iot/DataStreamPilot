@@ -28,7 +28,7 @@ fi
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
-  cp ${GNRC_NETWORKING_HOME}/bin/iotlab-a8-m3/${GNRC_NETWORKING_EXE_NAME}.elf ${SENSE_HOME}/release/${GNRC_NETWORKING_EXE_NAME}.elf
+  cp $ELF_FILE ${SENSE_HOME}/release/${GNRC_NETWORKING_EXE_NAME}.elf
   cp $ELF_FILE ~/A8
 
   echo "DataStreamPilot: Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"

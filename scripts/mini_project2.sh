@@ -61,7 +61,6 @@ source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
 echo "========= starting gnrc_networking node to flash broker ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-exit 0
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")

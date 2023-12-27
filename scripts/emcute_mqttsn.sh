@@ -14,15 +14,25 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 # fi
 my_arch=${ARCH}
 
-build_wireless_firmware ${EMCUTE_MQTSSN_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${my_arch} ${NODE_CHANNEL}
-build_status=$?
-if [ $build_status -ne 0 ]; then
-  exit $build_status
+file_to_check=${SENSE_HOME}/release/emcute_mqttsn_d.elf
+my_arch=${ARCH}
+
+# Check if the file exists
+if [ ! -f "$file_to_check" ]; then
+  build_wireless_firmware ${EMCUTE_MQTSSN_HOME} ${EMCUTE_MQTSSN_EXE_NAME} ${my_arch} ${NODE_CHANNEL}
+  build_status=$?
+  if [ $build_status -ne 0 ]; then
+    exit $build_status
+  fi
+  ELF_FILE=${EMCUTE_MQTSSN_HOME}/bin/${ARCH}/${EMCUTE_MQTSSN_EXE_NAME}.elf
+else
+  echo "DataStreamPilot: File exists: $file_to_check"
+  ELF_FILE=$file_to_check
 fi
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
-  cp ${EMCUTE_MQTSSN_HOME}/bin/iotlab-m3/${EMCUTE_MQTSSN_EXE_NAME}.elf ${SENSE_FIRMWARE_HOME}
-  cp ${EMCUTE_MQTSSN_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_EXE_NAME}.elf ${SENSE_HOME}/release/${EMCUTE_MQTSSN_EXE_NAME}_${EMCUTE_ID}.elf
+  cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
+  cp $ELF_FILE ${SENSE_HOME}/release/${EMCUTE_MQTSSN_EXE_NAME}_${EMCUTE_ID}.elf
 
   echo "DataStreamPilot:Flashing new firmware for ${ARCH} node : ${DENOISER_NODE}"
   flash_firmware ${EMCUTE_MQTSSN_EXE_NAME} ${DENOISER_NODE}

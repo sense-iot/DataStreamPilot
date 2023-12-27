@@ -62,7 +62,8 @@ static data_t data;
 
 static lpsxxx_t lpsxxx;
 // static mutex_t lps_lock = MUTEX_INIT;
-
+#define LPSXXX_REG_RES_CONF (0x10)
+#define LPSXXX_REG_CTRL_REG2 (0x21)
 #define DEV_I2C (dev->params.i2c)
 #define DEV_ADDR (dev->params.addr)
 #define DEV_RATE (dev->params.rate)

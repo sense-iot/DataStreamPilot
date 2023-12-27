@@ -41,6 +41,21 @@ static char *server_ip = MQTT_BROKER_IP;
 
 char *denoised_data = NULL;
 
+// change this function work with enum it self
+static unsigned get_qos(const char *str)
+{
+    int qos = atoi(str);
+    switch (qos)
+    {
+    case 1:
+        return EMCUTE_QOS_1;
+    case 2:
+        return EMCUTE_QOS_2;
+    default:
+        return EMCUTE_QOS_0;
+    }
+}
+
 static int cmd_sub_1(int argc, char **argv, emcute_cb_t cb)
 {
   unsigned flags = EMCUTE_QOS_0;
@@ -139,6 +154,56 @@ static int cmd_unsub(int argc, char **argv)
 
   printf("error: no subscription for topic '%s' found\n", argv[1]);
   return 1;
+}
+
+static int cmd_con(int argc, char **argv)
+{
+  sock_udp_ep_t gw = {.family = AF_INET6, .port = 1885U};
+  char *topic = NULL;
+  char *message = NULL;
+  size_t len = 0;
+
+  printf("Starting connection inside\n");
+
+  if (argc < 2)
+  {
+    printf("usage: %s <ipv6 addr> [port] [<will topic> <will message>]\n",
+           argv[0]);
+    return 1;
+  }
+
+  /* parse address */
+  printf("checking ip address\n");
+  printf("checking ip address: %s\n", argv[1]);
+  if (ipv6_addr_from_str((ipv6_addr_t *)&gw.addr.ipv6, argv[1]) == NULL)
+  {
+    printf("error parsing IPv6 address\n");
+    return 1;
+  }
+
+  printf("ip address okay\n");
+
+  // if (argc >= 3)
+  // {
+  //     gw.port = atoi(argv[2]);
+  // }
+  // if (argc >= 5)
+  // {
+  //     topic = argv[3];
+  //     message = argv[4];
+  //     len = strlen(message);
+  // }
+  printf("starting mqtt con\n");
+  int connectionResp = emcute_con(&gw, true, topic, message, len, 0);
+  if (connectionResp != EMCUTE_OK)
+  {
+    printf("error: unable to connect to [%s]:%i\n", argv[1], (int)gw.port);
+    return 1;
+  }
+  printf("Successfully connected to gateway at [%s]:%i\n",
+         argv[1], (int)gw.port);
+
+  return connectionResp;
 }
 
 typedef struct {
@@ -324,7 +389,7 @@ int main(void) {
       counter++;
     }
 
-    ztimer_sleep(ZTIMER_MSEC, 1000);
+    ztimer_sleep(ZTIMER_MSEC, 30000);
 
   }
 

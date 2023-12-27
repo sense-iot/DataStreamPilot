@@ -9,7 +9,7 @@ USEMODULE += ztimer_msec
 USEMODULE += ztimer_sec
 USEMODULE += ztimer_no_periph_rtt
 USEMODULE += xtimer
-
+USEMODULE += emcute
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules for IPv6 and UDP
@@ -87,6 +87,9 @@ ifeq (1,$(USE_ZEP))
   endif
 endif
 
+
+MQTT_BROKER_IP=${BROKER_IP}
+CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'
 GCOAP_AMAZON_SERVER_IP=${COAP_SERVER_IP}
 SITE_NAME=${SENSE_SITE}
 GCOAP_AMAZON_SERVER_IP_ONLY=${COAP_SERVER_IP_ONLY}
@@ -108,8 +111,6 @@ ifndef CONFIG_KCONFIG_MODULE_GCOAP
 ## Uncomment to redefine request token length, max 8.
 GCOAP_TOKENLEN = 2
 CFLAGS += -DCONFIG_GCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
-
-
 
 # Increase from default for confirmable block2 follow-on requests
 GCOAP_RESEND_BUFS_MAX ?= 2

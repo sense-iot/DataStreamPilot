@@ -327,9 +327,9 @@ int gcoap_post(char* msg, resource_path path)
 
     if (!_send(&buf[0], len, ip_add)) {
         puts("gcoap_cli: msg send failed");
+    } else {
+        DEBUG_PRINT("CoAP request sent successfully\n");
     }
-    DEBUG_PRINT("CoAP request sent successfully\n");
-
     printf("\n------ (END) coap post-------\n");
     return 0;
 }

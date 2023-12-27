@@ -75,6 +75,7 @@ if [ ! -f "$BROKER_DETAILS_FILE" ]; then
     exit
 fi
 
+export NODE_CHANNEL=${DEFAULT_CHANNEL}
 echo "=============== Starting Compute Engine ==================="
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 

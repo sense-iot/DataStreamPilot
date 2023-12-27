@@ -13,6 +13,9 @@ ifneq (,$(EMCUTE_ID))
   CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
 endif
 
+ifneq (,$(CLIENT_TOPIC))
+  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
+endif
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT

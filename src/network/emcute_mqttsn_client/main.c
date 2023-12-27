@@ -33,6 +33,7 @@
 #include "mutex.h"
 #include "lpsxxx.h"
 #include "lpsxxx_params.h"
+#include "lpsxxx_params.h"
 
 #define ENABLE_DEBUG 0
 #include "debug.h"
@@ -62,8 +63,6 @@ static data_t data;
 static lpsxxx_t lpsxxx;
 // static mutex_t lps_lock = MUTEX_INIT;
 
-#define LPSXXX_REG_RES_CONF (0x10)
-#define LPSXXX_REG_CTRL_REG2 (0x21)
 #define DEV_I2C (dev->params.i2c)
 #define DEV_ADDR (dev->params.addr)
 #define DEV_RATE (dev->params.rate)
@@ -96,7 +95,7 @@ int temp_sensor_reset(void)
     lpsxxx_params_t paramts = {
         .i2c = lpsxxx_params[0].i2c,
         .addr = lpsxxx_params[0].addr,
-        .rate = LPSXXX_RATE_1HZ};
+        .rate = LPSXXX_RATE_7HZ};
 
     // 7       6543    2          1      0
     // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT

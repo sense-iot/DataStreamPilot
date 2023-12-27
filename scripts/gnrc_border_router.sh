@@ -10,7 +10,7 @@ source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 file_to_check=${SENSE_HOME}/release/gnrc_border_router.elf
-
+echo "============== Building on channel ${NODE_CHANNEL} ================="
 if [ ! -f "$file_to_check" ]; then
   echo "DataStreamPilot: build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3" ${DEFAULT_CHANNEL}
   build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3 ${DEFAULT_CHANNEL}

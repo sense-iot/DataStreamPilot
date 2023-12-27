@@ -17,7 +17,6 @@
 #include "od.h"
 #include "ztimer.h"
 #include "net/emcute.h"
-#include "mutex.h"
 
 #include "gcoap_example.h"
 
@@ -32,14 +31,13 @@ static char stack[THREAD_STACKSIZE_DEFAULT];
 static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
+static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
 
 #define EMCUTE_ID ("compute_engine")
 
 static char *server_ip = MQTT_BROKER_IP;
-
-static mutex_t cb_lock = MUTEX_INIT;
 
 char *denoised_data = NULL;
 
@@ -112,50 +110,6 @@ static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
 
 }
 
-static int cmd_sub_1(int argc, char **argv, emcute_cb_t cb)
-{
-  unsigned flags = EMCUTE_QOS_0;
-
-  if (argc < 2)
-  {
-    printf("usage: %s <topic name> [QoS level]\n", argv[0]);
-    return 1;
-  }
-
-  if (strlen(argv[1]) > TOPIC_MAXLEN)
-  {
-    puts("error: topic name exceeds maximum possible size");
-    return 1;
-  }
-  if (argc >= 3)
-  {
-    flags |= get_qos(argv[2]);
-  }
-
-  /* find empty subscription slot */
-  unsigned i = 0;
-  for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
-  {
-  }
-  if (i == NUMOFSUBS)
-  {
-    puts("error: no memory to store new subscriptions");
-    return 1;
-  }
-
-  subscriptions[i].cb = cb;
-  strcpy(topics[i], argv[1]);
-  subscriptions[i].topic.name = topics[i];
-  if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
-  {
-    printf("error: unable to subscribe to %s\n", argv[1]);
-    return 1;
-  }
-
-  printf("Now subscribed to %s\n", argv[1]);
-  return 0;
-}
-
 static int cmd_unsub(int argc, char **argv)
 {
   if (argc < 2)
@@ -211,6 +165,45 @@ int calculate_odd_parity(int16_t num) {
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
+static void *emcute_thread(void *arg)
+{
+  (void)arg;
+  emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
+  return NULL; /* should never be reached */
+}
+
+void initizlize_mqtt_client(void)
+{
+  msg_init_queue(queue, ARRAY_SIZE(queue));
+  memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
+  printf("memset okay\n");
+
+  char *cmd_con_m[3];
+  cmd_con_m[0] = "con";
+  cmd_con_m[1] = server_ip;
+  cmd_con_m[2] = "1885";
+  int cmd_con_count = 3;
+
+  printf("char arguments okay\n");
+
+  thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
+                emcute_thread, NULL, "emcute");
+
+  printf("Starting connection\n");
+  while (cmd_con(cmd_con_count, cmd_con_m))
+  {
+    printf("broker connection failed\n");
+    printf("Trying again...\n");
+
+    int randi = rand();
+    float u1 = randi / RAND_MAX;                  // Normalized to [0, 1]
+    int sleepDuration = (int)(u1 * 5000) + 10000; // Convert to milliseconds (0 to 1000 ms range)
+    printf("Sleeping for : %d ms\n", sleepDuration);
+    ztimer_sleep(ZTIMER_MSEC, sleepDuration);
+  }
+  printf("connection okay\n");
+}
+
 void setup_coap_client(void) {
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     ztimer_sleep(ZTIMER_MSEC, 1000);
@@ -261,9 +254,13 @@ void subscribeToTopics(void)
 }
 
 int main(void) {
-
+  ztimer_sleep(ZTIMER_MSEC, 4000);
+  initizlize_mqtt_client();
+  ztimer_sleep(ZTIMER_MSEC, 4000);
   unsubscribeFromTopics();
+  ztimer_sleep(ZTIMER_MSEC, 4000);
   subscribeToTopics();
+  ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
 
   int counter = 0;

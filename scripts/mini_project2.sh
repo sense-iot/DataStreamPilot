@@ -30,7 +30,7 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
     exit 1
 fi
 
-export my_arch=${ARCH}
+
 # assign a8 nodes
 export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 
@@ -54,13 +54,14 @@ write_and_print_variable "COMPUTE_ENGINE_NODE" "$COMPUTE_ENGINE_NODE" "m3"
 echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5
 
+export NODE_CHANNEL=${DEFAULT_CHANNEL}
 echo "================ Border Router and Broker node =========================="
 echo "========= starting gnrc_border_router node ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
 echo "========= starting gnrc_networking node to flash broker ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-sleep 4
+exit 0
 source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
 export BROKER_IP=$(extract_global_ipv6)
 PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
@@ -74,8 +75,8 @@ if [ ! -f "$BROKER_DETAILS_FILE" ]; then
     echo "****************************************************"
     exit
 fi
+export my_arch=${ARCH}
 
-export NODE_CHANNEL=${DEFAULT_CHANNEL}
 echo "=============== Starting Compute Engine ==================="
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 

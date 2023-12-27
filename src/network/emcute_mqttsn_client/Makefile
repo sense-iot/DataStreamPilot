@@ -20,10 +20,12 @@ endif
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
 
-USEMODULE += netdev_default
+USEMODULE += gnrc_netdev_default
 # USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_default
+USEMODULE += gnrc_icmpv6_default
+USEMODULE += gnrc_sock_udp
 USEMODULE += emcute
 USEMODULE += ztimer_msec
 # USEMODULE += ztimer_sec

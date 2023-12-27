@@ -10,15 +10,16 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 # File to check
 file_to_check=${SENSE_HOME}/release/gnrc_networking.elf
+my_arch=${ARCH}
 
 # Check if the file exists
 if [ ! -f "$file_to_check" ]; then
-  build_wireless_firmware_cached ${GNRC_NETWORKING_HOME} ${GNRC_NETWORKING_EXE_NAME} iotlab-a8-m3
+  build_wireless_firmware ${GNRC_NETWORKING_HOME} ${GNRC_NETWORKING_EXE_NAME} iotlab-a8-m3 ${DEFAULT_CHANNEL}
   build_status=$?
   if [ $build_status -ne 0 ]; then
     exit $build_status
   fi
-  ELF_FILE=${BORDER_ROUTER_HOME}/bin/${ARCH}/${BORDER_ROUTER_EXE_NAME}.elf
+  ELF_FILE=${GNRC_NETWORKING_HOME}/bin/iotlab-a8-m3/${GNRC_NETWORKING_EXE_NAME}.elf
 else
   echo "DataStreamPilot: File exists: $file_to_check"
   ELF_FILE=$file_to_check
@@ -27,6 +28,7 @@ fi
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
+  cp ${GNRC_NETWORKING_HOME}/bin/iotlab-a8-m3/${GNRC_NETWORKING_EXE_NAME}.elf ${SENSE_HOME}/release/${GNRC_NETWORKING_EXE_NAME}.elf
   cp $ELF_FILE ~/A8
 
   echo "DataStreamPilot: Flashing new firmware for iotlab-a8-m3 node : ${GNRC_NETWORKING_NODE}"

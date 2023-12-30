@@ -21,12 +21,10 @@ fi
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
     cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
-    cp $ELF_FILE ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}.elf
+    cp $ELF_FILE ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${EMCUTE_ID}.elf
 
     echo "DataStreamPilot:Flashing new firmware for ${ARCH} node : ${COMPUTE_ENGINE_NODE}"
-    flash_firmware ${COMPUTE_ENGINE_EXE_NAME} ${COMPUTE_ENGINE_NODE}
-
-    export COMPUTE_ENGINE_ROUTER_UP=1
+    flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${EMCUTE_ID}.elf ${COMPUTE_ENGINE_NODE}
 
     echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"
     echo "coap info"

@@ -46,12 +46,14 @@
 #define NUMOFSUBS (16U)
 #define TOPIC_MAXLEN (64U)
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
-static msg_t queue[8];
+
 
 static emcute_sub_t subscriptions[NUMOFSUBS];
 
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
+
+static char stack[THREAD_STACKSIZE_DEFAULT];
+static msg_t queue[8];
 
 typedef struct
 {

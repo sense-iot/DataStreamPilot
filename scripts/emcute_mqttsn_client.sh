@@ -19,7 +19,7 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
   if [ "$my_arch" = "iotlab-m3" ]; then
       echo "Flashing new firmware for ${my_arch} node : ${MQTT_CLIENT_NODE}"
-      flash_firmware ${EMCUTE_MQTSSN_CLIENT_EXE_NAME} ${MQTT_CLIENT_NODE}
+      flash_elf ${SENSE_HOME}/release/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf ${MQTT_CLIENT_NODE}
       echo "nc m3-${MQTT_CLIENT_NODE} 20000"
   elif [ "$my_arch" = "iotlab-a8-m3" ]; then
       cp ${EMCUTE_MQTSSN_CLIENT_HOME}/bin/${my_arch}/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}.elf ~/A8/${EMCUTE_MQTSSN_CLIENT_EXE_NAME}_${EMCUTE_ID}.elf

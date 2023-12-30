@@ -16,7 +16,6 @@
 #include "net/utils.h"
 #include "od.h"
 #include "ztimer.h"
-#include "net/emcute.h"
 
 #include "gcoap_example.h"
 
@@ -35,260 +34,33 @@ static char topics[NUMOFSUBS][TOPIC_MAXLEN];
 
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
 
-#define EMCUTE_ID ("compute_engine")
-
-static char *server_ip = MQTT_BROKER_IP;
-
 char *denoised_data = NULL;
 
-// change this function work with enum it self
-static unsigned get_qos(const char *str)
+void setup_coap_client(void)
 {
-    int qos = atoi(str);
-    switch (qos)
-    {
-    case 1:
-        return EMCUTE_QOS_1;
-    case 2:
-        return EMCUTE_QOS_2;
-    default:
-        return EMCUTE_QOS_0;
-    }
-}
-
-static int cmd_sub_1(int argc, char **argv, emcute_cb_t cb)
-{
-  unsigned flags = EMCUTE_QOS_0;
-
-  if (argc < 2)
-  {
-    printf("usage: %s <topic name> [QoS level]\n", argv[0]);
-    return 1;
-  }
-
-  if (strlen(argv[1]) > TOPIC_MAXLEN)
-  {
-    puts("error: topic name exceeds maximum possible size");
-    return 1;
-  }
-  if (argc >= 3)
-  {
-    flags |= get_qos(argv[2]);
-  }
-
-  /* find empty subscription slot */
-  unsigned i = 0;
-  for (; (i < NUMOFSUBS) && (subscriptions[i].topic.id != 0); i++)
-  {
-  }
-  if (i == NUMOFSUBS)
-  {
-    puts("error: no memory to store new subscriptions");
-    return 1;
-  }
-
-  subscriptions[i].cb = cb;
-  strcpy(topics[i], argv[1]);
-  subscriptions[i].topic.name = topics[i];
-  if (emcute_sub(&subscriptions[i], flags) != EMCUTE_OK)
-  {
-    printf("error: unable to subscribe to %s\n", argv[1]);
-    return 1;
-  }
-
-  printf("Now subscribed to %s\n", argv[1]);
-  return 0;
-}
-
-static void on_pub(const emcute_topic_t *topic, void *data, size_t len)
-{
-  char *in = (char *)data;
-
-  printf("### got publication for topic '%s' [%i] ###\n", topic->name, (int)topic->id);
-  printf("Data : %s \n", in);
-
-  if (denoised_data == NULL)
-  {
-    denoised_data = malloc(len + 1);
-    strncpy(denoised_data, in, len);
-    denoised_data[len] = '\0';
-  }
-  else
-  {
-    free(denoised_data);
-    denoised_data = malloc(len + 1);
-    strncpy(denoised_data, in, len);
-    denoised_data[len] = '\0';
-  }
-
-  printf("Denoised data : %s \n", denoised_data);
-
-}
-
-static int cmd_unsub(int argc, char **argv)
-{
-  if (argc < 2)
-  {
-    printf("usage %s <topic name>\n", argv[0]);
-    return 1;
-  }
-
-  /* find subscriptions entry */
-  for (unsigned i = 0; i < NUMOFSUBS; i++)
-  {
-    if (subscriptions[i].topic.name &&
-        (strcmp(subscriptions[i].topic.name, argv[1]) == 0))
-    {
-      if (emcute_unsub(&subscriptions[i]) == EMCUTE_OK)
-      {
-        memset(&subscriptions[i], 0, sizeof(emcute_sub_t));
-        printf("Unsubscribed from '%s'\n", argv[1]);
-      }
-      else
-      {
-        printf("Unsubscription form '%s' failed\n", argv[1]);
-      }
-      return 0;
-    }
-  }
-
-  printf("error: no subscription for topic '%s' found\n", argv[1]);
-  return 1;
-}
-
-static int cmd_con(int argc, char **argv)
-{
-  sock_udp_ep_t gw = {.family = AF_INET6, .port = 1885U};
-  char *topic = NULL;
-  char *message = NULL;
-  size_t len = 0;
-
-  printf("Starting connection inside\n");
-
-  if (argc < 2)
-  {
-    printf("usage: %s <ipv6 addr> [port] [<will topic> <will message>]\n",
-           argv[0]);
-    return 1;
-  }
-
-  /* parse address */
-  printf("checking ip address\n");
-  printf("checking ip address: %s\n", argv[1]);
-  if (ipv6_addr_from_str((ipv6_addr_t *)&gw.addr.ipv6, argv[1]) == NULL)
-  {
-    printf("error parsing IPv6 address\n");
-    return 1;
-  }
-
-  printf("ip address okay\n");
-
-  // if (argc >= 3)
-  // {
-  //     gw.port = atoi(argv[2]);
-  // }
-  // if (argc >= 5)
-  // {
-  //     topic = argv[3];
-  //     message = argv[4];
-  //     len = strlen(message);
-  // }
-  printf("starting mqtt con\n");
-  int connectionResp = emcute_con(&gw, true, topic, message, len, 0);
-  if (connectionResp != EMCUTE_OK)
-  {
-    printf("error: unable to connect to [%s]:%i\n", argv[1], (int)gw.port);
-    return 1;
-  }
-  printf("Successfully connected to gateway at [%s]:%i\n",
-         argv[1], (int)gw.port);
-
-  return connectionResp;
-}
-
-typedef struct {
-  char buffer[128];
-  int16_t tempList[5];
-} data_t;
-
-static data_t data;
-
-#define MAX_JSON_PAYLOAD_SIZE 256
-
-// Function to calculate odd parity 
-int calculate_odd_parity(int16_t num) {
-    int8_t count = 0;
-    for (int i = 0; i < 16; ++i) { // Assuming 16-bit integers
-        if (num & 1) {
-            count++;
-        }
-        num >>= 1;
-    }
-    return (count % 2 == 0) ? 1 : 0;
-}
-
-#define MAIN_QUEUE_SIZE (4)
-static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
-
-static void *emcute_thread(void *arg)
-{
-  (void)arg;
-  emcute_run(CONFIG_EMCUTE_DEFAULT_PORT, EMCUTE_ID);
-  return NULL; /* should never be reached */
-}
-
-void initizlize_mqtt_client(void)
-{
-  msg_init_queue(queue, ARRAY_SIZE(queue));
-  memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
-  printf("memset okay\n");
-
-  char *cmd_con_m[3];
-  cmd_con_m[0] = "con";
-  cmd_con_m[1] = server_ip;
-  cmd_con_m[2] = "1885";
-  int cmd_con_count = 3;
-
-  printf("char arguments okay\n");
-
-  thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
-                emcute_thread, NULL, "emcute");
-
-  printf("Starting connection\n");
-  while (cmd_con(cmd_con_count, cmd_con_m))
-  {
-    printf("broker connection failed\n");
-    printf("Trying again...\n");
-
-    int randi = rand();
-    float u1 = randi / RAND_MAX;                  // Normalized to [0, 1]
-    int sleepDuration = (int)(u1 * 5000) + 10000; // Convert to milliseconds (0 to 1000 ms range)
-    printf("Sleeping for : %d ms\n", sleepDuration);
-    ztimer_sleep(ZTIMER_MSEC, sleepDuration);
-  }
-  printf("connection okay\n");
-}
-
-void setup_coap_client(void) {
-    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
-    ztimer_sleep(ZTIMER_MSEC, 1000);
+  msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
+  ztimer_sleep(ZTIMER_MSEC, 1000);
 }
 
 // Define a structure to hold the location name and its corresponding binary value
-struct LocationMapping {
-    const char *location;
-    unsigned int binaryValue;
+struct LocationMapping
+{
+  const char *location;
+  unsigned int binaryValue;
 };
 
 // Function to retrieve the binary value based on the location name
-unsigned int getBinaryValue(const struct LocationMapping *mapping, const char *location) {
-    for (int i = 0; mapping[i].location != NULL; ++i) {
-        if (strcmp(mapping[i].location, location) == 0) {
-            return mapping[i].binaryValue;
-        }
+unsigned int getBinaryValue(const struct LocationMapping *mapping, const char *location)
+{
+  for (int i = 0; mapping[i].location != NULL; ++i)
+  {
+    if (strcmp(mapping[i].location, location) == 0)
+    {
+      return mapping[i].binaryValue;
     }
-    // Return a default value (e.g., 000) if the location is not found
-    return 0;
+  }
+  // Return a default value (e.g., 000) if the location is not found
+  return 0;
 }
 
 struct LocationMapping locationMap[] = {
@@ -300,98 +72,203 @@ struct LocationMapping locationMap[] = {
     {"strasbourg", 0b101},
     {NULL, 0}};
 
-  
+static char stack[THREAD_STACKSIZE_DEFAULT];
+static msg_t queue[8];
 
-void unsubscribeFromTopics(void)
+typedef struct
 {
-  char *unsub_message[2];
-  unsub_message[0] = "sub";
-  unsub_message[1] = "d";
-  cmd_unsub(2, unsub_message);
+  int16_t tempList[8];
+} data_t;
+
+static data_t data;
+
+static lpsxxx_t lpsxxx;
+// static mutex_t lps_lock = MUTEX_INIT;
+#define LPSXXX_REG_RES_CONF (0x10)
+#define LPSXXX_REG_CTRL_REG2 (0x21)
+#define DEV_I2C (dev->params.i2c)
+#define DEV_ADDR (dev->params.addr)
+#define DEV_RATE (dev->params.rate)
+
+int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
+{
+  i2c_acquire(DEV_I2C);
+  if (i2c_write_reg(DEV_I2C, DEV_ADDR, reg, value, 0) < 0)
+  {
+    i2c_release(DEV_I2C);
+    return -LPSXXX_ERR_I2C;
+  }
+  i2c_release(DEV_I2C);
+
+  return LPSXXX_OK; // Success
 }
 
-void subscribeToTopics(void)
+int temp_sensor_write_CTRL_REG2_value(const lpsxxx_t *dev, uint8_t value)
 {
-  char *sub_message[2];
-  sub_message[0] = "sub";
-  sub_message[1] = "d";
-  cmd_sub_1(2, sub_message, on_pub);
+  return write_register_value(dev, LPSXXX_REG_CTRL_REG2, value);
 }
 
-int main(void) {
+int temp_sensor_write_res_conf(const lpsxxx_t *dev, uint8_t value)
+{
+  return write_register_value(dev, LPSXXX_REG_RES_CONF, value);
+}
+
+int temp_sensor_reset(void)
+{
+  lpsxxx_params_t paramts = {
+      .i2c = lpsxxx_params[0].i2c,
+      .addr = lpsxxx_params[0].addr,
+      .rate = LPSXXX_RATE_7HZ};
+
+  // 7       6543    2          1      0
+  // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
+  //  1      0000   1      0            0
+  // 44
+  if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
+  {
+    printf("Sensor reset failed\n");
+    return 0;
+  }
+
   ztimer_sleep(ZTIMER_MSEC, 4000);
-  initizlize_mqtt_client();
+
+  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
+  {
+    printf("Sensor initialization failed\n");
+    return 0;
+  }
+
   ztimer_sleep(ZTIMER_MSEC, 4000);
-  unsubscribeFromTopics();
+
+  // 0x40 -- 01000000
+  // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
+  if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
+  {
+    printf("Sensor enable failed\n");
+    return 0;
+  }
+
   ztimer_sleep(ZTIMER_MSEC, 4000);
-  subscribeToTopics();
+  if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
+  {
+    printf("Sensor enable failed\n");
+    return 0;
+  }
+
+  ztimer_sleep(ZTIMER_MSEC, 4000);
+  return 1;
+}
+
+float generate_normal_random(float stddev)
+{
+  float M_PI = 3.1415926535;
+
+  // Box-Muller transform to generate random numbers with normal distribution
+  float u1 = rand() / (float)RAND_MAX;
+  float u2 = rand() / (float)RAND_MAX;
+  float z = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
+
+  return stddev * z;
+}
+
+float add_noise(float stddev)
+{
+  int num;
+  float noise_val = 0;
+
+  num = rand() % 100 + 1; // use rand() function to get the random number
+  if (num >= 50)
+  {
+    // Generate a random number with normal distribution based on a stddev
+    noise_val = generate_normal_random(stddev);
+  }
+  return noise_val;
+}
+
+int main(void)
+{
+  ztimer_sleep(ZTIMER_MSEC, 5000);
+  printf("Sensor data averaged - Group 12 MQTT\n");
+  printf("Sensor ID : %s\n", EMCUTE_ID);
+  printf("Topic : %s\n", CLIENT_TOPIC);
+
+  if (temp_sensor_reset() == 0)
+  {
+    printf("Sensor failed\n");
+  }
+
   ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
 
-  int counter = 0;
-  int parity;
-  int16_t base_value = 0;
+  int array_length = 0;
 
-  while (1) {
-    
-    int16_t temp = 3250;
-    int is_base = 0;
+  while (1)
+  {
 
-    if (temp > 30) {
+    int16_t temp = 0;
+    if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK)
+    {
 
-      char temp_str[10];
-      char parity_bit[4];
-
-      DEBUG_PRINT("temp: %i base_value: %i\n", temp, base_value);
-      
-      counter = counter % 10;
-
-      if (counter == 0) {
-        base_value = temp;
-        sprintf(temp_str, "%i,", temp);
-        strcat(data.buffer, temp_str);
-        is_base = 1;
+      int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
+      printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      if (array_length < 7)
+      {
+        data.tempList[array_length++] = temp_n_noise;
       }
-      else {
-        temp -= base_value;
-        temp = (temp < -128) ? -128 : (temp > 127) ? 127 : temp; // threshold = 128
-        sprintf(temp_str, "%i,", temp);
-        strcat(data.buffer, temp_str);
-      }
+      else
+      {
+        data.tempList[array_length++] = temp_n_noise;
+        int32_t sum = 0;
+        int numElements = array_length;
+        // printf("No of ele: %i\n", numElements);
+        for (int i = 0; i < numElements; i++)
+        {
+          sum += (int32_t)data.tempList[i];
+          // printf("Temp List: %i.%u°C\n", (data.tempList[i] / 100), (data.tempList[i] % 100));
+        }
 
-      parity = calculate_odd_parity(temp);
-      sprintf(parity_bit, "%i,", parity);
-      strcat(data.buffer, parity_bit);
+        // printf("Sum: %li\n", sum);
 
-      DEBUG_PRINT("Data: %s\n", data.buffer);
-      DEBUG_PRINT("site: %d\n", site_name);
-      ztimer_sleep(ZTIMER_MSEC, 1000);
+        // avg_temp = sum / numElements;
 
-      // Create a JSON-like string manually
-      char json_payload[MAX_JSON_PAYLOAD_SIZE];
-      int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                   "{\"s\": \"%d\", \"t\": \"%s\", \"b\": \"%d\"}",
-                                   site_name, data.buffer, is_base);
+        double avg_temp = (double)sum / numElements;
 
-      // Check if snprintf was successful
-      if (snprintf_result < 0 || snprintf_result >= (int) sizeof(json_payload)) {
+        // Round to the nearest integer
+        int16_t rounded_avg_temp = (int16_t)round(avg_temp);
+
+        char json_payload[MAX_JSON_PAYLOAD_SIZE];
+        int snprintf_result = snprintf(json_payload, sizeof(json_payload),
+                                       "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d\"}",
+                                       site_name, EMCUTE_ID, rounded_avg_temp);
+
+        // Check if snprintf was successful
+        if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
+        {
           fprintf(stderr, "Error creating JSON payload\n");
           return 1;
+        }
+
+        // Use the JSON payload string as needed
+        printf("JSON Payload: %s\n", json_payload);
+
+        gcoap_post(json_payload, TEMP);
+        memset(data.buffer, 0, sizeof(data.buffer));
+
+        for (int i = 0; i < array_length - 1; ++i)
+        {
+          data.tempList[i] = data.tempList[i + 1];
+        }
+        array_length--;
       }
-
-      // Use the JSON payload string as needed
-      printf("JSON Payload: %s\n", json_payload);
-
-
-      gcoap_post(json_payload, TEMP);
-      memset(data.buffer, 0, sizeof(data.buffer));
-
-      counter++;
     }
 
-    ztimer_sleep(ZTIMER_MSEC, 30000);
-
+    int randi = rand();
+    float u1 = randi / RAND_MAX;
+    int sleepDuration = (int)(u1 * 5000) + 30000; // delay of 1-2 seconds
+    printf("Sleeping for : %d ms\n", sleepDuration);
+    ztimer_sleep(ZTIMER_MSEC, sleepDuration);
   }
+}
 
-  return 0;
+return 0;
 }

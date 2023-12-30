@@ -4,12 +4,20 @@ BOARD ?= iotlab-m3
 
 RIOTBASE ?= $(CURDIR)/../../external/RIOT
 
+
+ifneq (,$(EMCUTE_ID))
+  CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
+endif
+
+ifneq (,$(CLIENT_TOPIC))
+  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
+endif
+
 USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
 USEMODULE += ztimer_sec
 USEMODULE += ztimer_no_periph_rtt
 USEMODULE += xtimer
-USEMODULE += emcute
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules for IPv6 and UDP

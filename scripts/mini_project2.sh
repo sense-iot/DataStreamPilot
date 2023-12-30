@@ -6,8 +6,8 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 export ARCH=iotlab-m3
 
 EXPERIMENT_NAME="mini-project-2-group-12"
-M3_NODE_COUNT=6
-A8_NODE_COUNT=1
+M3_NODE_COUNT=4
+A8_NODE_COUNT=0
 EXPERIMENT_ID=0
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
@@ -36,20 +36,14 @@ export GNRC_NETWORKING_NODE=${a8_nodes[0]}
 
 # assign m3 nodes
 export BORDER_ROUTER_NODE=${m3_nodes[0]}
-export DENOISER_NODE=${m3_nodes[1]}
-export MQTT_CLIENT_NODE_1=${m3_nodes[2]}
-export MQTT_CLIENT_NODE_2=${m3_nodes[3]}
-export MQTT_CLIENT_NODE_3=${m3_nodes[4]}
-export COMPUTE_ENGINE_NODE=${m3_nodes[5]}
-
-write_and_print_variable "GNRC_NETWORKING_NODE" "$GNRC_NETWORKING_NODE" "a8"
+export COMPUTE_ENGINE_NODE_1=${m3_nodes[1]}
+export COMPUTE_ENGINE_NODE_2=${m3_nodes[2]}
+export COMPUTE_ENGINE_NODE_3=${m3_nodes[3]}
 
 write_and_print_variable "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE" "m3"
-write_and_print_variable "DENOISER_NODE" "$DENOISER_NODE" "m3"
-write_and_print_variable "MQTT_CLIENT_NODE_1" "$MQTT_CLIENT_NODE_1" "m3"
-write_and_print_variable "MQTT_CLIENT_NODE_2" "$MQTT_CLIENT_NODE_2" "m3"
-write_and_print_variable "MQTT_CLIENT_NODE_3" "$MQTT_CLIENT_NODE_3" "m3"
-write_and_print_variable "COMPUTE_ENGINE_NODE" "$COMPUTE_ENGINE_NODE" "m3"
+write_and_print_variable "COMPUTE_ENGINE_NODE_1" "$COMPUTE_ENGINE_NODE_1" "m3"
+write_and_print_variable "COMPUTE_ENGINE_NODE_2" "$COMPUTE_ENGINE_NODE_2" "m3"
+write_and_print_variable "COMPUTE_ENGINE_NODE_3" "$COMPUTE_ENGINE_NODE_3" "m3"
 
 echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5
@@ -59,57 +53,24 @@ echo "================ Border Router and Broker node =========================="
 echo "========= starting gnrc_border_router node ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
-echo "========= starting gnrc_networking node to flash broker ========="
-source ${SENSE_SCRIPTS_HOME}/gnrc_networking.sh
-source ${SENSE_SCRIPTS_HOME}/mqtt_broker_setup.sh
-export BROKER_IP=$(extract_global_ipv6)
-PREV_BROKER_IP=$(read_variable_from_file "PREV_BROKER_IP")
-BROKER_DETAILS_FILE=~/shared/mqtt_broker_details.txt
-if [ ! -f "$BROKER_DETAILS_FILE" ]; then
-    error_message="DataStreamPilot: ERROR: Broker failed"
-    echo "****************************************************"
-    echo "*                                                  *"
-    printf "* %-36s*\n" "$error_message"
-    echo "*                                                  *"
-    echo "****************************************************"
-    exit
-fi
-export my_arch=${ARCH}
-
 echo "=============== Starting Compute Engine ==================="
-source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
-
-echo "=============== Starting Denoiser ==================="
-
-export DENOISER_NODE=${DENOISER_NODE}
-export EMCUTE_ID="d"
-export CLIENT_TOPIC="d"
-source ${SENSE_SCRIPTS_HOME}/emcute_mqttsn.sh
-
-echo "=============== Starting sensors ==================="
-
-export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_1}
 export EMCUTE_ID="s1"
 export CLIENT_TOPIC="s1"
 export NODE_CHANNEL=${DEFAULT_CHANNEL}
-setup_and_check_sensor "$my_arch"
-# source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
+export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_1}
+source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 
-export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_2}
 export EMCUTE_ID="s2"
 export CLIENT_TOPIC="s2"
-setup_and_check_sensor "$my_arch"
-# source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
+export NODE_CHANNEL=${DEFAULT_CHANNEL}
+export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_1}
+source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 
-export MQTT_CLIENT_NODE=${MQTT_CLIENT_NODE_3}
 export EMCUTE_ID="s3"
 export CLIENT_TOPIC="s3"
-setup_and_check_sensor "$my_arch"
-# source ${SENSE_SCRIPTS_HOME}/paho_mqtt_client.sh
+export NODE_CHANNEL=${DEFAULT_CHANNEL}
+export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_1}
+source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 
-echo "=============== Starting Compute Enginer ==================="
-
-export PREV_BROKER_IP=${BROKER_IP}
-write_variable_to_file "PREV_BROKER_IP" "$PREV_BROKER_IP"
-
+echo "=============== Starting sensors ==================="
 create_tap_interface "${BORDER_ROUTER_NODE}" "${TAP_INTERFACE}" "${BORDER_ROUTER_IP}"

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "thread.h"
 #include "ztimer.h"
@@ -9,32 +10,31 @@
 
 #include "msg.h"
 
+#include "lpsxxx.h"
+#include "lpsxxx_params.h"
+#include "lpsxxx_internal.h"
+#include "periph/i2c.h"
 #include "net/gcoap.h"
-#include "net/ipv6/addr.h"
-#include "net/sock/util.h"
-#include "shell.h"
-#include "net/utils.h"
-#include "od.h"
 #include "ztimer.h"
-
-#include "gcoap_example.h"
 
 #define ENABLE_DEBUG 1
 #include "debug.h"
+
+#define MAIN_QUEUE_SIZE (4)
+static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
+
+extern int gcoap_cli_cmd(int argc, char **argv);
+extern void gcoap_cli_init(void);
+
+static char *server_ip = GCOAP_AMAZON_SERVER_IP_ONLY;
+#define MAX_JSON_PAYLOAD_SIZE 128
+char json_payload[MAX_JSON_PAYLOAD_SIZE];
 
 #define EMCUTE_PRIO (THREAD_PRIORITY_MAIN - 1)
 #define NUMOFSUBS (16U)
 #define TOPIC_MAXLEN (64U)
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
-static msg_t queue[8];
-
-static emcute_sub_t subscriptions[NUMOFSUBS];
-static char topics[NUMOFSUBS][TOPIC_MAXLEN];
-
 #define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
-
-char *denoised_data = NULL;
 
 void setup_coap_client(void)
 {
@@ -72,8 +72,6 @@ struct LocationMapping locationMap[] = {
     {"strasbourg", 0b101},
     {NULL, 0}};
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
-static msg_t queue[8];
 
 typedef struct
 {
@@ -185,12 +183,28 @@ float add_noise(float stddev)
   return noise_val;
 }
 
+// Function to calculate odd parity 
+int calculate_odd_parity(int16_t num) {
+    int8_t count = 0;
+    for (int i = 0; i < 16; ++i) { // Assuming 16-bit integers
+        if (num & 1) {
+            count++;
+        }
+        num >>= 1;
+    }
+    return (count % 2 == 0) ? 1 : 0;
+}
+
+ char parity_bit[4];
 int main(void)
 {
   ztimer_sleep(ZTIMER_MSEC, 5000);
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", EMCUTE_ID);
   printf("Topic : %s\n", CLIENT_TOPIC);
+
+  setup_coap_client();
+  msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
 
   if (temp_sensor_reset() == 0)
   {
@@ -199,6 +213,16 @@ int main(void)
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
+
+  char *coap_command[6];
+  coap_command[0] = "coap";
+  coap_command[1] = "post";
+  coap_command[2] = server_ip;
+  coap_command[3] = "5683";
+  coap_command[4] = "/temp";
+  coap_command[5] = json_payload;
+
+  const int message_arg_count = 6;
 
   int array_length = 0;
 
@@ -236,10 +260,11 @@ int main(void)
         // Round to the nearest integer
         int16_t rounded_avg_temp = (int16_t)round(avg_temp);
 
-        char json_payload[MAX_JSON_PAYLOAD_SIZE];
+        int parity = calculate_odd_parity(rounded_avg_temp);
+        
         int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                       "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d\"}",
-                                       site_name, EMCUTE_ID, rounded_avg_temp);
+                                       "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": %d, %d}",
+                                       site_name, EMCUTE_ID, rounded_avg_temp, parity);
 
         // Check if snprintf was successful
         if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
@@ -251,8 +276,7 @@ int main(void)
         // Use the JSON payload string as needed
         printf("JSON Payload: %s\n", json_payload);
 
-        gcoap_post(json_payload, TEMP);
-        memset(data.buffer, 0, sizeof(data.buffer));
+        gcoap_cli_cmd(message_arg_count, coap_command);
 
         for (int i = 0; i < array_length - 1; ++i)
         {
@@ -268,7 +292,6 @@ int main(void)
     printf("Sleeping for : %d ms\n", sleepDuration);
     ztimer_sleep(ZTIMER_MSEC, sleepDuration);
   }
-}
 
 return 0;
 }

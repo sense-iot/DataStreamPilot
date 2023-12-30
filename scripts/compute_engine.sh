@@ -3,7 +3,7 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-file_to_check=${SENSE_HOME}/release/compute_engine.elf
+file_to_check=${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${EMCUTE_ID}.elf
 my_arch=${ARCH}
 
 # Check if the file exists

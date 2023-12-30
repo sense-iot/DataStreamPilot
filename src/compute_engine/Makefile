@@ -18,6 +18,7 @@ USEMODULE += ztimer_msec
 USEMODULE += ztimer_sec
 USEMODULE += ztimer_no_periph_rtt
 USEMODULE += xtimer
+USEMODULE += lps331ap
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules for IPv6 and UDP
@@ -27,6 +28,17 @@ USEMODULE += sock_udp
 USEMODULE += gnrc_icmpv6_error
 # Additional networking modules that can be dropped if not needed
 USEMODULE += gnrc_icmpv6_echo
+
+# Specify the mandatory networking module for a IPv6 routing node
+USEMODULE += gnrc_ipv6_router_default
+# Add a routing protocol
+USEMODULE += gnrc_rpl
+USEMODULE += auto_init_gnrc_rpl
+USEMODULE += gnrc_udp
+
+USEMODULE += netstats_l2
+USEMODULE += netstats_ipv6
+USEMODULE += netstats_rpl
 
 USEMODULE += nanocoap_sock
 USEMODULE += nanocoap_resources
@@ -66,10 +78,8 @@ USEMODULE += gcoap
 # Required by gcoap example
 USEMODULE += od
 USEMODULE += fmt
-USEMODULE += netutils
 # Add also the shell, some shell commands
 USEMODULE += shell
-USEMODULE += shell_cmds_default
 USEMODULE += ps
 
 # Comment this out to disable code in RIOT that does safety checking

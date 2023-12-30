@@ -72,10 +72,18 @@ struct LocationMapping locationMap[] = {
     {"strasbourg", 0b101},
     {NULL, 0}};
 
+/*
+  % r - accuracy (5%),
+  % s - standard deviation,
+  % x - Average,
+  % z = 1.960 (95%) - TAKE THE CEIL
+  % N = (100*z*s/(r*x))^2
+*/
+#define WINDOW_SIZE 60
 
 typedef struct
 {
-  int16_t tempList[8];
+  int16_t tempList[WINDOW_SIZE];
 } data_t;
 
 static data_t data;
@@ -181,16 +189,19 @@ float add_noise(float stddev)
   return noise_val;
 }
 
-// Function to calculate odd parity 
-int calculate_odd_parity(int16_t num) {
-    int8_t count = 0;
-    for (int i = 0; i < 16; ++i) { // Assuming 16-bit integers
-        if (num & 1) {
-            count++;
-        }
-        num >>= 1;
+// Function to calculate odd parity
+int calculate_odd_parity(int16_t num)
+{
+  int8_t count = 0;
+  for (int i = 0; i < 16; ++i)
+  { // Assuming 16-bit integers
+    if (num & 1)
+    {
+      count++;
     }
-    return (count % 2 == 0) ? 1 : 0;
+    num >>= 1;
+  }
+  return (count % 2 == 0) ? 1 : 0;
 }
 
 char parity_bit[4];
@@ -205,7 +216,7 @@ int main(void)
 
   if (temp_sensor_reset() == 0)
   {
-    printf("Sensor failed\n");
+    printf("Sensor reset failed in the main loop\n");
   }
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
@@ -221,74 +232,65 @@ int main(void)
 
   const int message_arg_count = 6;
 
-  int array_length = 0;
+  int current_index = 0;
+
+  // initialize the array
+  for (int i = 0; i < WINDOW_SIZE; i++)
+  {
+    data.tempList[i] = 0;
+  }
 
   while (1)
   {
-
     int16_t temp = 0;
     if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK)
     {
 
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
       printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
-      if (array_length < 7)
+      data.tempList[current_index++] = temp_n_noise;
+
+      if (current_index == WINDOW_SIZE)
       {
-        data.tempList[array_length++] = temp_n_noise;
+        current_index = 0;
       }
-      else
+
+      int32_t sum = 0;
+      for (int i = 0; i < WINDOW_SIZE; i++)
       {
-        data.tempList[array_length++] = temp_n_noise;
-        int32_t sum = 0;
-        int numElements = array_length;
-        // printf("No of ele: %i\n", numElements);
-        for (int i = 0; i < numElements; i++)
-        {
-          sum += (int32_t)data.tempList[i];
-          // printf("Temp List: %i.%u°C\n", (data.tempList[i] / 100), (data.tempList[i] % 100));
-        }
-
-        // printf("Sum: %li\n", sum);
-
-        // avg_temp = sum / numElements;
-
-        double avg_temp = (double)sum / numElements;
-
-        // Round to the nearest integer
-        int16_t rounded_avg_temp = (int16_t)round(avg_temp);
-
-        int parity = calculate_odd_parity(rounded_avg_temp);
-
-        int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                       "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
-                                       site_name, SENSOR_ID, rounded_avg_temp, parity);
-
-        // Check if snprintf was successful
-        if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
-        {
-          fprintf(stderr, "Error creating JSON payload\n");
-          return 1;
-        }
-
-        // Use the JSON payload string as needed
-        printf("JSON Payload: %s\n", json_payload);
-
-        gcoap_cli_cmd(message_arg_count, coap_command);
-
-        for (int i = 0; i < array_length - 1; ++i)
-        {
-          data.tempList[i] = data.tempList[i + 1];
-        }
-        array_length--;
+        sum += (int32_t)data.tempList[i];
       }
+
+      double avg_temp = (double)sum / WINDOW_SIZE;
+
+      // Round to the nearest integer
+      int16_t rounded_avg_temp = (int16_t)round(avg_temp);
+
+      int parity = calculate_odd_parity(rounded_avg_temp);
+
+      int snprintf_result = snprintf(json_payload, sizeof(json_payload),
+                                     "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
+                                     site_name, SENSOR_ID, rounded_avg_temp, parity);
+
+      // Check if snprintf was successful
+      if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
+      {
+        fprintf(stderr, "Error creating JSON payload\n");
+        return 1;
+      }
+      // Use the JSON payload string as needed
+      printf("JSON Payload: %s\n", json_payload);
+      gcoap_cli_cmd(message_arg_count, coap_command);
     }
 
     int randi = rand();
     float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 1000) + 5000; // delay of 1-2 seconds
+    int sleepDuration = (int)(u1 * 100)+100; // delay of 1-2 seconds
     printf("Sleeping for : %d ms\n", sleepDuration);
+
+    // This is to handle border router crashing
     ztimer_sleep(ZTIMER_MSEC, sleepDuration);
   }
 
-return 0;
+  return 0;
 }

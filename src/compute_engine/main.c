@@ -124,7 +124,7 @@ int temp_sensor_reset(void)
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_7HZ};
+      .rate = LPSXXX_RATE_25HZ};
 
   ztimer_sleep(ZTIMER_MSEC, 10000);
 

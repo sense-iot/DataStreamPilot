@@ -5,8 +5,8 @@ import numpy as np
 from collections import defaultdict
 from configuration import sites
 
-sensor_readings = defaultdict(list)
-sensor_readings_processed = defaultdict(list)
+sensor_readings = defaultdict(lambda: defaultdict(list))
+sensor_readings_processed = defaultdict(lambda: defaultdict(list))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("coap-server")
@@ -28,32 +28,36 @@ async def decodeTemperature(site, reading, sensor):
 
     if (parityCheck(reading, parity)):
         logger.debug(f"Initializing reading for site {site_name}")
-        sensor_readings[site_name].append({sensor: reading})
+        sensor_readings[site_name][sensor].append(reading)
     else:
-        if 2 < len(sensor_readings[site_name]):
-            logger.debug(f"mismatched{reading} {parity} {parityCheck(reading, parity)}" )
-            prev_value = list(sensor_readings[site_name][-1].values())[0]
-            prev_prev_value = list(sensor_readings[site_name][-2].values())[0]
+        if 2 <= len(sensor_readings[site_name][sensor]):
+            logger.debug(f"Mismatched{reading} {parity} {parityCheck(reading, parity)}" )
+            prev_value = sensor_readings[site_name][sensor][-1]
+            prev_prev_value = sensor_readings[site_name][sensor][-2]
             interpolated_value = (prev_value + prev_prev_value) / 2.0
-            sensor_readings[site_name].append({sensor: interpolated_value})
+            sensor_readings[site_name][sensor].append(interpolated_value)
 
-    logger.debug(f"Sensor readings for site {site_name}: {len(sensor_readings[site_name])}")
+    logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(sensor_readings[site_name][sensor])}")
 
-    if len(sensor_readings[site_name])>0 and len(sensor_readings[site_name])%NUMBER_OF_SENSORS == 0:
-        logger.debug(f"Processing sensor readings for site {site_name}")
-        reading_for_processing = sensor_readings[site_name][-NUMBER_OF_SENSORS:]
+    if len(sensor_readings[site_name][sensor]) > 2:
+        logger.debug(f"Processing sensor readings for site {site_name}, sensor {sensor}")
+        reading_for_processing = sensor_readings[site_name][sensor]
         logger.debug(f"Reading for processing: {reading_for_processing}")
-        processed_value = filter_outliers(readings=np.array([list(pair.values())[-1] for pair in reading_for_processing]),  z_threshold=Z_THRESHOLD)/100.0
+        processed_value = filter_outliers(readings=np.array(reading_for_processing),
+                                          z_threshold=Z_THRESHOLD)
+        if processed_value is None:
+            outlier_value = sensor_readings[site_name][sensor].pop()
+            return outlier_value, True
 
-        #keeping track of processed values
-        sensor_readings_processed[site_name].append(processed_value)
-        
-    #memory optimizing
-    if sensor_readings[site_name] and len(sensor_readings[site_name]) > NUMBER_OF_SENSORS*10:
-        logger.debug(f"Memory optimization for site {site_name}")
-        sensor_readings[site_name] = sensor_readings[site_name][-1:]
+        # Keeping track of processed values
+        sensor_readings_processed[site_name][sensor].append(processed_value)
 
-    return processed_value
+    # Memory optimization
+    if len(sensor_readings[site_name][sensor]) > NUMBER_OF_SENSORS * 10:
+        logger.debug(f"Memory optimization for site {site_name}, sensor {sensor}")
+        sensor_readings[site_name][sensor] = sensor_readings[site_name][sensor][-4:]
+
+    return processed_value, False
 
 
 #checking odd parity
@@ -70,25 +74,24 @@ def parityCheck(value, parity):
     return (ones_count + int(parity)) % 2 == 1
 
 def filter_outliers(readings, z_threshold):
-    # Calculate mean of the readings
-    mean_reading = np.mean(readings)
 
-    print(f"Mean = {int(mean_reading)}")  # Debugging
+    # Calculate mean of the readings
+    mean_reading = np.mean(readings[: -1])
+
+    print(f"Mean = {int(mean_reading)}, {readings[: -1]}")  # Debugging
 
     # Calculate standard deviation of the readings
-    std_dev_reading = np.std(readings)
+    std_dev_reading = np.std(readings[: -1])
 
     print(f"SD = {int(std_dev_reading)}")  # Debugging
 
     # Filtering outliers
-    z_scores = np.abs((readings - mean_reading) / std_dev_reading)
+    z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
 
-    print("Z scores:", (z_scores * 1000).astype(int))  # Debugging
+    print("Z score:", (z_score).astype(int))  # Debugging
 
-    mask = z_scores <= z_threshold
-    filtered_readings = readings[mask]
-    new_mean_reading = np.mean(filtered_readings)
+    if z_score <= z_threshold:
+        return int(readings[-1])
 
-    print(f"New mean: {int(new_mean_reading)/100.0}")  # Debugging
-
-    return int(new_mean_reading)
+    logger.debug("Value outside confidence interval, discarding.")  # Debugging
+    return None

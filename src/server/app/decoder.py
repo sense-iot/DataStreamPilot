@@ -41,7 +41,7 @@ async def decodeTemperature(site, reading, sensor):
         logger.debug(f"Processing sensor readings for site {site_name}")
         reading_for_processing = sensor_readings[site_name][-NUMBER_OF_SENSORS:]
         logger.debug(f"Reading for processing: {reading_for_processing}")
-        processed_value = filter_outliers(readings=np.array([(pair.values())[-1] for pair in reading_for_processing]),  z_threshold=Z_THRESHOLD)/100.0
+        processed_value = filter_outliers(readings=np.array([list(pair.values())[-1] for pair in reading_for_processing]),  z_threshold=Z_THRESHOLD)/100.0
 
         #keeping track of processed values
         sensor_readings_processed[site_name].append(processed_value)
@@ -70,12 +70,12 @@ def filter_outliers(readings, z_threshold):
     # Calculate mean of the readings
     mean_reading = np.mean(readings)
 
-    print(f"Mean = {int(mean_reading * 100)}")  # Debugging
+    print(f"Mean = {int(mean_reading)}")  # Debugging
 
     # Calculate standard deviation of the readings
     std_dev_reading = np.std(readings)
 
-    print(f"SD = {int(std_dev_reading * 100)}")  # Debugging
+    print(f"SD = {int(std_dev_reading)}")  # Debugging
 
     # Filtering outliers
     z_scores = np.abs((readings - mean_reading) / std_dev_reading)
@@ -86,6 +86,6 @@ def filter_outliers(readings, z_threshold):
     filtered_readings = readings[mask]
     new_mean_reading = np.mean(filtered_readings)
 
-    print(f"New mean: {int(new_mean_reading * 100)}")  # Debugging
+    print(f"New mean: {int(new_mean_reading)/100.0}")  # Debugging
 
     return int(new_mean_reading)

@@ -5,7 +5,7 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
 export ARCH=iotlab-m3
 
-EXPERIMENT_NAME="mini-project-2-group-12"
+EXPERIMENT_NAME="mini-project-2-group-12-$SENSE_SITE"
 M3_NODE_COUNT=4
 A8_NODE_COUNT=0
 EXPERIMENT_ID=0

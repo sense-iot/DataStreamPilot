@@ -18,6 +18,7 @@ Z_THRESHOLD = 1.3
 async def decodeTemperature(site, reading, sensor):
     global sensor_readings
     processed_value = None
+    is_outlier = False
 
     site_name = sites[site]
 
@@ -28,14 +29,14 @@ async def decodeTemperature(site, reading, sensor):
 
     if (parityCheck(reading, parity)):
         logger.debug(f"Initializing reading for site {site_name}")
-        sensor_readings[site_name][sensor].append(reading)
+        sensor_readings[site_name][sensor].append(reading/100.0)
     else:
         if 2 <= len(sensor_readings[site_name][sensor]):
             logger.debug(f"Mismatched{reading} {parity} {parityCheck(reading, parity)}" )
             prev_value = sensor_readings[site_name][sensor][-1]
             prev_prev_value = sensor_readings[site_name][sensor][-2]
             interpolated_value = (prev_value + prev_prev_value) / 2.0
-            sensor_readings[site_name][sensor].append(interpolated_value)
+            sensor_readings[site_name][sensor].append(interpolated_value/100.0)
 
     logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(sensor_readings[site_name][sensor])}")
 
@@ -46,18 +47,15 @@ async def decodeTemperature(site, reading, sensor):
         processed_value = filter_outliers(readings=np.array(reading_for_processing),
                                           z_threshold=Z_THRESHOLD)
         if processed_value is None:
-            outlier_value = sensor_readings[site_name][sensor].pop()
-            return outlier_value, True
-
-        # Keeping track of processed values
-        sensor_readings_processed[site_name][sensor].append(processed_value)
+            processed_value = sensor_readings[site_name][sensor].pop()
+            is_outlier = True
 
     # Memory optimization
-    if len(sensor_readings[site_name][sensor]) > NUMBER_OF_SENSORS * 10:
+    if len(sensor_readings[site_name][sensor]) > NUMBER_OF_SENSORS * 3:
         logger.debug(f"Memory optimization for site {site_name}, sensor {sensor}")
-        sensor_readings[site_name][sensor] = sensor_readings[site_name][sensor][-4:]
+        sensor_readings[site_name][sensor] = sensor_readings[site_name][sensor][-1:]
 
-    return processed_value, False
+    return processed_value, is_outlier
 
 
 #checking odd parity

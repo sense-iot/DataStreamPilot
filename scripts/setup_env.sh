@@ -10,7 +10,7 @@ fi
 
 # this is seconds
 export JOB_WAIT_TIMEOUT=150
-export EXPERIMENT_TIME=180
+export EXPERIMENT_TIME=300
 
 # grenoble, paris, lille, saclay, strasbourg
 export SENSE_SITE=grenoble

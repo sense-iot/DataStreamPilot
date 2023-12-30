@@ -31,7 +31,7 @@ async def sendInfluxdb(decodedValue, is_outlier, site, sensor):
     tags        = {"place": sites[site], "sensor": sensor, "outlier": is_outlier}
     # base_timestamp = datetime.utcnow() - timedelta(seconds=len(decodedValues))
 
-    fields      = { "value" : decodedValue/100.0}
+    fields      = { "value" : decodedValue}
 
     await save(db_client, sites[site], fields, tags=tags, timestamp=datetime.utcnow())    
 

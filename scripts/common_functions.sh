@@ -40,8 +40,8 @@ flash_elf() {
     local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
 
     # Execute the command
-    echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node""
-    iotlab-node --flash "$firmware_path" -l "${site},m3,$node"
+    echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node" -i ${EXPERIMENT_ID}"
+    iotlab-node --flash "$firmware_path" -l "${site},m3,$node" -i "${EXPERIMENT_ID}"
 }
 
 # Function to execute the iotlab-node command with given parameters

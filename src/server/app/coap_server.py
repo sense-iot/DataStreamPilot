@@ -28,7 +28,7 @@ class Temperature(resource.Resource):
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"\nReceived message: {payload}")
 
-        decodedValue = await decodeTemperature(payload['site'], payload['val'], payload['sensor'])
+        decodedValue = await decodeTemperature(payload['site'], payload['value'], payload['sensor'])
         logger.debug(f"Decoded values: {decodedValue}")
 
         if decodedValue != None:

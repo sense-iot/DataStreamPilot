@@ -39,9 +39,9 @@ async def decodeTemperature(site, reading, sensor):
 
     if len(sensor_readings[site_name])>0 and len(sensor_readings[site_name])%NUMBER_OF_SENSORS == 0:
         logger.debug(f"Processing sensor readings for site {site_name}")
-        reading_for_processing = np.array(sensor_readings[site_name][-NUMBER_OF_SENSORS:])
+        reading_for_processing = sensor_readings[site_name][-NUMBER_OF_SENSORS:]
         logger.debug(f"Reading for processing: {reading_for_processing}")
-        processed_value = filter_outliers(readings=list(reading_for_processing.values()),  z_threshold=Z_THRESHOLD)
+        processed_value = filter_outliers(readings=np.array([(pair.values())[-1] for pair in reading_for_processing]),  z_threshold=Z_THRESHOLD)/100.0
 
         #keeping track of processed values
         sensor_readings_processed[site_name].append(processed_value)

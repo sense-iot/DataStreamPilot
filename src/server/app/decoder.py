@@ -29,14 +29,14 @@ async def decodeTemperature(site, reading, sensor):
 
     if (parityCheck(reading, parity)):
         logger.debug(f"Initializing reading for site {site_name}")
-        sensor_readings[site_name][sensor].append(reading/100.0)
+        sensor_readings[site_name][sensor].append(reading)
     else:
         if 2 <= len(sensor_readings[site_name][sensor]):
             logger.debug(f"Mismatched{reading} {parity} {parityCheck(reading, parity)}" )
             prev_value = sensor_readings[site_name][sensor][-1]
             prev_prev_value = sensor_readings[site_name][sensor][-2]
             interpolated_value = (prev_value + prev_prev_value) / 2.0
-            sensor_readings[site_name][sensor].append(interpolated_value/100.0)
+            sensor_readings[site_name][sensor].append(interpolated_value)
 
     logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(sensor_readings[site_name][sensor])}")
 

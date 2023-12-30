@@ -21,6 +21,7 @@ endif
 RIOTBASE ?= $(CURDIR)/../../../external/RIOT
 
 USEMODULE += gnrc_netdev_default
+USEMODULE += gnrc_sock_udp
 # USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_default
@@ -32,7 +33,6 @@ USEMODULE += ztimer_msec
 USEMODULE += shell
 USEMODULE += lps331ap
 USEMODULE += random
-USEMODULE += emcute
 
 DEVELHELP ?= 1
 

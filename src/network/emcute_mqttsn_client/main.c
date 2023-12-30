@@ -315,13 +315,13 @@ int main(void)
     printf("Emcute ID : %s\n", EMCUTE_ID);
     printf("Topic : %s\n", CLIENT_TOPIC);
 
-    initizlize_mqtt_client();
 
     if (temp_sensor_reset() == 0)
     {
         printf("Sensor failed\n");
         return 1;
     }
+    initizlize_mqtt_client();
 
     int array_length = 0;
 

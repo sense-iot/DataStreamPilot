@@ -27,8 +27,8 @@ USEMODULE += shell_cmd_gnrc_udp
 USEMODULE += shell
 USEMODULE += shell_cmds_default
 USEMODULE += ps
-# USEMODULE += netstats_l2
-# USEMODULE += netstats_ipv6
+USEMODULE += netstats_l2
+USEMODULE += netstats_ipv6
 USEMODULE += netstats_rpl
 
 # Optionally include DNS support. This includes resolution of names at an

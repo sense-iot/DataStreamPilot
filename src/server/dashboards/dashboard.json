@@ -622,7 +622,7 @@
         "type": "influxdb",
         "uid": "ds_influxdb"
       },
-      "description": "Temperature of Paris",
+      "description": "Temperature of Strasbourg",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -687,7 +687,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "paris"
+              "options": "strasbourg"
             },
             "properties": [
               {
@@ -769,7 +769,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "paris",
+          "measurement": "strasbourg",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -791,7 +791,7 @@
           "tags": []
         }
       ],
-      "title": "Temperature of Paris",
+      "title": "Temperature of Strasbourg",
       "type": "timeseries"
     }
   ],

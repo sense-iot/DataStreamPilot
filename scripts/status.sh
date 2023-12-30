@@ -3,7 +3,7 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-EXPERIMENT_NAME="mini-project-2-group-12"
+EXPERIMENT_NAME="mini-project-2-group-12-$SENSE_SITE"
 EXPERIMENT_ID=$(read_experiment_id)
 echo "DataStreamPilot: Current experiment ID : ${EXPERIMENT_ID}"
 

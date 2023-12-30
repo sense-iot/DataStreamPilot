@@ -116,7 +116,7 @@ int temp_sensor_reset(void)
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_7HZ};
+      .rate = LPSXXX_RATE_1HZ};
 
   // 7       6543    2          1      0
   // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
@@ -125,7 +125,6 @@ int temp_sensor_reset(void)
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
   {
     printf("Sensor reset failed\n");
-    return 0;
   }
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
@@ -133,7 +132,6 @@ int temp_sensor_reset(void)
   if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
   {
     printf("Sensor initialization failed\n");
-    return 0;
   }
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
@@ -143,14 +141,12 @@ int temp_sensor_reset(void)
   if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
   {
     printf("Sensor enable failed\n");
-    return 0;
   }
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
     printf("Sensor enable failed\n");
-    return 0;
   }
 
   ztimer_sleep(ZTIMER_MSEC, 4000);

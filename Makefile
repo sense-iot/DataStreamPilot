@@ -75,7 +75,7 @@ clean:
 	rm -f ~/shared/*.conf
 
 clean_firmware:
-	rm -f ~/release/computer_engine*.elf
+	rm -f ~/release/computer_engine*
 	
 
 broker_sub:

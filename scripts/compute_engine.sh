@@ -3,7 +3,7 @@
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 
-file_to_check=${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${EMCUTE_ID}.elf
+file_to_check=${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf
 my_arch=${ARCH}
 
 # Check if the file exists
@@ -21,10 +21,10 @@ fi
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
     cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
-    cp $ELF_FILE ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${EMCUTE_ID}.elf
+    cp $ELF_FILE ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf
 
     echo "DataStreamPilot:Flashing new firmware for ${ARCH} node : ${COMPUTE_ENGINE_NODE}"
-    flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${EMCUTE_ID}.elf ${COMPUTE_ENGINE_NODE}
+    flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf ${COMPUTE_ENGINE_NODE}
 
     echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"
     echo "coap info"

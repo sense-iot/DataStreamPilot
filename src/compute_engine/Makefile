@@ -5,13 +5,13 @@ BOARD ?= iotlab-m3
 RIOTBASE ?= $(CURDIR)/../../external/RIOT
 
 
-ifneq (,$(EMCUTE_ID))
-  CFLAGS += -DEMCUTE_ID=\"$(EMCUTE_ID)\"
+ifneq (,$(SENSOR_ID))
+  CFLAGS += -DSENSOR_ID=\"$(SENSOR_ID)\"
 endif
 
-ifneq (,$(CLIENT_TOPIC))
-  CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)\"
-endif
+# ifneq (,$(CLIENT_TOPIC))
+#   CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)
+# endif
 
 USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec

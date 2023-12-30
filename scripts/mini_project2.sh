@@ -50,23 +50,16 @@ echo "========= starting gnrc_border_router node ========="
 source ${SENSE_SCRIPTS_HOME}/gnrc_border_router.sh
 
 echo "=============== Starting Compute Engine ==================="
-export EMCUTE_ID="s1"
-export CLIENT_TOPIC="s1"
-export NODE_CHANNEL=${DEFAULT_CHANNEL}
+export SENSOR_ID=1
 export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_1}
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 
-export EMCUTE_ID="s2"
-export CLIENT_TOPIC="s2"
-export NODE_CHANNEL=${DEFAULT_CHANNEL}
-export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_1}
+export SENSOR_ID=2
+export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_2}
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
 
-export EMCUTE_ID="s3"
-export CLIENT_TOPIC="s3"
-export NODE_CHANNEL=${DEFAULT_CHANNEL}
-export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_1}
+export SENSOR_ID=3
+export COMPUTE_ENGINE_NODE=${COMPUTE_ENGINE_NODE_3}
 source ${SENSE_SCRIPTS_HOME}/compute_engine.sh
-
 echo "=============== Starting sensors ==================="
 create_tap_interface "${BORDER_ROUTER_NODE}" "${TAP_INTERFACE}" "${BORDER_ROUTER_IP}"

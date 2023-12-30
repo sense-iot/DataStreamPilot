@@ -73,6 +73,9 @@ clean:
 	rm -f ~/shared/*.elf
 	rm -f ~/shared/*.txt
 	rm -f ~/shared/*.conf
+
+clean_firmware:
+	rm -f ~/release/computer_engine*.elf
 	
 
 broker_sub:

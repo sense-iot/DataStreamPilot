@@ -118,6 +118,8 @@ int temp_sensor_reset(void)
       .addr = lpsxxx_params[0].addr,
       .rate = LPSXXX_RATE_1HZ};
 
+  ztimer_sleep(ZTIMER_MSEC, 10000);
+
   // 7       6543    2          1      0
   // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
   //  1      0000   1      0            0
@@ -196,8 +198,7 @@ int main(void)
 {
   ztimer_sleep(ZTIMER_MSEC, 5000);
   printf("Sensor data averaged - Group 12 MQTT\n");
-  printf("Sensor ID : %s\n", EMCUTE_ID);
-  printf("Topic : %s\n", CLIENT_TOPIC);
+  printf("Sensor ID : %s\n", SENSOR_ID);
 
   setup_coap_client();
   msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
@@ -257,10 +258,10 @@ int main(void)
         int16_t rounded_avg_temp = (int16_t)round(avg_temp);
 
         int parity = calculate_odd_parity(rounded_avg_temp);
-        
+
         int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                       "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": %d, %d}",
-                                       site_name, EMCUTE_ID, rounded_avg_temp, parity);
+                                       "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
+                                       site_name, SENSOR_ID, rounded_avg_temp, parity);
 
         // Check if snprintf was successful
         if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))

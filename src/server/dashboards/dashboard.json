@@ -122,7 +122,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "saclay"
+              "options": "grenoble"
             },
             "properties": [
               {
@@ -204,7 +204,7 @@
               ]
             }
           ],
-          "measurement": "saclay",
+          "measurement": "grenoble",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -226,7 +226,7 @@
           ]
         }
       ],
-      "title": "Temperature of Saclay",
+      "title": "Temperature of grenoble",
       "type": "timeseries"
     }
   ],

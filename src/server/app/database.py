@@ -26,14 +26,15 @@ def getInfluxDB(query, measurement=TEMPERATURE):
     return output
 
 
-async def sendInfluxdb(decodedValues, site, sensor):
+async def sendInfluxdb(decodedValue, site, sensor):
     db_client = await client()
     tags        = {"place": sites[site], "sensor": sensor}
     # base_timestamp = datetime.utcnow() - timedelta(seconds=len(decodedValues))
 
-    for i in range(len(decodedValues)):
-        fields      = { "value" : decodedValues, "filtered" : 0 if len(filteredValues) == 0 else filteredValues[i] }
-        await save(db_client, sites[site], fields, tags=tags, timestamp=base_timestamp + timedelta(seconds=i))    
+    fields      = { "value" : decodedValue}
+
+    await save(db_client, sites[site], fields, tags=tags, timestamp=datetime.utcnow())    
+    
     return True
 
 

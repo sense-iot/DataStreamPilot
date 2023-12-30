@@ -2,65 +2,61 @@ import logging
 from filterpy.kalman import KalmanFilter
 import numpy as np
 
+from collections import defaultdict
 from configuration import sites
 
-kf = {}  # Set to None initially
-base_value = 0
-buffer = []
+sensor_readings = defaultdict(lambda: defaultdict(list))
+sensor_readings_processed = defaultdict(lambda: defaultdict(list))
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("coap-server")
 logger.setLevel(logging.DEBUG)
 
-async def initializeKalmanFilter(initial_value):
-    kf = KalmanFilter(dim_x=1, dim_z=1)
-    kf.x = np.array([[initial_value]])
-    kf.F = np.array([[1]])
-    kf.H = np.array([[1]])
-    kf.P = np.array([[10]])
-    kf.R = np.array([[20]])
-    kf.Q = np.array([[5]])
-    return kf
+NUMBER_OF_SENSORS = 3
+Z_THRESHOLD = 2.1
 
-async def decodeTemperature(site, message, isBaseValue):
-    global kf
-    global base_value
-    global buffer
+async def decodeTemperature(site, reading, sensor):
+    global sensor_readings
+    processed_value = None
+    is_outlier = False
 
-    data_out = []
     site_name = sites[site]
 
-    message = list(map(int, message[:-1].strip().split(',')))
-    logger.debug(f"Message {message}")
+    reading = list(map(int, reading.strip().split(',')))
+    logger.debug(f"Sensor reading: {reading}")
 
-    if int(isBaseValue) == 1:
-        base_value = message[0]
+    reading, parity = reading[0], reading[1]
 
-    if site_name not in kf.keys():
-        # Initialize Kalman filter with the initial value from the first request
-        logger.debug(f"Initializing Kalman filter for site {site_name}")
-        initial_value = message[0] / 100.0
-        kf[site_name] = await initializeKalmanFilter(initial_value)
+    if (parityCheck(reading, parity)):
+        logger.debug(f"Initializing reading for site {site_name}")
+        sensor_readings[site_name][sensor].append(reading)
+    else:
+        if 2 <= len(sensor_readings[site_name][sensor]):
+            logger.debug(f"Mismatched{reading} {parity} {parityCheck(reading, parity)}" )
+            prev_value = sensor_readings[site_name][sensor][-1]
+            prev_prev_value = sensor_readings[site_name][sensor][-2]
+            interpolated_value = (prev_value + prev_prev_value) / 2.0
+            sensor_readings[site_name][sensor].append(interpolated_value)
 
-    if int(isBaseValue) == 0 and len(buffer) == 0:
-        return [], []
-    
-    for i in range(0, len(message), 2):
-        value, parity = message[i], message[i + 1]
+    logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(sensor_readings[site_name][sensor])}")
 
-        if (parityCheck(value, parity)):
-            value= (value + base_value)/100.0 if int(isBaseValue) == 0 else value/100.0
-            data_out.append(value)
-        else:
-            if 2 < len(buffer):
-                logger.debug(f"mismatched{value} {parity} {parityCheck(value, parity)}" )
-                prev_value = buffer[-1] 
-                prev_prev_value = buffer[-2]
-                interpolated_value = (prev_value + prev_prev_value) / 2.0
-                data_out.append(interpolated_value)
+    if len(sensor_readings[site_name][sensor]) > 3:
+        logger.debug(f"Processing sensor readings for site {site_name}, sensor {sensor}")
+        reading_for_processing = sensor_readings[site_name][sensor]
+        logger.debug(f"Reading for processing: {reading_for_processing}")
+        processed_value = filter_outliers(readings=np.array(reading_for_processing),
+                                          z_threshold=Z_THRESHOLD)
+        if processed_value is None:
+            processed_value = sensor_readings[site_name][sensor].pop()
+            is_outlier = True
 
-    # filtered_data, kf[site_name] = await kalmanfilter(np.array(data_out), kf[site_name])
-    buffer.extend(data_out)
-    return data_out, data_out
+    # Memory optimization
+    if len(sensor_readings[site_name][sensor]) > NUMBER_OF_SENSORS * 3:
+        logger.debug(f"Memory optimization for site {site_name}, sensor {sensor}")
+        sensor_readings[site_name][sensor] = sensor_readings[site_name][sensor][-1:]
+
+    return processed_value, is_outlier
+
 
 #checking odd parity
 def calculate_odd_parity(num):
@@ -75,15 +71,25 @@ def parityCheck(value, parity):
     ones_count = calculate_odd_parity(value)
     return (ones_count + int(parity)) % 2 == 1
 
-async def kalmanfilter(z, kf):
+def filter_outliers(readings, z_threshold):
 
-    output = np.zeros(z.shape[0])
-    output[0] = kf.x[0][0]
+    # Calculate mean of the readings
+    mean_reading = np.mean(readings[: -1])
 
-    for i in range(z.shape[0]):
-        y = z[i]
-        kf.predict()
-        kf.update(y)
-        output[i] = kf.x[0][0]
+    print(f"Mean = {int(mean_reading)}, {readings[: -1]}")  # Debugging
 
-    return output, kf
+    # Calculate standard deviation of the readings
+    std_dev_reading = np.std(readings[: -1])
+
+    print(f"SD = {int(std_dev_reading)}")  # Debugging
+
+    # Filtering outliers
+    z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
+
+    logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading}")  # Debugging
+
+    if z_score <= z_threshold:
+        return int(readings[-1])
+
+    logger.debug("Value outside confidence interval, discarding.")  # Debugging
+    return None

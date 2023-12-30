@@ -88,7 +88,7 @@ def filter_outliers(readings, z_threshold):
     # Filtering outliers
     z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
 
-    print("Z score:", (z_score).astype(int))  # Debugging
+    logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading}")  # Debugging
 
     if z_score <= z_threshold:
         return int(readings[-1])

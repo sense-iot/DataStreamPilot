@@ -175,7 +175,7 @@ float generate_normal_random(float stddev)
 
 float calculate_stddev(int16_t *data, int size, double mean)
 {
-  float sum = 0.0;
+  double sum = 0.0;
   for (int i = 0; i < size; i++)
   {
     sum += pow(data[i] - mean, 2);
@@ -286,12 +286,13 @@ int main(void)
 
       remove_outliers(data.tempList, WINDOW_SIZE, avg_temp, stddev);
 
-      sum = 0;
+      int newsum = 0;
       for (int i = 0; i < WINDOW_SIZE; i++)
       {
-        sum += data.tempList[i];
+        newsum += data.tempList[i];
       }
-      int16_t rounded_avg_temp = (int16_t)round(avg_temp);
+      double new_avg_temp = (double)sum / WINDOW_SIZE;
+      int16_t rounded_avg_temp = (int16_t)round(new_avg_temp);
       printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
       int parity = calculate_odd_parity(rounded_avg_temp);

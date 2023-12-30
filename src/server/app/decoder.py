@@ -13,7 +13,7 @@ logger = logging.getLogger("coap-server")
 logger.setLevel(logging.DEBUG)
 
 NUMBER_OF_SENSORS = 3
-Z_THRESHOLD = 2.1
+Z_THRESHOLD = 1.960
 
 async def decodeTemperature(site, reading, sensor):
     global sensor_readings
@@ -86,8 +86,8 @@ def filter_outliers(readings, z_threshold):
     # Filtering outliers
     z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
 
-    lower_bound = mean_reading - z_threshold * std_dev_reading;
-    upper_bound = mean_reading + z_threshold * std_dev_reading;
+    lower_bound = mean_reading - z_threshold * std_dev_reading
+    upper_bound = mean_reading + z_threshold * std_dev_reading
 
     logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading} Lower bound: {lower_bound} Upper bound: {upper_bound}")  # Debugging
     current_reading_value = readings[-1]
@@ -95,5 +95,4 @@ def filter_outliers(readings, z_threshold):
         logger.debug("Value outside confidence interval, discarding.")  # Debugging
         return None
 
-    logger.debug("Value outside confidence interval, discarding.")  # Debugging
     return current_reading_value

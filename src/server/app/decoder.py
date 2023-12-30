@@ -37,6 +37,8 @@ async def decodeTemperature(site, reading, sensor):
             interpolated_value = (prev_value + prev_prev_value) / 2.0
             sensor_readings[site_name].append({sensor: interpolated_value})
 
+    logger.debug(f"Sensor readings for site {site_name}: {sensor_readings[site_name]}")
+    
     if len(sensor_readings[site_name])>0 and len(sensor_readings[site_name])%NUMBER_OF_SENSORS == 0:
         logger.debug(f"Processing sensor readings for site {site_name}")
         reading_for_processing = sensor_readings[site_name][-NUMBER_OF_SENSORS:]
@@ -48,7 +50,8 @@ async def decodeTemperature(site, reading, sensor):
         
     #memory optimizing
     if sensor_readings[site_name] and len(sensor_readings[site_name]) > NUMBER_OF_SENSORS*10:
-        sensor_readings[site_name] = sensor_readings[site_name][-(NUMBER_OF_SENSORS*10):]
+        logger.debug(f"Memory optimization for site {site_name}")
+        sensor_readings[site_name] = sensor_readings[site_name][-1:]
 
     return processed_value
 

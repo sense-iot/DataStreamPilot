@@ -71,9 +71,9 @@ elif [ "$SENSE_SITE" = "saclay" ]; then
     export BORDER_ROUTER_IP=2001:660:3207:04de::1/64
     export BORDER_ROUTER_IP_2=2001:660:3207:04df::1/64
 elif [ "$SENSE_SITE" = "strasbourg" ]; then
-    # 2001:660:4701:f0a0::/64	2001:660:4701:f0bf::/64
-    export BORDER_ROUTER_IP=2001:660:4701:f0af::1/64
-    export BORDER_ROUTER_IP_2=2001:660:4701:f0ae::1/64
+    # 2a07:2e40:fffe:00e0::/64	2a07:2e40:fffe:00ff::/64
+    export BORDER_ROUTER_IP=2a07:2e40:fffe:00fe::1/64
+    export BORDER_ROUTER_IP_2=2a07:2e40:fffe:00fa::1/64
 else
     echo "Invalid SENSE_SITE value. Please set to 'grenoble' or 'paris'."
 fi

@@ -76,7 +76,7 @@ struct LocationMapping locationMap[] = {
   % z = 1.960 (95%) - TAKE THE CEIL
   % N = (100*z*s/(r*x))^2
 */
-#define WINDOW_SIZE 60
+#define WINDOW_SIZE 62
 
 typedef struct
 {

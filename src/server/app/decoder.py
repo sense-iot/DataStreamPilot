@@ -86,10 +86,14 @@ def filter_outliers(readings, z_threshold):
     # Filtering outliers
     z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
 
-    logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading}")  # Debugging
+    lower_bound = mean_reading - z_threshold * std_dev_reading;
+    upper_bound = mean_reading + z_threshold * std_dev_reading;
 
-    if z_score <= z_threshold:
-        return int(readings[-1])
+    logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading}")  # Debugging
+    current_reading_value = readings[-1]
+    if current_reading_value < lower_bound or current_reading_value > upper_bound:
+        logger.debug("Value outside confidence interval, discarding.")  # Debugging
+        return None
 
     logger.debug("Value outside confidence interval, discarding.")  # Debugging
-    return None
+    return current_reading_value

@@ -107,7 +107,7 @@ int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
 }
 
 // check for the boot bit is set back to zero or not
-void bootDealay(void)
+void bootDealay(const lpsxxx_t *dev)
 {
 
   uint8_t val;
@@ -155,7 +155,7 @@ void bootDealay(void)
     {
       puts("Sensor reset failed");
     }
-    bootDealay();
+    bootDealay(&lpsxxx);
 
     ztimer_sleep(ZTIMER_MSEC, 5000);
 

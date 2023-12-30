@@ -6,7 +6,7 @@ source ${SENSE_SCRIPTS_HOME}/setup_env.sh
 export ARCH=iotlab-m3
 
 EXPERIMENT_NAME="mini-project-2-group-12-$SENSE_SITE"
-M3_NODE_COUNT=4
+M3_NODE_COUNT=5
 A8_NODE_COUNT=0
 EXPERIMENT_ID=0
 
@@ -31,10 +31,10 @@ if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
     exit 1
 fi
 # assign m3 nodes
-export BORDER_ROUTER_NODE=${m3_nodes[0]}
-export COMPUTE_ENGINE_NODE_1=${m3_nodes[1]}
-export COMPUTE_ENGINE_NODE_2=${m3_nodes[2]}
-export COMPUTE_ENGINE_NODE_3=${m3_nodes[3]}
+export BORDER_ROUTER_NODE=${m3_nodes[1]}
+export COMPUTE_ENGINE_NODE_1=${m3_nodes[2]}
+export COMPUTE_ENGINE_NODE_2=${m3_nodes[3]}
+export COMPUTE_ENGINE_NODE_3=${m3_nodes[4]}
 
 write_and_print_variable "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE" "m3"
 write_and_print_variable "COMPUTE_ENGINE_NODE_1" "$COMPUTE_ENGINE_NODE_1" "m3"

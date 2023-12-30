@@ -121,7 +121,7 @@ int temp_sensor_reset(void)
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_12HZ5};
+      .rate = LPSXXX_RATE_7HZ};
   // .rate = lpsxxx_params[0].rate
   // LPSXXX_RATE_7HZ = 5,        /**< sample with 7Hz, default */
   //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
@@ -265,53 +265,51 @@ int main(void)
     int16_t temp = 0;
     if (lpsxxx_read_temp(&lpsxxx, &temp) != LPSXXX_OK)
     {
-      printf("Error reading temperature\n");
+      int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
+      // printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      data.tempList[current_index++] = temp_n_noise;
+
+      if (current_index == WINDOW_SIZE)
+      {
+        current_index = 0;
+      }
+
+      int32_t sum = 0;
+      for (int i = 0; i < WINDOW_SIZE; i++)
+      {
+        sum += data.tempList[i];
+      }
+
+      double avg_temp = (double)sum / WINDOW_SIZE;
+
+      float stddev = calculate_stddev(data.tempList, WINDOW_SIZE, avg_temp);
+
+      remove_outliers(data.tempList, WINDOW_SIZE, avg_temp, stddev);
+
+      sum = 0;
+      for (int i = 0; i < WINDOW_SIZE; i++)
+      {
+        sum += data.tempList[i];
+      }
+      int16_t rounded_avg_temp = (int16_t)round(avg_temp);
+      printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
+
+      int parity = calculate_odd_parity(rounded_avg_temp);
+
+      int snprintf_result = snprintf(json_payload, sizeof(json_payload),
+                                     "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
+                                     site_name, SENSOR_ID, rounded_avg_temp, parity);
+
+      // Check if snprintf was successful
+      if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
+      {
+        fprintf(stderr, "Error creating JSON payload\n");
+        return 1;
+      }
+      // Use the JSON payload string as needed
+      printf("JSON Payload: %s\n", json_payload);
+      gcoap_cli_cmd(message_arg_count, coap_command);
     }
-
-    int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-    // printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
-    data.tempList[current_index++] = temp_n_noise;
-
-    if (current_index == WINDOW_SIZE)
-    {
-      current_index = 0;
-    }
-
-    int32_t sum = 0;
-    for (int i = 0; i < WINDOW_SIZE; i++)
-    {
-      sum += data.tempList[i];
-    }
-
-    double avg_temp = (double)sum / WINDOW_SIZE;
-
-    float stddev = calculate_stddev(data.tempList, WINDOW_SIZE, avg_temp);
-
-    remove_outliers(data.tempList, WINDOW_SIZE, avg_temp, stddev);
-
-    sum = 0;
-    for (int i = 0; i < WINDOW_SIZE; i++)
-    {
-      sum += data.tempList[i];
-    }
-    int16_t rounded_avg_temp = (int16_t)round(avg_temp);
-    printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
-
-    int parity = calculate_odd_parity(rounded_avg_temp);
-
-    int snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                   "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
-                                   site_name, SENSOR_ID, rounded_avg_temp, parity);
-
-    // Check if snprintf was successful
-    if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
-    {
-      fprintf(stderr, "Error creating JSON payload\n");
-      return 1;
-    }
-    // Use the JSON payload string as needed
-    printf("JSON Payload: %s\n", json_payload);
-    gcoap_cli_cmd(message_arg_count, coap_command);
 
     int randi = rand();
     float u1 = randi / RAND_MAX;

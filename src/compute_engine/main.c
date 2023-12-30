@@ -120,6 +120,8 @@ void bootDealay(const lpsxxx_t *dev)
     {
       return;
     }
+    // At the end of the boot process the BOOT bit is set again to ‘0’. 
+    // BOOT bit takes effect after one ODR clock cycle.
     if ((val & (1 << 7)) == 0)
     {
       return;
@@ -150,6 +152,8 @@ int temp_sensor_reset(void)
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
       .rate = LPSXXX_RATE_7HZ};
+
+  lpsxxx.params = paramts;
 
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, (1 << 7) | (1 << 2)) != LPSXXX_OK)
   {

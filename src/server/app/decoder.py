@@ -40,7 +40,7 @@ async def decodeTemperature(site, reading, sensor):
 
     logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(sensor_readings[site_name][sensor])}")
 
-    if len(sensor_readings[site_name][sensor]) > 2:
+    if len(sensor_readings[site_name][sensor]) > 3:
         logger.debug(f"Processing sensor readings for site {site_name}, sensor {sensor}")
         reading_for_processing = sensor_readings[site_name][sensor]
         logger.debug(f"Reading for processing: {reading_for_processing}")

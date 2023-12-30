@@ -13,7 +13,7 @@ logger = logging.getLogger("coap-server")
 logger.setLevel(logging.DEBUG)
 
 NUMBER_OF_SENSORS = 3
-Z_THRESHOLD = 1.3
+Z_THRESHOLD = 2.1
 
 async def decodeTemperature(site, reading, sensor):
     global sensor_readings

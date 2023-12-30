@@ -29,7 +29,9 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   cp $ELF_FILE ${SENSE_HOME}/release/
 
   flash_firmware ${BORDER_ROUTER_EXE_NAME} ${BORDER_ROUTER_NODE}
-  # flash_firmware ${BORDER_ROUTER_EXE_NAME} ${BORDER_ROUTER_NODE_2}
+
+  # border_router_job_id=$(submit_border_router_job "${BORDER_ROUTER_NODE}")
+  # wait_for_job "${border_router_job_id}"
 
   current_ethos_id=$(ps -ef | grep ethos | grep -v "grep" | grep perera | awk '{print $2}' | head -1)
   if [ -z "$current_ethos_id" ]; then

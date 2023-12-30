@@ -73,17 +73,11 @@ int temp_sensor_reset(void)
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_7HZ};
+      .rate = LPSXXX_DEFAULT_RATE};
   // .rate = lpsxxx_params[0].rate
   // LPSXXX_RATE_7HZ = 5,        /**< sample with 7Hz, default */
   //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
   //   LPSXXX_RATE_25HZ = 7
-
-  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
-  {
-    puts("Sensor initialization failed");
-    return 0;
-  }
 
   // 7       6543    2          1      0
   // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
@@ -92,6 +86,13 @@ int temp_sensor_reset(void)
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
   {
     puts("Sensor reset failed");
+    return 0;
+  }
+
+
+  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
+  {
+    puts("Sensor initialization failed");
     return 0;
   }
 
@@ -143,7 +144,6 @@ int main(void)
 {
   if (temp_sensor_reset() == 0) {
     puts("Sensor failed");
-    return 1;
   }
 
   // int16_t avg_temp = 0; 

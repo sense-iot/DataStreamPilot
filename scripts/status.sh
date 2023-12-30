@@ -20,9 +20,9 @@ echo "DataStreamPilot: a8 nodes: ${a8_nodes[@]}"
 echo "DataStreamPilot: m3 nodes: ${m3_nodes[@]}"
 
 BORDER_ROUTER_NODE=$(read_variable_from_file "BORDER_ROUTER_NODE")
-COMPUTE_ENGINE_NODE_1=$(read_variable_from_file "COMPUTE_ENGINE_NODE_3")
+COMPUTE_ENGINE_NODE_1=$(read_variable_from_file "COMPUTE_ENGINE_NODE_1")
 COMPUTE_ENGINE_NODE_2=$(read_variable_from_file "COMPUTE_ENGINE_NODE_2")
-COMPUTE_ENGINE_NODE_3=$(read_variable_from_file "COMPUTE_ENGINE_NODE_1")
+COMPUTE_ENGINE_NODE_3=$(read_variable_from_file "COMPUTE_ENGINE_NODE_3")
 
 printf "%-50s %s\n" "DataStreamPilot: BORDER_ROUTER_NODE    :   " "m3 - $BORDER_ROUTER_NODE"
 printf "%-50s %s\n" "DataStreamPilot: COMPUTE_ENGINE_NODE_1    :   " "m3 - $COMPUTE_ENGINE_NODE_1"

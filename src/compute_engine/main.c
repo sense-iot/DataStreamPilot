@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "thread.h"
+// #include "thread.h"
 #include "ztimer.h"
 #include "msg.h"
 
@@ -14,8 +14,8 @@
 #include "net/gcoap.h"
 #include "ztimer.h"
 
-#define ENABLE_DEBUG 1
 #include "debug.h"
+#define MODULE_LPS331AP 1
 
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -76,7 +76,7 @@ struct LocationMapping locationMap[] = {
   % z = 1.960 (95%) - TAKE THE CEIL
   % N = (100*z*s/(r*x))^2
 */
-#define WINDOW_SIZE 62
+#define WINDOW_SIZE 60
 
 typedef struct
 {
@@ -84,24 +84,17 @@ typedef struct
 } data_t;
 
 static data_t data;
-
 static lpsxxx_t lpsxxx;
-// static mutex_t lps_lock = MUTEX_INIT;
-#define LPSXXX_REG_RES_CONF (0x10)
-#define LPSXXX_REG_CTRL_REG2 (0x21)
-#define DEV_I2C (dev->params.i2c)
-#define DEV_ADDR (dev->params.addr)
-#define DEV_RATE (dev->params.rate)
 
 int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
 {
-  i2c_acquire(DEV_I2C);
-  if (i2c_write_reg(DEV_I2C, DEV_ADDR, reg, value, 0) < 0)
+  i2c_acquire(dev->params.i2c);
+  if (i2c_write_reg(dev->params.i2c, dev->params.addr, reg, value, 0) < 0)
   {
-    i2c_release(DEV_I2C);
+    i2c_release(dev->params.i2c);
     return -LPSXXX_ERR_I2C;
   }
-  i2c_release(DEV_I2C);
+  i2c_release(dev->params.i2c);
 
   return LPSXXX_OK; // Success
 }
@@ -115,12 +108,12 @@ void bootDealay(const lpsxxx_t *dev)
   while (1)
   {
     ztimer_sleep(ZTIMER_MSEC, 100);
-    int ret = i2c_read_reg(DEV_I2C, DEV_ADDR, LPSXXX_REG_CTRL_REG2, &val, 0);
+    int ret = i2c_read_reg(dev->params.i2c, dev->params.addr, LPSXXX_REG_CTRL_REG2, &val, 0);
     if (ret < 0)
     {
       return;
     }
-    // At the end of the boot process the BOOT bit is set again to ‘0’. 
+    // At the end of the boot process the BOOT bit is set again to ‘0’.
     // BOOT bit takes effect after one ODR clock cycle.
     if ((val & (1 << 7)) == 0)
     {
@@ -148,16 +141,18 @@ int temp_sensor_write_res_conf(const lpsxxx_t *dev, uint8_t value)
 
 int temp_sensor_reset(void)
 {
+  ztimer_sleep(ZTIMER_MSEC, 5000);
+
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_7HZ};
-
+      .rate = LPSXXX_DEFAULT_RATE};
   lpsxxx.params = paramts;
 
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, (1 << 7) | (1 << 2)) != LPSXXX_OK)
   {
     puts("Sensor reset failed");
+    return 1;
   }
   bootDealay(&lpsxxx);
 
@@ -166,24 +161,19 @@ int temp_sensor_reset(void)
   if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
   {
     puts("Sensor initialization failed");
+    return 1;
   }
 
   ztimer_sleep(ZTIMER_MSEC, 5000);
 
-  // 0x40 -- 01000000
-  // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
-  if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
-  {
-    puts("Sensor enable failed");
-  }
-
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
     puts("Sensor enable failed");
+    return 1;
   }
 
   ztimer_sleep(ZTIMER_MSEC, 1000);
-  return 1;
+  return 0;
 }
 
 float generate_normal_random(float stddev)
@@ -200,14 +190,14 @@ float generate_normal_random(float stddev)
 
 #define DEVIATION_FACTOR 2 // Defines how many standard deviations away from the mean to consider as outlier
 
-float calculate_stddev(int16_t *data, int size, double mean)
+float calculate_stddev(int16_t *data, float mean)
 {
-  double sum = 0.0;
-  for (int i = 0; i < size; i++)
+  float sum = 0.0;
+  for (int i = 0; i < WINDOW_SIZE; i++)
   {
     sum += pow(data[i] - mean, 2);
   }
-  return sqrt(sum / size);
+  return sqrt(sum / WINDOW_SIZE);
 }
 
 float add_noise(float stddev)
@@ -239,10 +229,10 @@ int calculate_odd_parity(int16_t num)
   return (count % 2 == 0) ? 1 : 0;
 }
 
-void remove_outliers(int16_t *data, int size, float mean, float stddev)
+void remove_outliers(int16_t *data, float mean, float stddev)
 {
   int j = 0;
-  for (int i = 0; i < size; i++)
+  for (int i = 0; i < WINDOW_SIZE; i++)
   {
     if (fabs((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
     {
@@ -258,9 +248,10 @@ int main(void)
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", SENSOR_ID);
 
-  if (temp_sensor_reset() == 0)
+  if (temp_sensor_reset())
   {
     printf("Sensor reset failed in the main loop\n");
+    return 1;
   }
   ztimer_sleep(ZTIMER_MSEC, 4000);
   setup_coap_client();
@@ -293,10 +284,10 @@ int main(void)
     if (lpsxxx_read_temp(&lpsxxx, &temp) != LPSXXX_OK)
     {
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-      // printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       data.tempList[current_index++] = temp_n_noise;
 
-      if (current_index == WINDOW_SIZE)
+      if (current_index >= WINDOW_SIZE)
       {
         current_index = 0;
       }
@@ -307,16 +298,21 @@ int main(void)
         sum += data.tempList[i];
       }
 
-      double avg_temp = (double)sum / WINDOW_SIZE;
-      float stddev = calculate_stddev(data.tempList, WINDOW_SIZE, avg_temp);
-      remove_outliers(data.tempList, WINDOW_SIZE, avg_temp, stddev);
+      printf("Sum: %li\n", sum);
 
+      double avg_temp = (double)sum / WINDOW_SIZE;
+      printf("Average temperature: %f\n", avg_temp);
+      float stddev = calculate_stddev(data.tempList, avg_temp);
+      printf("Standard deviation: %f\n", stddev);
+      remove_outliers(data.tempList, avg_temp, stddev);
       int newsum = 0;
       for (int i = 0; i < WINDOW_SIZE; i++)
       {
         newsum += data.tempList[i];
       }
+      printf("New sum: %i\n", newsum);
       double new_avg_temp = (double)sum / WINDOW_SIZE;
+      printf("New average temperature: %f\n", new_avg_temp);
       int16_t rounded_avg_temp = (int16_t)round(new_avg_temp);
       printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 

@@ -7,13 +7,13 @@ export ARCH=iotlab-m3
 
 EXPERIMENT_NAME="mini-project-2-group-12-$SENSE_SITE"
 M3_NODE_COUNT=5
-A8_NODE_COUNT=0
+A8_NODE_COUNT=1
 EXPERIMENT_ID=0
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     echo "DataStreamPilot: submitting a new experiment"
     # experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
-    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE})
+    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
     wait_for_job "${EXPERIMENT_ID}"
 else
@@ -36,10 +36,16 @@ export COMPUTE_ENGINE_NODE_1=${m3_nodes[2]}
 export COMPUTE_ENGINE_NODE_2=${m3_nodes[3]}
 export COMPUTE_ENGINE_NODE_3=${m3_nodes[4]}
 
+# export COMPUTE_ENGINE_NODE_1=${a8_nodes[0]}
+# export COMPUTE_ENGINE_NODE_2=${a8_nodes[1]}
+# export COMPUTE_ENGINE_NODE_3=${a8_nodes[2]}
+
 write_and_print_variable "BORDER_ROUTER_NODE" "$BORDER_ROUTER_NODE" "m3"
 write_and_print_variable "COMPUTE_ENGINE_NODE_1" "$COMPUTE_ENGINE_NODE_1" "m3"
 write_and_print_variable "COMPUTE_ENGINE_NODE_2" "$COMPUTE_ENGINE_NODE_2" "m3"
 write_and_print_variable "COMPUTE_ENGINE_NODE_3" "$COMPUTE_ENGINE_NODE_3" "m3"
+
+# iotlab-experiment stop -i ${EXPERIMENT_ID}
 
 echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5

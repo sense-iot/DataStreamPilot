@@ -9,15 +9,18 @@ ifneq (,$(SENSOR_ID))
   CFLAGS += -DSENSOR_ID=\"$(SENSOR_ID)\"
 endif
 
+# CFLAGS += -Wno-unused-variable -Wno-unused-but-set-variable
+
 # ifneq (,$(CLIENT_TOPIC))
 #   CFLAGS += -DCLIENT_TOPIC=\"$(CLIENT_TOPIC)
 # endif
 
+USEMODULE += ztimer
 USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
-USEMODULE += ztimer_sec
-USEMODULE += ztimer_no_periph_rtt
-USEMODULE += xtimer
+# USEMODULE += ztimer_sec
+# USEMODULE += ztimer_no_periph_rtt
+# USEMODULE += xtimer
 USEMODULE += lps331ap
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
@@ -30,15 +33,15 @@ USEMODULE += gnrc_icmpv6_error
 USEMODULE += gnrc_icmpv6_echo
 
 # Specify the mandatory networking module for a IPv6 routing node
-USEMODULE += gnrc_ipv6_router_default
+# USEMODULE += gnrc_ipv6_router_default
 # Add a routing protocol
-USEMODULE += gnrc_rpl
-USEMODULE += auto_init_gnrc_rpl
-USEMODULE += gnrc_udp
+# USEMODULE += gnrc_rpl
+# USEMODULE += auto_init_gnrc_rpl
+# USEMODULE += gnrc_udp
 
-USEMODULE += netstats_l2
-USEMODULE += netstats_ipv6
-USEMODULE += netstats_rpl
+# USEMODULE += netstats_l2
+# USEMODULE += netstats_ipv6
+# USEMODULE += netstats_rpl
 
 USEMODULE += nanocoap_sock
 USEMODULE += nanocoap_resources
@@ -85,7 +88,7 @@ USEMODULE += ps
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
-DEVELHELP ?= 1
+# DEVELHELP ?= 1
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
@@ -106,8 +109,8 @@ ifeq (1,$(USE_ZEP))
 endif
 
 
-MQTT_BROKER_IP=${BROKER_IP}
-CFLAGS += -DMQTT_BROKER_IP='"${MQTT_BROKER_IP}"'
+# MQTT_BROKER_IP=${BROKER_IP}
+# CFLAGS += -DMQTT_BROKER_IP='" ${MQTT_BROKER_IP}"'
 GCOAP_AMAZON_SERVER_IP=${COAP_SERVER_IP}
 SITE_NAME=${SENSE_SITE}
 GCOAP_AMAZON_SERVER_IP_ONLY=${COAP_SERVER_IP_ONLY}

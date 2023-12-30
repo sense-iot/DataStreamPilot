@@ -23,20 +23,28 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
     cp $ELF_FILE ${SENSE_FIRMWARE_HOME}
     cp $ELF_FILE ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf
 
-    echo "DataStreamPilot:Flashing new firmware for ${ARCH} node : ${COMPUTE_ENGINE_NODE}"
-    flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf ${COMPUTE_ENGINE_NODE}
+    if [ "$my_arch" = "iotlab-m3" ]; then
+        echo "Flashing new firmware for ${my_arch} node : ${COMPUTE_ENGINE_NODE}"
+        flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf ${COMPUTE_ENGINE_NODE}
 
-    echo "aiocoap-client coap://[2001:660:5307:3107:a4a9:dc28:5c45:38a9]/riot/board"
-    echo "coap info"
-    echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /.well-known/core"
-    echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /riot/board"
-    echo "coap get 192.168.2.135:5683 /.well-known/core"
-    echo "coap get example.com:5683 /.well-known/core # with sock dns"
-    echo "coap get [2001:660:5307:3107:a4a9:dc28:5c45:38a9]:5683 /temperature"
+        # iotlab-experiment submit -n "${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}" -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${COMPUTE_ENGINE_NODE},${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf
+        echo "nc m3-${COMPUTE_ENGINE_NODE} 20000"
+        #nc m3-${COMPUTE_ENGINE_NODE} 20000
+    elif [ "$my_arch" = "iotlab-a8-m3" ]; then
+        cp $ELF_FILE ~/A8/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}_a8.elf
+        until ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${COMPUTE_ENGINE_NODE} 'bash -s' <${SENSE_HOME}/src/compute_engine/compute_engine_SENSOR_${SENSOR_ID}.sh; do
+            echo "DataStreamPilot: ------------------------------------------"
+            echo "DataStreamPilot: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@node-a8-${COMPUTE_ENGINE_NODE} 'bash -s' <${SENSE_HOME}/src/compute_engine/compute_engine_SENSOR_${SENSOR_ID}.sh"
+            echo "DataStreamPilot: Error: ssh failed to COMPUTE_ENGINE. Retrying...!"
+            echo "DataStreamPilot: ------------------------------------------"
+            sleep 10
+        done
 
-    echo "I am setting up the system......"
-    #sleep 10
-    echo "Connecting to compute engine node....."
+        echo "ssh root@node-a8-${COMPUTE_ENGINE_NODE}"
+    else
+        echo "Architecture is something else."
+    fi
+
     echo "nc m3-${COMPUTE_ENGINE_NODE} 20000"
-    # nc m3-${COMPUTE_ENGINE_NODE} 20000
+
 fi

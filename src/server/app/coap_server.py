@@ -26,16 +26,17 @@ class TimeResource(resource.ObservableResource):
 class Temperature(resource.Resource):
     async def render_post(self, request):
         payload = json.loads(request.payload.decode('utf8'))
-        logger.debug(f"Received message: {payload}")
+        logger.debug(f"\nReceived message: {payload}")
 
-        decodedValues, filteredValues = await decodeTemperature(payload['s'], payload['t'], payload['b'])
-        logger.debug(f"Decoded values: {decodedValues}, Filtered values: {filteredValues}")
+        decodedValue = await decodeTemperature(payload['site'], payload['val'], payload['sensor'])
+        logger.debug(f"Decoded values: {decodedValue}")
 
-        recordedFlag = await sendInfluxdb(decodedValues, payload['s'], filteredValues)
-        logger.debug(f"Recorded flag: {recordedFlag}")
+        if decodedValue != None:
+            recordedFlag = await sendInfluxdb(decodedValue, payload['site'], payload['sensor'])
+            logger.debug(f"Recorded flag: {recordedFlag}\n")
 
         return aiocoap.Message(content_format=0,
-                payload=json.dumps({"status": "ok"}).encode('utf8'))
+                payload=json.dumps({"status": "OK"}).encode('utf8'))
 
 async def handle_requests():
     root = resource.Site()

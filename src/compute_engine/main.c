@@ -5,9 +5,6 @@
 
 #include "thread.h"
 #include "ztimer.h"
-
-#include "mutex.h"
-
 #include "msg.h"
 
 #include "lpsxxx.h"
@@ -128,6 +125,11 @@ int temp_sensor_reset(void)
 
   ztimer_sleep(ZTIMER_MSEC, 10000);
 
+  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
+  {
+    printf("Sensor initialization failed\n");
+  }
+
   // 7       6543    2          1      0
   // BOOT RESERVED SWRESET AUTO_ZERO ONE_SHOT
   //  1      0000   1      0            0
@@ -137,14 +139,14 @@ int temp_sensor_reset(void)
     printf("Sensor reset failed\n");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 4000);
+  ztimer_sleep(ZTIMER_MSEC, 100);
 
   if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
   {
     printf("Sensor initialization failed\n");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 4000);
+  ztimer_sleep(ZTIMER_MSEC, 100);
 
   // 0x40 -- 01000000
   // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
@@ -153,13 +155,13 @@ int temp_sensor_reset(void)
     printf("Sensor enable failed\n");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 4000);
+  ztimer_sleep(ZTIMER_MSEC, 100);
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
     printf("Sensor enable failed\n");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 4000);
+  ztimer_sleep(ZTIMER_MSEC, 100);
   return 1;
 }
 
@@ -247,7 +249,7 @@ int main(void)
     {
 
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-      printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      // printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       data.tempList[current_index++] = temp_n_noise;
 
       if (current_index == WINDOW_SIZE)
@@ -258,13 +260,14 @@ int main(void)
       int32_t sum = 0;
       for (int i = 0; i < WINDOW_SIZE; i++)
       {
-        sum += (int32_t)data.tempList[i];
+        sum += data.tempList[i];
       }
 
       double avg_temp = (double)sum / WINDOW_SIZE;
 
       // Round to the nearest integer
       int16_t rounded_avg_temp = (int16_t)round(avg_temp);
+      printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
       int parity = calculate_odd_parity(rounded_avg_temp);
 
@@ -285,7 +288,7 @@ int main(void)
 
     int randi = rand();
     float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 100)+100; // delay of 1-2 seconds
+    int sleepDuration = (int)(u1 * 100) + 500; // delay of 1-2 seconds
     printf("Sleeping for : %d ms\n", sleepDuration);
 
     // This is to handle border router crashing

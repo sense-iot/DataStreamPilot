@@ -38,5 +38,5 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
     #sleep 10
     echo "Connecting to compute engine node....."
     echo "nc m3-${COMPUTE_ENGINE_NODE} 20000"
-    #nc m3-${COMPUTE_ENGINE_NODE} 20000
+    # nc m3-${COMPUTE_ENGINE_NODE} 20000
 fi

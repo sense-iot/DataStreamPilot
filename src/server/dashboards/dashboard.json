@@ -154,7 +154,7 @@
       },
       "targets": [
         {
-          "alias": "temperature",
+          "alias": "Sensor 1",
           "datasource": {
             "type": "influxdb",
             "uid": "ds_influxdb"
@@ -173,6 +173,7 @@
               "type": "fill"
             }
           ],
+          "hide": false,
           "measurement": "grenoble",
           "orderByTime": "ASC",
           "policy": "default",
@@ -192,7 +193,127 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "sensor::tag",
+              "operator": "=",
+              "value": "1"
+            },
+            {
+              "condition": "AND",
+              "key": "outlier::tag",
+              "operator": "=",
+              "value": "False"
+            }
+          ]
+        },
+        {
+          "alias": "Sensor 2",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "ds_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "grenoble",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "sensor::tag",
+              "operator": "=",
+              "value": "2"
+            },
+            {
+              "condition": "AND",
+              "key": "outlier::tag",
+              "operator": "=",
+              "value": "False"
+            }
+          ]
+        },
+        {
+          "alias": "Sensor 3",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "ds_influxdb"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "grenoble",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "sensor::tag",
+              "operator": "=",
+              "value": "3"
+            },
+            {
+              "condition": "AND",
+              "key": "outlier::tag",
+              "operator": "=",
+              "value": "False"
+            }
+          ]
         }
       ],
       "title": "Temperature of grenoble",

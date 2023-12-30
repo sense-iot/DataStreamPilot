@@ -121,7 +121,7 @@ int temp_sensor_reset(void)
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_12HZ5};
+      .rate = LPSXXX_RATE_7HZ};
   // .rate = lpsxxx_params[0].rate
   // LPSXXX_RATE_7HZ = 5,        /**< sample with 7Hz, default */
   //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
@@ -171,6 +171,18 @@ float generate_normal_random(float stddev)
   return stddev * z;
 }
 
+#define DEVIATION_FACTOR 2 // Defines how many standard deviations away from the mean to consider as outlier
+
+float calculate_stddev(int16_t *data, int size, double mean)
+{
+  double sum = 0.0;
+  for (int i = 0; i < size; i++)
+  {
+    sum += pow(data[i] - mean, 2);
+  }
+  return sqrt(sum / size);
+}
+
 float add_noise(float stddev)
 {
   int num;
@@ -198,6 +210,18 @@ int calculate_odd_parity(int16_t num)
     num >>= 1;
   }
   return (count % 2 == 0) ? 1 : 0;
+}
+
+void remove_outliers(int16_t *data, int size, float mean, float stddev)
+{
+  int j = 0;
+  for (int i = 0; i < size; i++)
+  {
+    if (fabs((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
+    {
+      data[j++] = data[i];
+    }
+  }
 }
 
 char parity_bit[4];
@@ -239,9 +263,8 @@ int main(void)
   while (1)
   {
     int16_t temp = 0;
-    if (lpsxxx_read_temp(&lpsxxx, &temp) == LPSXXX_OK)
+    if (lpsxxx_read_temp(&lpsxxx, &temp) != LPSXXX_OK)
     {
-
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
       // printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       data.tempList[current_index++] = temp_n_noise;
@@ -259,8 +282,17 @@ int main(void)
 
       double avg_temp = (double)sum / WINDOW_SIZE;
 
-      // Round to the nearest integer
-      int16_t rounded_avg_temp = (int16_t)round(avg_temp);
+      float stddev = calculate_stddev(data.tempList, WINDOW_SIZE, avg_temp);
+
+      remove_outliers(data.tempList, WINDOW_SIZE, avg_temp, stddev);
+
+      int newsum = 0;
+      for (int i = 0; i < WINDOW_SIZE; i++)
+      {
+        newsum += data.tempList[i];
+      }
+      double new_avg_temp = (double)sum / WINDOW_SIZE;
+      int16_t rounded_avg_temp = (int16_t)round(new_avg_temp);
       printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
       int parity = calculate_odd_parity(rounded_avg_temp);

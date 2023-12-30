@@ -91,7 +91,7 @@ def filter_outliers(readings, z_threshold):
 
     logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading}")  # Debugging
     current_reading_value = readings[-1]
-    if current_reading_value < lower_bound or current_reading_value > upper_bound:
+    if current_reading_value > lower_bound or current_reading_value < upper_bound:
         logger.debug("Value outside confidence interval, discarding.")  # Debugging
         return None
 

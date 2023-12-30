@@ -21,7 +21,7 @@ async def decodeTemperature(site, reading, sensor):
 
     site_name = sites[site]
 
-    reading = list(map(int, reading[:-1].strip().split(',')))
+    reading = list(map(int, reading.strip().split(',')))
     logger.debug(f"Sensor reading: {reading}")
 
     reading, parity = reading[0], reading[1]
@@ -37,7 +37,7 @@ async def decodeTemperature(site, reading, sensor):
             interpolated_value = (prev_value + prev_prev_value) / 2.0
             sensor_readings[site_name].append({sensor: interpolated_value})
 
-    if len(sensor_readings[site_name])%NUMBER_OF_SENSORS == 0:
+    if len(sensor_readings[site_name])>0 and len(sensor_readings[site_name])%NUMBER_OF_SENSORS == 0:
         logger.debug(f"Processing sensor readings for site {site_name}")
         reading_for_processing = np.array(sensor_readings[site_name][-NUMBER_OF_SENSORS:])
         logger.debug(f"Reading for processing: {reading_for_processing}")

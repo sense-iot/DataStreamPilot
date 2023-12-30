@@ -121,13 +121,15 @@ int temp_sensor_reset(void)
   lpsxxx_params_t paramts = {
       .i2c = lpsxxx_params[0].i2c,
       .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_RATE_25HZ};
-
-  ztimer_sleep(ZTIMER_MSEC, 10000);
+      .rate = LPSXXX_RATE_12HZ5};
+  // .rate = lpsxxx_params[0].rate
+  // LPSXXX_RATE_7HZ = 5,        /**< sample with 7Hz, default */
+  //   LPSXXX_RATE_12HZ5 = 6,      /**< sample with 12.5Hz */
+  //   LPSXXX_RATE_25HZ = 7
 
   if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
   {
-    printf("Sensor initialization failed\n");
+    puts("Sensor initialization failed");
   }
 
   // 7       6543    2          1      0
@@ -136,32 +138,24 @@ int temp_sensor_reset(void)
   // 44
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, 0x44) != LPSXXX_OK)
   {
-    printf("Sensor reset failed\n");
+    puts("Sensor reset failed");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 100);
-
-  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
-  {
-    printf("Sensor initialization failed\n");
-  }
-
-  ztimer_sleep(ZTIMER_MSEC, 100);
+  ztimer_sleep(ZTIMER_MSEC, 5000);
 
   // 0x40 -- 01000000
   // AVGT2 AVGT1 AVGT0 100 --  Nr. internal average : 16
   if (temp_sensor_write_res_conf(&lpsxxx, 0x40) != LPSXXX_OK)
   {
-    printf("Sensor enable failed\n");
+    puts("Sensor enable failed");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 100);
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
-    printf("Sensor enable failed\n");
+    puts("Sensor enable failed");
   }
 
-  ztimer_sleep(ZTIMER_MSEC, 100);
+  ztimer_sleep(ZTIMER_MSEC, 1000);
   return 1;
 }
 
@@ -213,13 +207,13 @@ int main(void)
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", SENSOR_ID);
 
-  setup_coap_client();
-  msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
-
   if (temp_sensor_reset() == 0)
   {
     printf("Sensor reset failed in the main loop\n");
   }
+  ztimer_sleep(ZTIMER_MSEC, 4000);
+  setup_coap_client();
+  msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
@@ -288,7 +282,7 @@ int main(void)
 
     int randi = rand();
     float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 100) + 500; // delay of 1-2 seconds
+    int sleepDuration = (int)(u1 * 1000) + 5000; // delay of 1-2 seconds
     printf("Sleeping for : %d ms\n", sleepDuration);
 
     // This is to handle border router crashing

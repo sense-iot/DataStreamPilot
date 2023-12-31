@@ -24,8 +24,6 @@ This example comes with support for three uplink types pre-configured:
 
 For `native` the host-facing [`netdev_tap`](https://doc.riot-os.org/netdev__tap_8h.html) device
 is configured, providing connectivity via a TAP interface to the RIOT instance.
-On the node-facing side [`socket_zep`](https://doc.riot-os.org/group__drivers__socket__zep.html)
-is used to simulate a IEEE 802.15.4 network.
 
 To select an uplink, set the UPLINK environment variable. For instance, use `UPLINK=slip`
 for a SLIP uplink.
@@ -36,7 +34,7 @@ router, stdio is multiplexed over the same line.
 
 The `wifi` uplink will connect to an existing WiFi (IEEE 802.11) network.
 The network must provide a DHCPv6 server that supports prefix delegation (IA_PD) when
-`PREFIX_CONF=dhcpv6` is set (default).
+`USE_DHCPV6=1` is set (default).
 
 Use `WIFI_SSID="SSID" WIFI_PASS="password"` in your `make` command to set your WiFi's
 credentials. You can alternatively edit the `Makefile`.
@@ -44,23 +42,9 @@ credentials. You can alternatively edit the `Makefile`.
 Currently, `wifi` requires an esp8266 or esp32 for the border router and will default
 to using `esp_now` for the downstream interface.
 
-### Connection sharing with host
-
-If the host (Linux) computer has an IPv6 uplink that can be shard with the RIOT border
-router to provide it with an uplink.
-
-This requires the host network to be bridged with the TAP network by connecting it to
-the TAP bridge:
-
-    sudo dist/tools/tapsetup/tapsetup -u eno1
-
-where `eno1` is the host's uplink interface.
-
-Then specify `REUSE_TAP=1` when building / running the border router application.
-This works with both `native` and the `ethos` uplink.
-
 ## Requirements
 This functionality works only on Linux machines.
+Mac OSX support will be added in the future (lack of native `tap` interface).
 
 If you want to use DHCPv6, you also need a DHCPv6 server configured for prefix
 delegation from the interface facing the border router. With the [KEA] DHCPv6
@@ -78,7 +62,7 @@ server e.g. you can use the following configuration:
        "subnet": "2001:db8::/16",
        "pd-pools": [ { "prefix": "2001:db8::",
                        "prefix-len": 16,
-                       "delegated-len": 64 } ] }
+                       "delegated-len": 64 } ] },
   ]
   ...
 }
@@ -99,10 +83,10 @@ make clean all flash
 ```
 
 If you want to use DHCPv6 instead of UHCP compile with the environment variable
-`PREFIX_CONF` set to dhcpv6
+`USE_DHCPV6` set to 1
 
 ```bash
-PREFIX_CONF=dhcpv6 make clean all flash
+USE_DHCPV6=1 make clean all flash
 ```
 
 ## Usage
@@ -127,7 +111,7 @@ For instance, if you use the [`gnrc_networking`](https://github.com/RIOT-OS/RIOT
 ping it from your machine with:
 
 ```
-> ping 2001:db8:0:1234:0:567:8:1
+> ping6 2001:db8:0:1234:0:567:8:1
 ```
 
 Just replace this address by your mote's address.
@@ -154,21 +138,10 @@ You can check your ULA on your PC with `ifconfig` Linux command.
 On this example, such address can be pinged from 6lo motes:
 
 ```
-> ping fd00:dead:beef::1
+> ping6 fd00:dead:beef::1
 ```
 
 Thus far, IPv6 communication with between your PC and your motes is enabled.
-
-### Simulated network with native
-
-On native a IEEE 802.15.4 network is simulated by encapsulating 802.15.4 frames
-inside UDP packets. For this the `socket_zep` modules is used both on the border
-router and on the virtual mote.
-
-The UDP packets are sent to a dispatcher which forwards them to all other nodes.
-By default a simple dispatcher is provided that will forward every packet to
-every node (perfect broadcast), but it can be replaced by the user with alternative
-dispatchers to simulate more advanced topologies.
 
 # gnrc_border_router with manual config
 You can use `ethos` as a standalone driver, if you want to setup the BR manually.
@@ -242,7 +215,7 @@ Now, you should be able to ping your nodes.
 Use the global address starting by your prefix, on our case `2001:db8::`:
 
 ```
-> ping 2001:db8:0:1234:0:567:8:1
+> ping6 2001:db8:0:1234:0:567:8:1
 ```
 
 # gnrc_networking_border_router with SLIP

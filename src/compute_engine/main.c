@@ -21,10 +21,12 @@
 
 static data_t data;
 static lpsxxx_t lpsxxx;
-static const lpsxxx_params_t params_lps331 = {.i2c = LPSXXX_PARAM_I2C, .addr = LPSXXX_PARAM_ADDR, .rate = 0};
+static const lpsxxx_params_t simpleDeviceParams = {.i2c = ms_t paramts = {
+                                                  .i2c = lpsxxx_params[0].i2c,
+                                                  .addr = lpsxxx_params[0].addr,
+                                                  .rate = lpsxxx_params[0].rate};
 
-#define MAIN_QUEUE_SIZE (4)
-static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
+
 
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
@@ -33,16 +35,10 @@ static char *server_ip = GCOAP_AMAZON_SERVER_IP_ONLY;
 #define MAX_JSON_PAYLOAD_SIZE 128
 char json_payload[MAX_JSON_PAYLOAD_SIZE];
 
-#define EMCUTE_PRIO (THREAD_PRIORITY_MAIN - 1)
-#define NUMOFSUBS (16U)
-#define TOPIC_MAXLEN (64U)
-
-#define MAX_IP_LENGTH 46 // Maximum length for an IPv6 address
-
 void setup_coap_client(void)
 {
   msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
-  ztimer_sleep(ZTIMER_MSEC, 1000);
+  ztimer_sleep(ZTIMER_MSEC, 2000);
 }
 
 // Define a structure to hold the location name and its corresponding binary value
@@ -144,38 +140,30 @@ int temp_sensor_write_res_conf(const lpsxxx_t *dev, uint8_t value)
 
 int temp_sensor_reset()
 {
-  ztimer_sleep(ZTIMER_MSEC, 5000);
+  // cold start delay
+  ztimer_sleep(ZTIMER_MSEC, 1000);
+  lpsxxx.params = simpleDeviceParams;
 
-  lpsxxx_params_t paramts = {
-      .i2c = lpsxxx_params[0].i2c,
-      .addr = lpsxxx_params[0].addr,
-      .rate = LPSXXX_DEFAULT_RATE};
-  lpsxxx.params = paramts;
-
+  // reset the sensor
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, (1 << 7) | (1 << 2)) != LPSXXX_OK)
   {
     puts("Sensor reset failed");
-    return 1;
   }
   bootDealay(&lpsxxx);
 
-  ztimer_sleep(ZTIMER_MSEC, 5000);
+  ztimer_sleep(ZTIMER_MSEC, 1000);
 
-  if (lpsxxx_init(&lpsxxx, &paramts) != LPSXXX_OK)
+  if (lpsxxx_init(&lpsxxx, &lpsxxx.params) != LPSXXX_OK)
   {
     puts("Sensor initialization failed");
-    return 1;
   }
-
-  ztimer_sleep(ZTIMER_MSEC, 5000);
-
+  ztimer_sleep(ZTIMER_MSEC, 1000);
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
     puts("Sensor enable failed");
     return 1;
   }
-
-  ztimer_sleep(ZTIMER_MSEC, 1000);
+  ztimer_sleep(ZTIMER_MSEC, 2000);
   return 0;
 }
 
@@ -241,7 +229,10 @@ void remove_outliers(int16_t *data, float mean, float stddev)
   }
 }
 
+#define MAIN_QUEUE_SIZE (4)
+static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 char parity_bit[4];
+
 int main(void)
 {
 
@@ -262,9 +253,7 @@ int main(void)
     printf("Sensor reset failed in the main loop\n");
     return 1;
   }
-  ztimer_sleep(ZTIMER_MSEC, 4000);
   setup_coap_client();
-  msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);

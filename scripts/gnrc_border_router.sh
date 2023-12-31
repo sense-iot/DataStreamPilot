@@ -10,7 +10,7 @@ build_path=${BORDER_ROUTER_HOME}/bin/${ARCH}/${BORDER_ROUTER_EXE_NAME}.elf
 echo "============== Building on channel ${NODE_CHANNEL} ================="
 if [ ! -f "$RELEASE_FILE" ]; then
   echo "DataStreamPilot: build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3 ${DEFAULT_CHANNEL}"
-  build_wireless_firmware_cached ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3 ${DEFAULT_CHANNEL}
+  build_wireless_firmware ${BORDER_ROUTER_HOME} ${BORDER_ROUTER_EXE_NAME} iotlab-m3 ${DEFAULT_CHANNEL}
   build_status=$?
   if [ $build_status -ne 0 ]; then
     exit $build_status

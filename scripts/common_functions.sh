@@ -335,7 +335,7 @@ build_wireless_firmware() {
 
     echo "Build firmware ${firmware_source_folder}"
     echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" UPLINK=ethernet DEFAULT_CHANNEL="${channel}" BOARD=${ARCH} -C "${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" UPLINK=ethos DEFAULT_CHANNEL="${channel}" BOARD=${ARCH} -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?

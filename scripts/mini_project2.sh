@@ -2,6 +2,7 @@
 
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
+source /opt/riot.source
 
 export ARCH=iotlab-m3
 
@@ -36,10 +37,10 @@ export COMPUTE_ENGINE_NODE_1=${m3_nodes[2]}
 export COMPUTE_ENGINE_NODE_2=${m3_nodes[3]}
 export COMPUTE_ENGINE_NODE_3=${m3_nodes[4]}
 
-export BORDER_ROUTER_NODE=224
-export COMPUTE_ENGINE_NODE_1=225
-export COMPUTE_ENGINE_NODE_2=226
-export COMPUTE_ENGINE_NODE_3=227
+# export BORDER_ROUTER_NODE=224
+# export COMPUTE_ENGINE_NODE_1=225
+# export COMPUTE_ENGINE_NODE_2=226
+# export COMPUTE_ENGINE_NODE_3=227
 
 # export COMPUTE_ENGINE_NODE_1=${a8_nodes[0]}
 # export COMPUTE_ENGINE_NODE_2=${a8_nodes[1]}
@@ -50,7 +51,7 @@ write_and_print_variable "COMPUTE_ENGINE_NODE_1" "$COMPUTE_ENGINE_NODE_1" "m3"
 write_and_print_variable "COMPUTE_ENGINE_NODE_2" "$COMPUTE_ENGINE_NODE_2" "m3"
 write_and_print_variable "COMPUTE_ENGINE_NODE_3" "$COMPUTE_ENGINE_NODE_3" "m3"
 
-iotlab-experiment stop -i ${EXPERIMENT_ID}
+# iotlab-experiment stop -i ${EXPERIMENT_ID}
 
 echo "DataStreamPilot: I am sleeping for nodes to start..."
 sleep 5

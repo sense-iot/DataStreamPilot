@@ -24,6 +24,8 @@ services:
 
   coap_server:
     image: coap_server
+    environment:
+      - PYTHONUNBUFFERED=t
     ports:
      - "5683:5683"
      - target: 5683

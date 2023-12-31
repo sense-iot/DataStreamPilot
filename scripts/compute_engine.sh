@@ -25,9 +25,9 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
 
     if [ "$my_arch" = "iotlab-m3" ]; then
         echo "Flashing new firmware for ${my_arch} node : ${COMPUTE_ENGINE_NODE}"
-        flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf ${COMPUTE_ENGINE_NODE}
+        # flash_elf ${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf ${COMPUTE_ENGINE_NODE}
 
-        # iotlab-experiment submit -n "${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}" -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${COMPUTE_ENGINE_NODE},${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf
+        iotlab-experiment submit -n "${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}" -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${COMPUTE_ENGINE_NODE},${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}.elf
         echo "nc m3-${COMPUTE_ENGINE_NODE} 20000"
         #nc m3-${COMPUTE_ENGINE_NODE} 20000
     elif [ "$my_arch" = "iotlab-a8-m3" ]; then

@@ -14,8 +14,14 @@
 #include "net/gcoap.h"
 #include "ztimer.h"
 
-#include "debug.h"
-#define MODULE_LPS331AP 1
+#include "gcoap_example.h"
+
+// #include "debug.h"
+// #define MODULE_LPS331AP 1
+
+static data_t data;
+static lpsxxx_t lpsxxx;
+static const lpsxxx_params_t params_lps331 = {.i2c = LPSXXX_PARAM_I2C, .addr = LPSXXX_PARAM_ADDR, .rate = 0};
 
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -83,13 +89,10 @@ typedef struct
   int16_t tempList[WINDOW_SIZE];
 } data_t;
 
-static data_t data;
-static lpsxxx_t lpsxxx;
-
 int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
 {
   i2c_acquire(dev->params.i2c);
-  if (i2c_write_reg(dev->params.i2c, dev->params.addr, reg, value, 0) < 0)
+  if (i2c_write_reg(dev->params.i2c, dev->params.addr, reg, value, 0))
   {
     i2c_release(dev->params.i2c);
     return -LPSXXX_ERR_I2C;
@@ -139,7 +142,7 @@ int temp_sensor_write_res_conf(const lpsxxx_t *dev, uint8_t value)
   return write_register_value(dev, LPSXXX_REG_RES_CONF, value);
 }
 
-int temp_sensor_reset(void)
+int temp_sensor_reset()
 {
   ztimer_sleep(ZTIMER_MSEC, 5000);
 
@@ -179,12 +182,9 @@ int temp_sensor_reset(void)
 float generate_normal_random(float stddev)
 {
   float M_PI = 3.1415926535;
-
-  // Box-Muller transform to generate random numbers with normal distribution
   float u1 = rand() / (float)RAND_MAX;
   float u2 = rand() / (float)RAND_MAX;
   float z = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
-
   return stddev * z;
 }
 
@@ -192,7 +192,7 @@ float generate_normal_random(float stddev)
 
 float calculate_stddev(int16_t *data, float mean)
 {
-  float sum = 0.0;
+  double sum = 0.0;
   for (int i = 0; i < WINDOW_SIZE; i++)
   {
     sum += pow(data[i] - mean, 2);
@@ -234,7 +234,7 @@ void remove_outliers(int16_t *data, float mean, float stddev)
   int j = 0;
   for (int i = 0; i < WINDOW_SIZE; i++)
   {
-    if (fabs((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
+    if (fabsf((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
     {
       data[j++] = data[i];
     }
@@ -244,6 +244,15 @@ void remove_outliers(int16_t *data, float mean, float stddev)
 char parity_bit[4];
 int main(void)
 {
+
+  char *coap_command[6];
+  coap_command[0] = "coap";
+  coap_command[1] = "post";
+  coap_command[2] = server_ip;
+  coap_command[3] = "5683";
+  coap_command[4] = "/temp";
+  coap_command[5] = json_payload;
+
   ztimer_sleep(ZTIMER_MSEC, 5000);
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", SENSOR_ID);
@@ -260,13 +269,7 @@ int main(void)
   ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
 
-  char *coap_command[6];
-  coap_command[0] = "coap";
-  coap_command[1] = "post";
-  coap_command[2] = server_ip;
-  coap_command[3] = "5683";
-  coap_command[4] = "/temp";
-  coap_command[5] = json_payload;
+
 
   const int message_arg_count = 6;
 
@@ -293,6 +296,7 @@ int main(void)
       }
 
       int32_t sum = 0;
+      int16_t i = 0;
       for (int i = 0; i < WINDOW_SIZE; i++)
       {
         sum += data.tempList[i];
@@ -300,17 +304,17 @@ int main(void)
 
       printf("Sum: %li\n", sum);
 
-      double avg_temp = (double)sum / WINDOW_SIZE;
-      printf("Average temperature: %f\n", avg_temp);
+      float avg_temp = (float)sum / WINDOW_SIZE;
+      printf("Average temperature: %f\n", (double)avg_temp);
       float stddev = calculate_stddev(data.tempList, avg_temp);
-      printf("Standard deviation: %f\n", stddev);
+      printf("Standard deviation: %f\n", (double)stddev);
       remove_outliers(data.tempList, avg_temp, stddev);
-      int newsum = 0;
-      for (int i = 0; i < WINDOW_SIZE; i++)
+      int32_t newsum = 0;
+      for (i = 0; i < WINDOW_SIZE; i++)
       {
         newsum += data.tempList[i];
       }
-      printf("New sum: %i\n", newsum);
+      printf("New sum: %li\n", newsum);
       double new_avg_temp = (double)sum / WINDOW_SIZE;
       printf("New average temperature: %f\n", new_avg_temp);
       int16_t rounded_avg_temp = (int16_t)round(new_avg_temp);
@@ -335,7 +339,7 @@ int main(void)
 
     int randi = rand();
     float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 1000) + 5000; // delay of 1-2 seconds
+    int sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
     printf("Sleeping for : %d ms\n", sleepDuration);
 
     // This is to handle border router crashing

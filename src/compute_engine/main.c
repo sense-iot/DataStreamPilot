@@ -14,8 +14,6 @@
 #include "net/gcoap.h"
 #include "ztimer.h"
 
-#include "gcoap_example.h"
-
 // #include "debug.h"
 // #define MODULE_LPS331AP 1
 

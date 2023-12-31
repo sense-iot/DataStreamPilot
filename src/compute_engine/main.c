@@ -137,7 +137,7 @@ int temp_sensor_write_res_conf(const lpsxxx_t *dev, uint8_t value)
   return write_register_value(dev, LPSXXX_REG_RES_CONF, value);
 }
 
-int temp_sensor_reset()
+int temp_sensor_reset(void)
 {
   // cold start delay
   ztimer_sleep(ZTIMER_MSEC, 1000);

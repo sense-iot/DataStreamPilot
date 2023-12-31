@@ -2,6 +2,7 @@
 
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
+source /opt/riot.source
 
 RELEASE_FILE=${SENSE_HOME}/release/gnrc_border_router.elf
 build_path=${BORDER_ROUTER_HOME}/bin/${ARCH}/${BORDER_ROUTER_EXE_NAME}.elf

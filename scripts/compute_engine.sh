@@ -2,6 +2,7 @@
 
 source setup.sh
 source ${SENSE_SCRIPTS_HOME}/setup_env.sh
+source /opt/riot.source
 
 RELEASE_FILE=${SENSE_HOME}/release/${COMPUTE_ENGINE_EXE_NAME}_${SENSOR_ID}_${SENSE_SITE}.elf
 build_path=${COMPUTE_ENGINE_HOME}/bin/${ARCH}/${COMPUTE_ENGINE_EXE_NAME}.elf

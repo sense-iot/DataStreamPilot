@@ -17,14 +17,23 @@
 // #include "debug.h"
 // #define MODULE_LPS331AP 1
 
+/*
+  % r - accuracy (5%),
+  % s - standard deviation,
+  % x - Average,
+  % z = 1.960 (95%) - TAKE THE CEIL
+  % N = (100*z*s/(r*x))^2
+*/
+#define WINDOW_SIZE 60
+typedef struct
+{
+  int16_t tempList[WINDOW_SIZE];
+} data_t;
 static data_t data;
 static lpsxxx_t lpsxxx;
-static const lpsxxx_params_t simpleDeviceParams = {.i2c = ms_t paramts = {
-                                                  .i2c = lpsxxx_params[0].i2c,
+static const lpsxxx_params_t simpleDeviceParams = {.i2c = lpsxxx_params[0].i2c,
                                                   .addr = lpsxxx_params[0].addr,
                                                   .rate = lpsxxx_params[0].rate};
-
-
 
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
@@ -32,6 +41,10 @@ extern void gcoap_cli_init(void);
 static char *server_ip = GCOAP_AMAZON_SERVER_IP_ONLY;
 #define MAX_JSON_PAYLOAD_SIZE 128
 char json_payload[MAX_JSON_PAYLOAD_SIZE];
+
+#define MAIN_QUEUE_SIZE (4)
+static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
+char parity_bit[4];
 
 void setup_coap_client(void)
 {
@@ -69,19 +82,7 @@ struct LocationMapping locationMap[] = {
     {"strasbourg", 0b101},
     {NULL, 0}};
 
-/*
-  % r - accuracy (5%),
-  % s - standard deviation,
-  % x - Average,
-  % z = 1.960 (95%) - TAKE THE CEIL
-  % N = (100*z*s/(r*x))^2
-*/
-#define WINDOW_SIZE 60
 
-typedef struct
-{
-  int16_t tempList[WINDOW_SIZE];
-} data_t;
 
 int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
 {
@@ -227,9 +228,6 @@ void remove_outliers(int16_t *data, float mean, float stddev)
   }
 }
 
-#define MAIN_QUEUE_SIZE (4)
-static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
-char parity_bit[4];
 
 int main(void)
 {

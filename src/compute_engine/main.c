@@ -245,11 +245,11 @@ int main(void)
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", SENSOR_ID);
 
-  if (temp_sensor_reset())
-  {
-    printf("Sensor reset failed in the main loop\n");
-    return 1;
-  }
+  // if (temp_sensor_reset())
+  // {
+  //   printf("Sensor reset failed in the main loop\n");
+  //   return 1;
+  // }
   setup_coap_client();
 
   ztimer_sleep(ZTIMER_MSEC, 4000);

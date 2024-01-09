@@ -143,6 +143,12 @@ int temp_sensor_reset(void)
   ztimer_sleep(ZTIMER_MSEC, 1000);
   lpsxxx.params = simpleDeviceParams;
 
+  if (lpsxxx_init(&lpsxxx, &lpsxxx.params) != LPSXXX_OK)
+  {
+    puts("Sensor initialization failed");
+  }
+  ztimer_sleep(ZTIMER_MSEC, 1000);
+
   // reset the sensor
   if (temp_sensor_write_CTRL_REG2_value(&lpsxxx, (1 << 7) | (1 << 2)) != LPSXXX_OK)
   {
@@ -152,11 +158,6 @@ int temp_sensor_reset(void)
 
   ztimer_sleep(ZTIMER_MSEC, 1000);
 
-  if (lpsxxx_init(&lpsxxx, &lpsxxx.params) != LPSXXX_OK)
-  {
-    puts("Sensor initialization failed");
-  }
-  ztimer_sleep(ZTIMER_MSEC, 1000);
   if (lpsxxx_enable(&lpsxxx) != LPSXXX_OK)
   {
     puts("Sensor enable failed");

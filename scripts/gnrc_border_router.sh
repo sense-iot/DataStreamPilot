@@ -26,6 +26,8 @@ if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   # border_router_job_id=$(submit_border_router_job "${BORDER_ROUTER_NODE}")
   # wait_for_job "${border_router_job_id}"
 
+  echo "ping6 2001:4860:4860::8888 -c 5"
+
   current_ethos_id=$(ps -ef | grep ethos | grep -v "grep" | grep perera | awk '{print $2}' | head -1)
   if [ -z "$current_ethos_id" ]; then
     echo "DataStreamPilot:  No matching ethos process found."

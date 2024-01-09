@@ -8,13 +8,13 @@ export ARCH=iotlab-m3
 
 EXPERIMENT_NAME="mini-project-2-group-12-$SENSE_SITE"
 M3_NODE_COUNT=5
-A8_NODE_COUNT=1
+A8_NODE_COUNT=0
 EXPERIMENT_ID=0
 
 if ! is_experiment_running "${EXPERIMENT_NAME}"; then
     echo "DataStreamPilot: submitting a new experiment"
     # experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
-    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
+    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE}
     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
     wait_for_job "${EXPERIMENT_ID}"
 else

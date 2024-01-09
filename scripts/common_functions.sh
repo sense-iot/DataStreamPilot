@@ -7,7 +7,6 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     fi
 fi
 
-
 declare -a a8_nodes
 declare -a m3_nodes
 
@@ -20,16 +19,16 @@ extract_and_categorize_nodes() {
     local num_nodes=$(echo "$json" | jq '.nb_nodes')
 
     # Loop through each node and categorize
-    for (( i=0; i<num_nodes; i++ )); do
+    for ((i = 0; i < num_nodes; i++)); do
         local node=$(echo "$json" | jq -r ".nodes[$i]")
         if [[ $node == "a8-"* ]]; then
             # Extract the number part for a8 nodes
             local number=$(echo "$node" | cut -d'-' -f2 | cut -d'.' -f1)
-            a8_nodes+=( "$number" )
+            a8_nodes+=("$number")
         elif [[ $node == "m3-"* ]]; then
             # Extract the number part for m3 nodes
             local number=$(echo "$node" | cut -d'-' -f2 | cut -d'.' -f1)
-            m3_nodes+=( "$number" )
+            m3_nodes+=("$number")
         fi
     done
 }
@@ -37,7 +36,7 @@ extract_and_categorize_nodes() {
 flash_elf() {
     local firmware_path=$1
     local node=$2
-    local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
+    local site=${SENSE_SITE} # Default site if SENSE_SITE is not set
 
     # Execute the command
     echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node" -i ${EXPERIMENT_ID}"
@@ -49,7 +48,7 @@ flash_firmware() {
     local firmware_name=$1
     local node=$2
     local firmware_path="${SENSE_FIRMWARE_HOME}/${firmware_name}.elf"
-    local site=${SENSE_SITE}  # Default site if SENSE_SITE is not set
+    local site=${SENSE_SITE} # Default site if SENSE_SITE is not set
 
     # Execute the command
     echo "iotlab-node --flash "$firmware_path" -l "${site},m3,$node" -i ${EXPERIMENT_ID}"
@@ -66,7 +65,7 @@ write_variable_to_file() {
     mkdir -p "$(dirname "$file_path")"
 
     # Write the variable value to the file
-    echo "$variable_value" > "$file_path"
+    echo "$variable_value" >"$file_path"
 }
 
 # Function to read a variable from a file
@@ -79,7 +78,7 @@ read_variable_from_file() {
         cat "$file_path"
     else
         echo "Error: File not found."
-        return 1  # Return a non-zero status to indicate failure
+        return 1 # Return a non-zero status to indicate failure
     fi
 }
 
@@ -155,7 +154,7 @@ write_experiment_id() {
     mkdir -p "$(dirname "$file_path")"
 
     # Write the experiment ID to the file
-    echo "$experiment_id" > "$file_path"
+    echo "$experiment_id" >"$file_path"
 }
 
 # Function to read the experiment ID from a file
@@ -167,7 +166,7 @@ read_experiment_id() {
         cat "$file_path"
     else
         echo "Error: File not found."
-        return 1  # Return a non-zero status to indicate failure
+        return 1 # Return a non-zero status to indicate failure
     fi
 }
 
@@ -334,8 +333,8 @@ build_wireless_firmware() {
     local channel="${4:-$DEFAULT_CHANNEL}"
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" UPLINK=ethos DEFAULT_CHANNEL="${channel}" BOARD=${ARCH} -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} DEFAULT_PAN_ID="${PANID}"  BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" UPLINK=ethos DEFAULT_CHANNEL="${channel}" DEFAULT_PAN_ID="${PANID}" BOARD=${ARCH} -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -359,8 +358,8 @@ build_wireless_firmware_forced() {
     local channel="${4:-$DEFAULT_CHANNEL}"
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD="${ARCH}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} DEFAULT_PAN_ID="${PANID}" BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" DEFAULT_PAN_ID="${PANID}" BOARD="${ARCH}" -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -389,8 +388,8 @@ build_wireless_firmware_cached() {
     fi
 
     echo "Build firmware ${firmware_source_folder}"
-    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} BOARD=${ARCH} -C ${firmware_source_folder}"
-    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" BOARD="${ARCH}" -C "${firmware_source_folder}"
+    echo "make ETHOS_BAUDRATE=${ETHOS_BAUDRATE} DEFAULT_CHANNEL=${channel} DEFAULT_PAN_ID="${PANID}" BOARD=${ARCH} -C ${firmware_source_folder}"
+    make ETHOS_BAUDRATE="${ETHOS_BAUDRATE}" DEFAULT_CHANNEL="${channel}" DEFAULT_PAN_ID="${PANID}" BOARD="${ARCH}" -C "${firmware_source_folder}"
 
     # Capture the exit status of the make command
     local status=$?
@@ -494,7 +493,6 @@ extract_ip() {
     echo "$ip"
 }
 
-
 flash_sensor() {
     local architecture=$1
     local file_to_flash=$2
@@ -546,5 +544,3 @@ write_and_print_variable() {
     write_variable_to_file "$var_name" "$var_value"
     printf "%-50s %s\n" "DataStreamPilot: $var_name:" "$print_prefix - $var_value"
 }
-
-export SENSE_FUNCTONS_ENV_UP=1

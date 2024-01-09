@@ -69,6 +69,7 @@ fi
 
 # values are from 11-26
 export DEFAULT_CHANNEL=22
+export PANID=0xff0c
 
 export ETHOS_BAUDRATE=500000
 export TAP_INTERFACE=tap23

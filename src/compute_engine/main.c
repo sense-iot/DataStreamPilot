@@ -254,13 +254,10 @@ int main(void)
   ztimer_sleep(ZTIMER_MSEC, 4000);
   unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
 
-
-
   const int message_arg_count = 6;
 
   int current_index = 0;
 
-  // initialize the array
   for (int i = 0; i < WINDOW_SIZE; i++)
   {
     data.tempList[i] = 0;
@@ -324,11 +321,14 @@ int main(void)
 
     int randi = rand();
     float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
-    printf("Sleeping for : %d ms\n", sleepDuration);
+    int sleepDuration = (int)(u1 * 1000) + 5000; // delay of 1-2 seconds
+    lpsxxx_disable(&lpsxxx);
+    printf("Sleeping for : %d ms after disabling sensor\n", sleepDuration);
 
     // This is to handle border router crashing
     ztimer_sleep(ZTIMER_MSEC, sleepDuration);
+    lpsxxx_enable(&lpsxxx);
+    printf("Sleeping for : %d ms after enabling sensor\n", sleepDuration);
   }
 
   return 0;

@@ -274,7 +274,7 @@ int main(void)
     int16_t temp = 0;
     int ret = lpsxxx_read_temp(&lpsxxx, &temp);
     printf("Temperature reading request response: %i\n", ret);
-    if (ret != LPSXXX_OK)
+    if (ret == LPSXXX_OK)
     {
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
       printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));

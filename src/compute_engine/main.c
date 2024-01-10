@@ -25,6 +25,10 @@
   % N = (100*z*s/(r*x))^2
 */
 #define WINDOW_SIZE 60
+/*
+  Defines how many standard deviations away from the mean to consider as outlier
+*/
+#define DEVIATION_FACTOR 2
 
 typedef struct
 {
@@ -178,7 +182,7 @@ float generate_normal_random(float stddev)
   return stddev * z;
 }
 
-#define DEVIATION_FACTOR 2 // Defines how many standard deviations away from the mean to consider as outlier
+
 
 float calculate_stddev(int16_t *data, float mean)
 {
@@ -231,9 +235,24 @@ void remove_outliers(int16_t *data, float mean, float stddev)
   }
 }
 
-
 int main(void)
 {
+
+  int resetValue;
+  unsigned int site_name;
+  int message_arg_count;
+  int current_index;
+  int i;
+  int32_t sum;
+  int32_t newsum;
+   float avg_temp;
+  float stddev;
+  double new_avg_temp;
+  int16_t rounded_avg_temp;
+  int parity;
+  int snprintf_result;
+  int randi;
+  int sleepDuration;
 
   char *coap_command[6];
   coap_command[0] = "coap";
@@ -247,7 +266,7 @@ int main(void)
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", SENSOR_ID);
 
-  int resetValue = temp_sensor_reset();
+  resetValue = temp_sensor_reset();
   if (resetValue == -1)
   {
     printf("Sensor reset failed in the main loop : %d\n", resetValue);
@@ -258,13 +277,13 @@ int main(void)
   setup_coap_client();
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
-  unsigned int site_name = getBinaryValue(locationMap, SITE_NAME);
+  site_name = getBinaryValue(locationMap, SITE_NAME);
 
-  const int message_arg_count = 6;
+  message_arg_count = 6;
 
-  int current_index = 0;
+  current_index = 0;
 
-  for (int i = 0; i < WINDOW_SIZE; i++)
+  for (i = 0; i < WINDOW_SIZE; i++)
   {
     data.tempList[i] = 0;
   }
@@ -285,9 +304,8 @@ int main(void)
         current_index = 0;
       }
 
-      int32_t sum;
       sum = 0;
-      int16_t i = 0;
+      i = 0;
       for (i = 0; i < WINDOW_SIZE; i++)
       {
         sum += data.tempList[i];
@@ -295,25 +313,25 @@ int main(void)
 
       printf("Sum: %li\n", sum);
 
-      float avg_temp = (float)sum / WINDOW_SIZE;
+      avg_temp = (float)sum / WINDOW_SIZE;
       printf("Average temperature: %f\n", (double)avg_temp);
-      float stddev = calculate_stddev(data.tempList, avg_temp);
+      stddev = calculate_stddev(data.tempList, avg_temp);
       printf("Standard deviation: %f\n", (double)stddev);
       remove_outliers(data.tempList, avg_temp, stddev);
-      int32_t newsum = 0;
+      newsum = 0;
       for (i = 0; i < WINDOW_SIZE; i++)
       {
         newsum += data.tempList[i];
       }
       printf("New sum: %li\n", newsum);
-      double new_avg_temp = (double)sum / WINDOW_SIZE;
+      new_avg_temp = (double)sum / WINDOW_SIZE;
       printf("New average temperature: %f\n", new_avg_temp);
-      int16_t rounded_avg_temp = (int16_t)round(new_avg_temp);
+      rounded_avg_temp = (int16_t)round(new_avg_temp);
       printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
-      int parity = calculate_odd_parity(rounded_avg_temp);
+      parity = calculate_odd_parity(rounded_avg_temp);
 
-      int snprintf_result = snprintf(json_payload, sizeof(json_payload),
+      snprintf_result = snprintf(json_payload, sizeof(json_payload),
                                      "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
                                      site_name, SENSOR_ID, rounded_avg_temp, parity);
 
@@ -330,9 +348,9 @@ int main(void)
       printf("Temperature reading failed\n");
     }
 
-    int randi = rand();
-    float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
+    randi = rand();
+    u1 = randi / RAND_MAX;
+    sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
     printf("Sleeping for : %d ms for\n", sleepDuration);
     ztimer_sleep(ZTIMER_MSEC, sleepDuration);
   }

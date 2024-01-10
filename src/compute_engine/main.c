@@ -247,10 +247,12 @@ int main(void)
   printf("Sensor data averaged - Group 12 MQTT\n");
   printf("Sensor ID : %s\n", SENSOR_ID);
 
-  if (temp_sensor_reset())
+  int resetValue = temp_sensor_reset() 
+  if (resetValue == -1)
   {
-    printf("Sensor reset failed in the main loop\n");
-    return 1;
+    printf("Sensor reset failed in the main loop : %d\n", resetValue);
+  } else {
+    printf("Sensor reset successful in the main loop : %d\n", resetValue);
   }
   setup_coap_client();
 

@@ -38,8 +38,8 @@ typedef struct
 static data_t data;
 static lpsxxx_t lpsxxx;
 static const lpsxxx_params_t simpleDeviceParams = {.i2c = lpsxxx_params[0].i2c,
-                                                  .addr = lpsxxx_params[0].addr,
-                                                  .rate = lpsxxx_params[0].rate};
+                                                   .addr = lpsxxx_params[0].addr,
+                                                   .rate = lpsxxx_params[0].rate};
 
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
@@ -87,8 +87,6 @@ struct LocationMapping locationMap[] = {
     {"saclay", 0b100},
     {"strasbourg", 0b101},
     {NULL, 0}};
-
-
 
 int write_register_value(const lpsxxx_t *dev, uint16_t reg, uint8_t value)
 {
@@ -182,8 +180,6 @@ float generate_normal_random(float stddev)
   return stddev * z;
 }
 
-
-
 float calculate_stddev(int16_t *data, float mean)
 {
   double sum = 0.0;
@@ -245,8 +241,9 @@ int main(void)
   int i;
   int32_t sum;
   int32_t newsum;
-   float avg_temp;
+  float avg_temp;
   float stddev;
+  float u1;
   double new_avg_temp;
   int16_t rounded_avg_temp;
   int parity;
@@ -270,7 +267,9 @@ int main(void)
   if (resetValue == -1)
   {
     printf("Sensor reset failed in the main loop : %d\n", resetValue);
-  } else {
+  }
+  else
+  {
     printf("Sensor reset successful in the main loop : %d\n", resetValue);
   }
 
@@ -332,8 +331,8 @@ int main(void)
       parity = calculate_odd_parity(rounded_avg_temp);
 
       snprintf_result = snprintf(json_payload, sizeof(json_payload),
-                                     "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
-                                     site_name, SENSOR_ID, rounded_avg_temp, parity);
+                                 "{\"site\": \"%d\", \"sensor\": \"%s\", \"value\": \"%d, %d\"}",
+                                 site_name, SENSOR_ID, rounded_avg_temp, parity);
 
       // Check if snprintf was successful
       if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
@@ -344,7 +343,9 @@ int main(void)
       // Use the JSON payload string as needed
       printf("JSON Payload: %s\n", json_payload);
       gcoap_cli_cmd(message_arg_count, coap_command);
-    } else {
+    }
+    else
+    {
       printf("Temperature reading failed\n");
     }
 

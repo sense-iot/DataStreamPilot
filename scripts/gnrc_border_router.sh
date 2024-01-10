@@ -23,8 +23,8 @@ fi
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
   flash_elf ${RELEASE_FILE} ${BORDER_ROUTER_NODE}
 
-  # border_router_job_id=$(submit_border_router_job "${BORDER_ROUTER_NODE}")
-  # wait_for_job "${border_router_job_id}"
+  border_router_job_id=$(submit_border_router_job "${BORDER_ROUTER_NODE}")
+  wait_for_job "${border_router_job_id}"
 
   echo "ping6 2001:4860:4860::8888 -c 5"
 

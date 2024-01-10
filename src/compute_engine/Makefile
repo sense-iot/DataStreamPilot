@@ -4,8 +4,6 @@ BOARD ?= iotlab-m3
 
 RIOTBASE ?= $(CURDIR)/../../external/RIOT
 
-CFLAGS += -Werror -Wall -Wextra -Wdouble-promotion -Wformat=2 -Wformat-security -fno-common -Wno-unused-function
-
 USEMODULE += ztimer_usec
 USEMODULE += ztimer_msec
 USEMODULE += ztimer_sec

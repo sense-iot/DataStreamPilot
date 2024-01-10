@@ -285,9 +285,10 @@ int main(void)
         current_index = 0;
       }
 
-      int32_t sum = 0;
+      int32_t sum;
+      sum = 0;
       int16_t i = 0;
-      for (int i = 0; i < WINDOW_SIZE; i++)
+      for (i = 0; i < WINDOW_SIZE; i++)
       {
         sum += data.tempList[i];
       }
@@ -331,8 +332,8 @@ int main(void)
 
     int randi = rand();
     float u1 = randi / RAND_MAX;
-    int sleepDuration = (int)(u1 * 1000) + 5000; // delay of 1-2 seconds
-    printf("Sleeping for : %d ms after disabling sensor\n", sleepDuration);
+    int sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
+    printf("Sleeping for : %d ms for\n", sleepDuration);
   }
 
   return 0;

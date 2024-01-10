@@ -25,10 +25,12 @@
   % N = (100*z*s/(r*x))^2
 */
 #define WINDOW_SIZE 60
+
 typedef struct
 {
   int16_t tempList[WINDOW_SIZE];
 } data_t;
+
 static data_t data;
 static lpsxxx_t lpsxxx;
 static const lpsxxx_params_t simpleDeviceParams = {.i2c = lpsxxx_params[0].i2c,
@@ -267,7 +269,9 @@ int main(void)
   while (1)
   {
     int16_t temp = 0;
-    if (lpsxxx_read_temp(&lpsxxx, &temp) != LPSXXX_OK)
+    int ret = lpsxxx_read_temp(&lpsxxx, &temp);
+    printf("Temperature reading request response: %i\n", ret);
+    if (ret != LPSXXX_OK)
     {
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
       printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
@@ -318,6 +322,8 @@ int main(void)
       // Use the JSON payload string as needed
       printf("JSON Payload: %s\n", json_payload);
       gcoap_cli_cmd(message_arg_count, coap_command);
+    } else {
+      printf("Temperature reading failed\n");
     }
 
     int randi = rand();

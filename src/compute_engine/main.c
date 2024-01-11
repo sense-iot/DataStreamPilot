@@ -310,9 +310,11 @@ int main(void)
     int ret = lpsxxx_read_temp(&lpsxxx, &temp);
     if (ret == LPSXXX_OK)
     {
+      printf("DataStreamPilot: ------------------------\n");
+      printf("DataStreamPilot: Original value : %i.%u°C\n", (temp / 100), (temp % 100));
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-      printf("DataStreamPilot: avg_temp : %d\n", (int)(avg_temp*100));
-      printf("DataStreamPilot: stddev   : %d\n", (int)(stddev * 100));
+      printf("DataStreamPilot: avg_temp : %d\n", (int)(avg_temp));
+      printf("DataStreamPilot: stddev   : %d\n", (int)(stddev));
 
       if (fabsf(temp_n_noise - avg_temp) <= DEVIATION_FACTOR * stddev)
       {
@@ -366,7 +368,7 @@ int main(void)
       avg_temp = calculate_average(data.tempList);
       stddev = calculate_stddev(data.tempList, avg_temp);
       rounded_avg_temp = (int16_t)round(avg_temp);
-      printf("Avg temp: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
+      // printf("Avg temp: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
       parity = calculate_odd_parity(rounded_avg_temp);
 
@@ -380,18 +382,18 @@ int main(void)
         fprintf(stderr, "Error creating JSON payload\n");
       }
       // Use the JSON payload string as needed
-      printf("JSON Payload: %s\n", json_payload);
+      printf("DataStreamPilot: JSON Payload: %s\n", json_payload);
       gcoap_cli_cmd(message_arg_count, coap_command);
     }
     else
     {
-      printf("Temp read failed\n");
+      printf("DataStreamPilot: Temp read failed\n");
     }
 
     randi = rand();
     u1 = randi / RAND_MAX;
     sleepDuration = (int)(u1 * 1000) + 1000; // delay of 1-2 seconds
-    printf("Sleeping for : %d ms for\n", sleepDuration);
+    printf("DataStreamPilot: Sleeping for : %d ms for\n", sleepDuration);
     ztimer_sleep(ZTIMER_MSEC, sleepDuration);
   }
 

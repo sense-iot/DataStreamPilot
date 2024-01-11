@@ -100,28 +100,32 @@ class Temperature(resource.Resource):
     
     def filter_outliers(self, readings, z_threshold):
         # Calculate mean of the readings
-        mean_reading = np.mean(readings[: -1])
+        mean_reading = np.mean(readings)
 
-        print(f"Mean = {int(mean_reading)}, {readings[: -1]}")  # Debugging
+        print(f"Mean = {int(mean_reading)}, {readings}")  # Debugging
 
         # Calculate standard deviation of the readings
-        std_dev_reading = np.std(readings[: -1])
+        std_dev_reading = np.std(readings)
 
         print(f"SD = {int(std_dev_reading)}")  # Debugging
 
         # Filtering outliers
-        z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
+        z_score_1 = np.abs((readings[0] - mean_reading) / std_dev_reading)
+        z_score_2 = np.abs((readings[1] - mean_reading) / std_dev_reading)
+        z_score_3 = np.abs((readings[2] - mean_reading) / std_dev_reading)
 
-        lower_bound = mean_reading - z_threshold * std_dev_reading
-        upper_bound = mean_reading + z_threshold * std_dev_reading
+        correct_values = []
+        if z_score_1 <= z_threshold:
+            correct_values.append(readings[0])
 
-        logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading} Lower bound: {lower_bound} Upper bound: {upper_bound}")  # Debugging
-        current_reading_value = readings[-1]
-        if current_reading_value > lower_bound and current_reading_value < upper_bound:
-            logger.debug("Value is in the confidence interval.")  # Debugging
-            return current_reading_value
-        logger.debug("Value outside the confidence interval. Value Disregarded!")  # Debugging
-        return None
+        if z_score_2 <= z_threshold:
+            correct_values.append(readings[1])
+
+        if z_score_3 <= z_threshold:
+            correct_values.append(readings[2])
+
+        mean_reading = np.mean(correct_values)
+        return mean_reading
 
     def calculate_odd_parity(self, num):
         count = 0

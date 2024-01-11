@@ -24,11 +24,11 @@
   % z = 1.960 (95%) - TAKE THE CEIL
   % N = (100*z*s/(r*x))^2
 */
-#define WINDOW_SIZE 200
+#define WINDOW_SIZE 65
 /*
   Defines how many standard deviations away from the mean to consider as outlier
 */
-#define DEVIATION_FACTOR 2
+#define DEVIATION_FACTOR 1.5
 
 typedef struct
 {
@@ -222,20 +222,33 @@ int calculate_odd_parity(int16_t num)
 void remove_outliers(int16_t *data, float mean, float stddev)
 {
   int j = 0;
-  int16_t alternate_temp = (int16_t)(mean * 100);
   for (int i = 0; i < WINDOW_SIZE; i++)
   {
     if (fabsf((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
     {
       data[j++] = data[i];
     } else {
-      if (i == 0) {
-        data[i] = alternate_temp;
-      } else {
-        data[i] = data[i-1];
-      }
+      printf("Outlier detected: %d\n", data[i]);
+      data[j++] = 0;
     }
   }
+}
+
+double calculate_average(int16_t *data)
+{
+  double sum = 0.0;
+  int count = 0;
+  double average = 0.0;
+  for (int i = 0; i < WINDOW_SIZE; i++)
+  {
+    if (data[i] != 0) {
+      sum += data[i];
+      count = count + 1;
+    }
+  }
+
+  average = sum / count;
+  return average;
 }
 
 volatile double sum;
@@ -281,12 +294,14 @@ int main(void)
   site_name = getBinaryValue(locationMap, SITE_NAME);
 
   message_arg_count = 6;
-
   current_index = 0;
 
+  // initialize the sensor data list with initial temp or hardcoded 35.0
+  int16_t initial_temp = 0;
+  lpsxxx_read_temp(&lpsxxx, &initial_temp);
   for (i = 0; i < WINDOW_SIZE; i++)
   {
-    data.tempList[i] = 3000;
+    data.tempList[i] = initial_temp;
   }
 
   while (1)
@@ -296,7 +311,16 @@ int main(void)
     if (ret == LPSXXX_OK)
     {
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-      printf("Temp with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      printf("DataStreamPilot: avg_temp : %d\n", (int)(avg_temp*100));
+      printf("DataStreamPilot: stddev   : %d\n", (int)(stddev * 100));
+
+      if (fabsf(temp_n_noise - avg_temp) <= DEVIATION_FACTOR * stddev)
+      {
+        printf("DataStreamPilot: GOOD Temp with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      } else {
+        printf("DataStreamPilot: BAD Temp with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      }
+
       data.tempList[current_index++] = temp_n_noise;
 
       if (current_index >= WINDOW_SIZE)
@@ -311,17 +335,36 @@ int main(void)
         sum += data.tempList[i];
       }
 
+      // // Print tempList
+      // printf("tempList: [");
+      // for (i = 0; i < WINDOW_SIZE; i++)
+      // {
+      //   printf("%d", data.tempList[i]);
+      //   if (i < WINDOW_SIZE - 1)
+      //   {
+      //     printf(", ");
+      //   }
+      // }
+      // printf("]\n");
+
       avg_temp = sum / WINDOW_SIZE;
       stddev = calculate_stddev(data.tempList, avg_temp);
       remove_outliers(data.tempList, avg_temp, stddev);
 
-      sum = 0;
-      for (i = 0; i < WINDOW_SIZE; i++)
-      {
-        sum += data.tempList[i];
-      }
+      // Print tempList
+      // printf("tempList Cleaned: [");
+      // for (i = 0; i < WINDOW_SIZE; i++)
+      // {
+      //   printf("%d", data.tempList[i]);
+      //   if (i < WINDOW_SIZE - 1)
+      //   {
+      //     printf(", ");
+      //   }
+      // }
+      // printf("]\n");
 
-      avg_temp = sum / WINDOW_SIZE;
+      avg_temp = calculate_average(data.tempList);
+      stddev = calculate_stddev(data.tempList, avg_temp);
       rounded_avg_temp = (int16_t)round(avg_temp);
       printf("Avg temp: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 

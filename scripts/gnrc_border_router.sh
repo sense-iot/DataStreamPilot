@@ -21,9 +21,10 @@ else
 fi
 
 if [ -n "$IOT_LAB_FRONTEND_FQDN" ]; then
-  #flash_elf ${RELEASE_FILE} ${BORDER_ROUTER_NODE}
-  border_router_job_id=$(iotlab-experiment submit -n "${BORDER_ROUTER_EXE_NAME}" -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${BORDER_ROUTER_NODE},${SENSE_HOME}/release/${BORDER_ROUTER_EXE_NAME}.elf)
-  wait_for_job "${border_router_job_id}"
+  flash_elf ${RELEASE_FILE} ${BORDER_ROUTER_NODE}
+  # border_router_job_id_json=$(iotlab-experiment submit -n "${BORDER_ROUTER_EXE_NAME}" -d ${EXPERIMENT_TIME} -l ${SENSE_SITE},m3,${BORDER_ROUTER_NODE},${SENSE_HOME}/release/${BORDER_ROUTER_EXE_NAME}.elf)
+  # border_router_job_id=$(echo $border_router_job_id_json | jq -r '.id')
+  # wait_for_job "${border_router_job_id}"
 
   echo "ping6 2001:4860:4860::8888 -c 5"
 

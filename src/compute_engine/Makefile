@@ -10,24 +10,23 @@ USEMODULE += ztimer_sec
 USEMODULE += ztimer_no_periph_rtt
 USEMODULE += lps331ap
 USEMODULE += xtimer
+
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_default
 USEMODULE += sock_udp
-USEMODULE += gcoap
 USEMODULE += gnrc_icmpv6_error
 USEMODULE += gnrc_icmpv6_echo
-USEMODULE += gnrc_icmpv6_error
-USEMODULE += gnrc_ipv6_router_default
-USEMODULE += gnrc_rpl
-USEMODULE += auto_init_gnrc_rpl
-USEMODULE += gnrc_icmpv6_error
-USEMODULE += gnrc_ipv6_router_default
-USEMODULE += gnrc_udp
-USEMODULE += shell_commands
-USEMODULE += netstats_l2
-USEMODULE += netstats_ipv6
-USEMODULE += netstats_rpl
+
+USEMODULE += shell
+# USEMODULE += shell_cmds_default
+USEMODULE += ps
+
+USEMODULE += gcoap
+USEMODULE += od
+USEMODULE += fmt
+# USEMODULE += netutils
+USEMODULE += random
 
 ifneq (,$(SENSOR_ID))
   CFLAGS += -DSENSOR_ID=\"$(SENSOR_ID)\"
@@ -74,13 +73,7 @@ else
   endif
 endif
 
-USEMODULE += gcoap
-USEMODULE += od
-USEMODULE += fmt
-USEMODULE += shell
-USEMODULE += netstats_ipv6
-USEMODULE += ps
-USEMODULE += random
+
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1

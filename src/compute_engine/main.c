@@ -338,7 +338,6 @@ int main(void)
       if (snprintf_result < 0 || snprintf_result >= (int)sizeof(json_payload))
       {
         fprintf(stderr, "Error creating JSON payload\n");
-        return 1;
       }
       // Use the JSON payload string as needed
       printf("JSON Payload: %s\n", json_payload);

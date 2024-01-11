@@ -31,30 +31,32 @@ Z_THRESHOLD = 1.960
 class Temperature(resource.Resource):
     def __init__(self):
         self.site_data = {
-        'grenoble': {
-            '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
-        },
-        'strasbourg': {
-            '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
-        },
-        'saclay': {
-            '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
-        },
-        'lillie': {
-            '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
-            '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
+            'grenoble': {
+                '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
+            },
+            'strasbourg': {
+                '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
+            },
+            'saclay': {
+                '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
+            },
+            'lillie': {
+                '1': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '2': {'values': [0] * WINDOW_SIZE, 'index': 0},
+                '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
+            }
         }
-    }
         self.logger = logging.getLogger("temperature")
     
     async def render_post(self, request):
+        processed_value = None
+        is_outlier = False
         payload = json.loads(request.payload.decode('utf8'))
         logger.debug(f"\nReceived message: {payload}")
 

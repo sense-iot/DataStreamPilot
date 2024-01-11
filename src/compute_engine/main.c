@@ -227,6 +227,8 @@ void remove_outliers(int16_t *data, float mean, float stddev)
     if (fabsf((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
     {
       data[j++] = data[i];
+    } else {
+      data[i] = (int16_t)mean;
     }
   }
 }
@@ -240,10 +242,9 @@ int main(void)
   int current_index;
   int i;
   int32_t sum;
-  int32_t newsum;
-  float avg_temp;
-  float stddev;
-  float u1;
+  double avg_temp;
+  double stddev;
+  double u1;
   double new_avg_temp;
   int16_t rounded_avg_temp;
   int parity;
@@ -311,18 +312,19 @@ int main(void)
       }
 
       printf("Sum: %li\n", sum);
+      fflush(stdout);
 
-      avg_temp = (float)sum / WINDOW_SIZE;
-      printf("Average temperature: %f\n", (double)avg_temp);
+      avg_temp = sum / WINDOW_SIZE;
+      printf("Average temperature: %lf\n", avg_temp);
       stddev = calculate_stddev(data.tempList, avg_temp);
-      printf("Standard deviation: %f\n", (double)stddev);
+      printf("Standard deviation: %lf\n", stddev);
       remove_outliers(data.tempList, avg_temp, stddev);
-      newsum = 0;
+      sum = 0;
       for (i = 0; i < WINDOW_SIZE; i++)
       {
-        newsum += data.tempList[i];
+        sum += data.tempList[i];
       }
-      printf("New sum: %li\n", newsum);
+      printf("New sum: %li\n", sum);
       new_avg_temp = (double)sum / WINDOW_SIZE;
       printf("New average temperature: %f\n", new_avg_temp);
       rounded_avg_temp = (int16_t)round(new_avg_temp);

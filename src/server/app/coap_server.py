@@ -92,7 +92,7 @@ class Temperature(resource.Resource):
         logger.debug(f"Decoded values: {decodedValue} {is_outlier}")
 
         if decodedValue != None:
-            recordedFlag = await sendInfluxdb(decodedValue, is_outlier, payload['site'], payload['sensor'])
+            recordedFlag = await sendInfluxdb(decodedValue, is_outlier, payload['site'], '1')
             logger.debug(f"Recorded flag: {recordedFlag}\n")
 
         return aiocoap.Message(content_format=0,

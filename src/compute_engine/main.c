@@ -233,20 +233,19 @@ void remove_outliers(int16_t *data, float mean, float stddev)
   }
 }
 
+volatile double sum;
+volatile float avg_temp;
+volatile int16_t rounded_avg_temp;
+volatile float stddev;
+
 int main(void)
 {
-
   int resetValue;
   unsigned int site_name;
   int message_arg_count;
   int current_index;
   int i;
-  int32_t sum;
-  double avg_temp;
-  double stddev;
-  double u1;
-  double new_avg_temp;
-  int16_t rounded_avg_temp;
+  float u1;
   int parity;
   int snprintf_result;
   int randi;
@@ -311,23 +310,25 @@ int main(void)
         sum += data.tempList[i];
       }
 
-      printf("Sum: %li\n", sum);
+      printf("Sum: %lf\n", sum);
       fflush(stdout);
 
       avg_temp = sum / WINDOW_SIZE;
-      printf("Average temperature: %lf\n", avg_temp);
+      printf("Average temperature: %f\n", avg_temp);
       stddev = calculate_stddev(data.tempList, avg_temp);
-      printf("Standard deviation: %lf\n", stddev);
+      printf("Standard deviation: %f\n", stddev);
       remove_outliers(data.tempList, avg_temp, stddev);
+
       sum = 0;
       for (i = 0; i < WINDOW_SIZE; i++)
       {
         sum += data.tempList[i];
       }
-      printf("New sum: %li\n", sum);
-      new_avg_temp = (double)sum / WINDOW_SIZE;
-      printf("New average temperature: %f\n", new_avg_temp);
-      rounded_avg_temp = (int16_t)round(new_avg_temp);
+      printf("New sum: %lf\n", sum);
+
+      avg_temp = sum / WINDOW_SIZE;
+      printf("New average temperature: %f\n", avg_temp);
+      rounded_avg_temp = (int16_t)round(avg_temp);
       printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
       parity = calculate_odd_parity(rounded_avg_temp);

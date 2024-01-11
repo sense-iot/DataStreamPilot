@@ -45,8 +45,6 @@ CFLAGS += -DGCOAP_AMAZON_SERVER_IP_ONLY='"${GCOAP_AMAZON_SERVER_IP_ONLY}"'
 LWIP_IPV4 ?= 0
 LWIP_IPV6 ?= 0
 
-CFLAGS += -Wno-unused-but-set-variable -Wno-unused-parameter
-
 ifeq (,$(filter 1, $(LWIP_IPV4) $(LWIP_IPV6)))
   USEMODULE += auto_init_gnrc_netif
   # Specify the mandatory networking modules
@@ -72,8 +70,6 @@ else
     USEMODULE += lwip_ipv6_autoconfig
   endif
 endif
-
-
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1

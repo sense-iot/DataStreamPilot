@@ -37,10 +37,24 @@ EXPERIMENT_ID=0
 # export COMPUTE_ENGINE_NODE_2=${m3_nodes[3]}
 # export COMPUTE_ENGINE_NODE_3=${m3_nodes[4]}
 
-export BORDER_ROUTER_NODE=219
-export COMPUTE_ENGINE_NODE_1=220
-export COMPUTE_ENGINE_NODE_2=221
-export COMPUTE_ENGINE_NODE_3=222
+if [ "$SENSE_SITE" = "grenoble" ]; then
+    export BORDER_ROUTER_NODE=219
+    export COMPUTE_ENGINE_NODE_1=220
+    export COMPUTE_ENGINE_NODE_2=221
+    export COMPUTE_ENGINE_NODE_3=222
+elif [ "$SENSE_SITE" = "saclay" ]; then
+    export BORDER_ROUTER_NODE=5
+    export COMPUTE_ENGINE_NODE_1=7
+    export COMPUTE_ENGINE_NODE_2=8
+    export COMPUTE_ENGINE_NODE_3=9
+elif [ "$SENSE_SITE" = "strasbourg" ]; then
+    export BORDER_ROUTER_NODE=13
+    export COMPUTE_ENGINE_NODE_1=14
+    export COMPUTE_ENGINE_NODE_2=15
+    export COMPUTE_ENGINE_NODE_3=16
+else
+    echo "Invalid SENSE_SITE value. Please set to 'grenoble', 'saclay' or 'strasbourg'."
+fi
 
 # export COMPUTE_ENGINE_NODE_1=${a8_nodes[0]}
 # export COMPUTE_ENGINE_NODE_2=${a8_nodes[1]}

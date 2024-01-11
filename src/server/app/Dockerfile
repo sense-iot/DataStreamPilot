@@ -13,4 +13,4 @@ COPY decoder.py .
 
 EXPOSE 5683
 
-CMD ["python", "coap_server.py"]
+CMD ["python3", "-u", "coap_server.py"]

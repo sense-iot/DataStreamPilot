@@ -52,7 +52,6 @@ class Temperature(resource.Resource):
                 '3': {'values': [0] * WINDOW_SIZE, 'index': 0}
             }
         }
-        self.logger = logging.getLogger("temperature")
     
     async def render_post(self, request):
         processed_value = None
@@ -65,15 +64,15 @@ class Temperature(resource.Resource):
         sensor_reading = payload['value']
 
         reading = list(map(int, sensor_reading.strip().split(',')))
-        self.logger.debug(f"Sensor reading: {reading}")
+        logger.debug(f"Sensor reading: {reading}")
         sensor_value, parity = reading[0], reading[1]
 
         if (self.parityCheck(sensor_value, parity)):
-            self.logger.debug(f"Initializing reading for site {site_name}")
+            logger.debug(f"Initializing reading for site {site_name}")
             self.site_data[site_name][sensor]['values'][self.site_data[site_name][sensor]['index']] = sensor_value
         else:
             if 2 <= len(self.site_data[site_name]['values']):
-                self.logger.debug(f"Mismatched{reading} {parity} {self.parityCheck(reading, parity)}" )
+                logger.debug(f"Mismatched{reading} {parity} {self.parityCheck(reading, parity)}" )
                 prev_value = self.site_data[site_name][sensor]['values'][-1]
                 self.site_data[site_name][sensor]['values'][self.site_data[site_name][sensor]['index']] = prev_value
 
@@ -89,8 +88,8 @@ class Temperature(resource.Resource):
             decodedValue = self.site_data[site_name][sensor]['values'][-1]
             is_outlier = True
         
-        self.logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(self.site_data[site_name][sensor]['values'])}")
-        self.logger.debug(f"Decoded values: {decodedValue} {is_outlier}")
+        logger.debug(f"Sensor readings for site {site_name}:{sensor}:{len(self.site_data[site_name][sensor]['values'])}")
+        logger.debug(f"Decoded values: {decodedValue} {is_outlier}")
 
         if decodedValue != None:
             recordedFlag = await sendInfluxdb(decodedValue, is_outlier, payload['site'], payload['sensor'])

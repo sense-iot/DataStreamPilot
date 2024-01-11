@@ -25,7 +25,7 @@ class TimeResource(resource.ObservableResource):
                 strftime("%Y-%m-%d %H:%M").encode('ascii')
         return aiocoap.Message(payload=payload)
 
-WINDOW_SIZE = 65
+WINDOW_SIZE = 2
 Z_THRESHOLD = 1.960
 
 class Temperature(resource.Resource):

@@ -26,7 +26,7 @@ class TimeResource(resource.ObservableResource):
         return aiocoap.Message(payload=payload)
 
 WINDOW_SIZE = 2
-Z_THRESHOLD = 1.960
+Z_THRESHOLD = 1.3
 
 class Temperature(resource.Resource):
     def __init__(self):

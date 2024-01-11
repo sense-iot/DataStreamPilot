@@ -228,7 +228,7 @@ void remove_outliers(int16_t *data, float mean, float stddev)
     {
       data[j++] = data[i];
     } else {
-      data[i] = (int16_t)mean;
+      data[i] = (int16_t)(mean * 100);
     }
   }
 }
@@ -250,6 +250,7 @@ int main(void)
   int snprintf_result;
   int randi;
   int sleepDuration;
+  setvbuf(stdout, malloc(2048), _IOFBF, 2048);
 
   char *coap_command[6];
   coap_command[0] = "coap";
@@ -268,11 +269,7 @@ int main(void)
   {
     printf("Sensor reset failed in the main loop : %d\n", resetValue);
   }
-  else
-  {
-    printf("Sensor reset successful in the main loop : %d\n", resetValue);
-  }
-
+  fflush(stdout);
   setup_coap_client();
 
   ztimer_sleep(ZTIMER_MSEC, 4000);
@@ -284,18 +281,17 @@ int main(void)
 
   for (i = 0; i < WINDOW_SIZE; i++)
   {
-    data.tempList[i] = 0;
+    data.tempList[i] = 3000;
   }
 
   while (1)
   {
     int16_t temp = 0;
     int ret = lpsxxx_read_temp(&lpsxxx, &temp);
-    printf("Temperature reading request response: %i\n", ret);
     if (ret == LPSXXX_OK)
     {
       int16_t temp_n_noise = temp + (int16_t)add_noise(789.2);
-      printf("Temperature with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
+      printf("Temp with noise: %i.%u°C\n", (temp_n_noise / 100), (temp_n_noise % 100));
       data.tempList[current_index++] = temp_n_noise;
 
       if (current_index >= WINDOW_SIZE)
@@ -314,9 +310,9 @@ int main(void)
       fflush(stdout);
 
       avg_temp = sum / WINDOW_SIZE;
-      printf("Average temperature: %f\n", avg_temp);
+      printf("Avg temp: %.2f\n", avg_temp);
       stddev = calculate_stddev(data.tempList, avg_temp);
-      printf("Standard deviation: %f\n", stddev);
+      printf("Std Dev: %f\n", stddev);
       remove_outliers(data.tempList, avg_temp, stddev);
 
       sum = 0;
@@ -327,9 +323,9 @@ int main(void)
       printf("New sum: %lf\n", sum);
 
       avg_temp = sum / WINDOW_SIZE;
-      printf("New average temperature: %f\n", avg_temp);
+      printf("New avg temp: %f\n", avg_temp);
       rounded_avg_temp = (int16_t)round(avg_temp);
-      printf("Average temperature: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
+      printf("Avg temp: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 
       parity = calculate_odd_parity(rounded_avg_temp);
 
@@ -348,12 +344,12 @@ int main(void)
     }
     else
     {
-      printf("Temperature reading failed\n");
+      printf("Temp read failed\n");
     }
 
     randi = rand();
     u1 = randi / RAND_MAX;
-    sleepDuration = (int)(u1 * 1000) + 10000; // delay of 1-2 seconds
+    sleepDuration = (int)(u1 * 1000) + 1000; // delay of 1-2 seconds
     printf("Sleeping for : %d ms for\n", sleepDuration);
     ztimer_sleep(ZTIMER_MSEC, sleepDuration);
   }

@@ -11,36 +11,36 @@ M3_NODE_COUNT=5
 A8_NODE_COUNT=0
 EXPERIMENT_ID=0
 
-if ! is_experiment_running "${EXPERIMENT_NAME}"; then
-    echo "DataStreamPilot: submitting a new experiment"
-    # experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
-    experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE})
-    EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
-    wait_for_job "${EXPERIMENT_ID}"
-else
-    EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
-    echo "DataStreamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
-    wait_for_job "${EXPERIMENT_ID}"
-fi
+# if ! is_experiment_running "${EXPERIMENT_NAME}"; then
+#     echo "DataStreamPilot: submitting a new experiment"
+#     # experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE} -l $A8_NODE_COUNT,archi=a8:at86rf231+site=${SENSE_SITE})
+#     experiment_out=$(iotlab-experiment submit -n ${EXPERIMENT_NAME} -d ${EXPERIMENT_TIME} -l $M3_NODE_COUNT,archi=m3:at86rf231+site=${SENSE_SITE})
+#     EXPERIMENT_ID=$(echo $experiment_out | jq '.id')
+#     wait_for_job "${EXPERIMENT_ID}"
+# else
+#     EXPERIMENT_ID=$(get_running_experiment_id "${EXPERIMENT_NAME}")
+#     echo "DataStreamPilot: An experiment with the name '${EXPERIMENT_NAME}' is already running on '${EXPERIMENT_ID}'."
+#     wait_for_job "${EXPERIMENT_ID}"
+# fi
 
-write_experiment_id "$EXPERIMENT_ID"
-nodes_list=$(iotlab-experiment get -i ${EXPERIMENT_ID} -p)
-extract_and_categorize_nodes "$nodes_list"
+# write_experiment_id "$EXPERIMENT_ID"
+# nodes_list=$(iotlab-experiment get -i ${EXPERIMENT_ID} -p)
+# extract_and_categorize_nodes "$nodes_list"
 
-if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
-    echo "DataStreamPilot: [Error] Not enough m3 nodes."
-    exit 1
-fi
-assign m3 nodes
-export BORDER_ROUTER_NODE=${m3_nodes[1]}
-export COMPUTE_ENGINE_NODE_1=${m3_nodes[2]}
-export COMPUTE_ENGINE_NODE_2=${m3_nodes[3]}
-export COMPUTE_ENGINE_NODE_3=${m3_nodes[4]}
+# if [ ${#m3_nodes[@]} -lt ${M3_NODE_COUNT} ]; then
+#     echo "DataStreamPilot: [Error] Not enough m3 nodes."
+#     exit 1
+# fi
+# assign m3 nodes
+# export BORDER_ROUTER_NODE=${m3_nodes[1]}
+# export COMPUTE_ENGINE_NODE_1=${m3_nodes[2]}
+# export COMPUTE_ENGINE_NODE_2=${m3_nodes[3]}
+# export COMPUTE_ENGINE_NODE_3=${m3_nodes[4]}
 
-# export BORDER_ROUTER_NODE=168
-# export COMPUTE_ENGINE_NODE_1=169
-# export COMPUTE_ENGINE_NODE_2=170
-# export COMPUTE_ENGINE_NODE_3=171
+export BORDER_ROUTER_NODE=219
+export COMPUTE_ENGINE_NODE_1=220
+export COMPUTE_ENGINE_NODE_2=221
+export COMPUTE_ENGINE_NODE_3=222
 
 # export COMPUTE_ENGINE_NODE_1=${a8_nodes[0]}
 # export COMPUTE_ENGINE_NODE_2=${a8_nodes[1]}

@@ -28,7 +28,7 @@
 /*
   Defines how many standard deviations away from the mean to consider as outlier
 */
-#define DEVIATION_FACTOR 1.5
+#define DEVIATION_FACTOR 2.0
 
 typedef struct
 {

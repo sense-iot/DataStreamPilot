@@ -24,7 +24,7 @@
   % z = 1.960 (95%) - TAKE THE CEIL
   % N = (100*z*s/(r*x))^2
 */
-#define WINDOW_SIZE 60
+#define WINDOW_SIZE 200
 /*
   Defines how many standard deviations away from the mean to consider as outlier
 */
@@ -222,13 +222,18 @@ int calculate_odd_parity(int16_t num)
 void remove_outliers(int16_t *data, float mean, float stddev)
 {
   int j = 0;
+  int16_t alternate_temp = (int16_t)(mean * 100);
   for (int i = 0; i < WINDOW_SIZE; i++)
   {
     if (fabsf((float)data[i] - mean) <= DEVIATION_FACTOR * stddev)
     {
       data[j++] = data[i];
     } else {
-      data[i] = (int16_t)(mean * 100);
+      if (i == 0) {
+        data[i] = alternate_temp;
+      } else {
+        data[i] = data[i-1];
+      }
     }
   }
 }
@@ -306,13 +311,8 @@ int main(void)
         sum += data.tempList[i];
       }
 
-      printf("Sum: %lf\n", sum);
-      fflush(stdout);
-
       avg_temp = sum / WINDOW_SIZE;
-      printf("Avg temp: %.2f\n", avg_temp);
       stddev = calculate_stddev(data.tempList, avg_temp);
-      printf("Std Dev: %f\n", stddev);
       remove_outliers(data.tempList, avg_temp, stddev);
 
       sum = 0;
@@ -320,10 +320,8 @@ int main(void)
       {
         sum += data.tempList[i];
       }
-      printf("New sum: %lf\n", sum);
 
       avg_temp = sum / WINDOW_SIZE;
-      printf("New avg temp: %f\n", avg_temp);
       rounded_avg_temp = (int16_t)round(avg_temp);
       printf("Avg temp: %i.%u°C\n", (rounded_avg_temp / 100), (rounded_avg_temp % 100));
 

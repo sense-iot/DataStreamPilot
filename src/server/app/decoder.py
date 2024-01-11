@@ -59,40 +59,40 @@ async def decodeTemperature(site, reading, sensor):
 
 
 #checking odd parity
-def calculate_odd_parity(num):
-    count = 0
-    for i in range(16):  # Assuming 16-bit integers
-        if num & 1:
-            count += 1
-        num >>= 1
-    return count
+# def calculate_odd_parity(num):
+#     count = 0
+#     for i in range(16):  # Assuming 16-bit integers
+#         if num & 1:
+#             count += 1
+#         num >>= 1
+#     return count
 
-def parityCheck(value, parity):
-    ones_count = calculate_odd_parity(value)
-    return (ones_count + int(parity)) % 2 == 1
+# def parityCheck(value, parity):
+#     ones_count = calculate_odd_parity(value)
+#     return (ones_count + int(parity)) % 2 == 1
 
-def filter_outliers(readings, z_threshold):
+# def filter_outliers(readings, z_threshold):
 
-    # Calculate mean of the readings
-    mean_reading = np.mean(readings[: -1])
+#     # Calculate mean of the readings
+#     mean_reading = np.mean(readings[: -1])
 
-    print(f"Mean = {int(mean_reading)}, {readings[: -1]}")  # Debugging
+#     print(f"Mean = {int(mean_reading)}, {readings[: -1]}")  # Debugging
 
-    # Calculate standard deviation of the readings
-    std_dev_reading = np.std(readings[: -1])
+#     # Calculate standard deviation of the readings
+#     std_dev_reading = np.std(readings[: -1])
 
-    print(f"SD = {int(std_dev_reading)}")  # Debugging
+#     print(f"SD = {int(std_dev_reading)}")  # Debugging
 
-    # Filtering outliers
-    z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
+#     # Filtering outliers
+#     z_score = np.abs((readings[-1] - mean_reading) / std_dev_reading)
 
-    lower_bound = mean_reading - z_threshold * std_dev_reading
-    upper_bound = mean_reading + z_threshold * std_dev_reading
+#     lower_bound = mean_reading - z_threshold * std_dev_reading
+#     upper_bound = mean_reading + z_threshold * std_dev_reading
 
-    logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading} Lower bound: {lower_bound} Upper bound: {upper_bound}")  # Debugging
-    current_reading_value = readings[-1]
-    if current_reading_value > lower_bound or current_reading_value < upper_bound:
-        logger.debug("Value outside confidence interval, discarding.")  # Debugging
-        return None
+#     logger.debug(f"Z score: {z_score} Mean: {mean_reading} SD: {std_dev_reading} Lower bound: {lower_bound} Upper bound: {upper_bound}")  # Debugging
+#     current_reading_value = readings[-1]
+#     if current_reading_value > lower_bound or current_reading_value < upper_bound:
+#         logger.debug("Value outside confidence interval, discarding.")  # Debugging
+#         return None
 
-    return current_reading_value
+#     return current_reading_value

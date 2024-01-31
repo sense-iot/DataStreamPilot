@@ -241,7 +241,7 @@ Matlab simulink to simulate SMA (simple moving window averaging)
 <img src="images/matlab_simulink_model.png" alt="Archhitecture" width="500">
 
 
-Full pipeline inside the nodes
+**Full pipeline inside the nodes**
 
 <img src="images/data_prep_in_nodes.png" alt="Archhitecture" width="500">
 
@@ -252,8 +252,9 @@ Full pipeline inside the nodes
 - continue for each moving window
 
 
-### Cloud and Edge
+### Cloud and Edge Layer
 
+<img src="images/server_side_data_processing.png" alt="Archhitecture" width="500">
 
 
 ## Architecture

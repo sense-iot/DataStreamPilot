@@ -92,6 +92,24 @@ This project demonstrate a data preparation pipeline. We have sensors which give
 
 ### Prerequisites
 
+Test bed,
+
+- You need an account in [FIT IoT Testbed](https://www.iot-lab.info/)
+- Get SSH access. [SSH Access : FIT IoT Testbed](https://www.iot-lab.info/docs/getting-started/ssh-access/)
+- For firstime use of command line tools you need authentication `iotlab-auth -u <login>`
+- Next we recommend to follow our hello example [How to Run Hello | Sense Wiki](https://github.com/KRVPerera/sense/wiki/Running-our-Hello-world-in-F-I-T-IOT%E2%80%90LAB).
+
+Server,
+
+Server with IPv6 stack and public IPv6 address. This is because RIOT OS only has IPv6 stack support by the time we did this project. We are using an Amazon EC2 instance.
+
+- AWS account with EC2 access
+- Docker installed on the EC2 instance
+
+References,
+
+- [Design | FIT IoT Testbed](https://www.iot-lab.info/docs/getting-started/design/)
+- [Sense Wiki](https://github.com/KRVPerera/sense/wiki)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -189,15 +207,17 @@ What can we do
 <!-- DOCUMENTATION -->
 ## Documentation
 
-[docs/](docs/README.md)
+### Sensor Layer
 
-[doas/SENSOR](docs/SENSOR.md)
+[docs/Sensor](SENSOR.md) explains our network layer
 
-[docs/NETWORK](docs/NETWORK.md)
+### Network Layer
 
-[docs/SERVER](docs/SERVER.md)
+[docs/Network](NETWORK.md) explains our network layer
 
-[docs/COMPRESSION](docs/COMPRESSION.md)
+### Data Layer
+
+[docs/Server](NETWORK.md) explains our network layer
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -220,7 +240,6 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- ACKNOWLEDGMENTS -->

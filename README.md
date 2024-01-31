@@ -243,7 +243,19 @@ Usage: Grafana with InfluxDB
 <p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 
+## Architecture
+
+<img src="images/architecture.png" alt="Archhitecture" width="500">
+
 ## Dataprocessing
+
+**Spatial consistency checks**
+
+By comparing the readings from three sensors, we identify inconsistencies and outliers that may be missed by a single sensor.
+
+**Temporal consistency checks**
+
+In summary, employing moving window average and z-score normalization offers several advantages in temporal consistency checks.The combination of moving window average and z-score normalization can effectively identify and correct a wide range of errors in temporal data.
 
 ### Sensor layer
 
@@ -265,35 +277,9 @@ Matlab simulink to simulate SMA (simple moving window averaging)
 
 ### Cloud and Edge Layer
 
+We have three sensor almost at the same location in the sensor layer. Therefore we assume that these three temperature sensors to provide us same temperature value.
+
 <img src="images/server_side_data_processing.png" alt="Archhitecture" width="500">
-
-
-## Architecture
-
-<img src="images/architecture.png" alt="Archhitecture" width="500">
-
-- More than one sensor 
-- Temporal consistency checks 
-  - Big sudden jumps 
-- Spatial consistency checks 
-  - More than one sensor 
-- Historical data analysis 
-  - Far away from history data 
-  - Mean,  
-- Rule based averaging 
-- Data filtering 
-
-What can we do 
-
-- 3 sensors – we can rely on correct ones 
-
-- Rely on data correction  
-
-- Data rejection 
-
- Error correction codes 
-
-- Can we reset the sensor?? 
 
 
 <!-- DOCUMENTATION -->

@@ -51,11 +51,26 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <ul>
+          <li><a href="#iot-testbed-setup">IoT Test Bed setup</a></li>
+          <li><a href="#server-setup">Server setup</a></li>
+        </ul>
       </ul>
     </li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#Documentation">Documentation</a></li>
-    <li><a href="#license">License</a></li>
+    <li><a href="#dataprocessing">Dataprocessing</a>
+      <ul>
+        <li><a href="#sensor-layer">Sensor layer</a></li>
+        <li><a href="#cloudandedgelayer">Cloud and Edge Layer</a></li>
+      </ul>
+    </li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#documentation">Documentation</a>
+    <ul>
+        <li><a href="#sensor-layer-1">Sensor Layer</a></li>
+        <li><a href="#network-layer">Network Layer</a></li>
+        <li><a href="#data-layer">Data Layer</a></li>
+      </ul>
+    </li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -86,7 +101,7 @@ This project demonstrate a data preparation pipeline. We have sensors which give
 
 * [Docker](https://www.docker.com/)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 ## Getting started
 
@@ -111,7 +126,7 @@ References,
 - [Design | FIT IoT Testbed](https://www.iot-lab.info/docs/getting-started/design/)
 - [Sense Wiki](https://github.com/KRVPerera/sense/wiki)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 ### Installation
 
@@ -145,13 +160,9 @@ elif [ "$SENSE_SITE" = "saclay" ]; then
 ```
 - execute command `make run_mini_project_2` 
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 #### Server setup
-
-Prerequisites
-
-- AWS account with EC2 access
 
 Setting Up EC2 and Assigning a Public IPv6 Address
 
@@ -229,7 +240,7 @@ Usage: Grafana with InfluxDB
 
    - Open your web browser and go to `http://<public-ip>:3000/`.
      
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 
 ## Architecture
@@ -288,14 +299,14 @@ We calcualte the mean and standard deviation from three sensor values. Then we c
 
 [docs/Server](NETWORK.md) explains our network layer
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 <!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 
 <!-- CONTACT -->
@@ -308,7 +319,7 @@ Nipun Waas - [MyPage](https://waasnipun.github.io/#contact)
 Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 
 <!-- ACKNOWLEDGMENTS -->
@@ -318,7 +329,7 @@ Rukshan Perera - [MyPage](https://www.krvperera.com/#contact)
 * [Awesome Badges](https://dev.to/envoy_/150-badges-for-github-pnk)
 * [Best README Template](https://github.com/othneildrew/Best-README-Template)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#about-the-project">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

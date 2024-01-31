@@ -19,7 +19,7 @@
     <a href="https://github.com/sense-iot/DataStreamPilot"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://www.youtube.com/watch?v=Y-Kq7G6Sz5Q">View Demo</a>
+    <a href="https://youtu.be/tnPCq7kCpds">View Demo</a>
     ·
     <a href="https://github.com/sense-iot/DataStreamPilot/issues">Report Bug</a>
     ·

@@ -63,6 +63,10 @@
 
 ## About The Project
 
+This project demonstrate a data preparation pipeline. We have sensors which gives erronous data simuated by adding gaussian noise. Noise is really high such that sensors can be considered almost not working properly. Pipeline filters the noise in different stages save processed data to a database.
+
+<a href="https://docs.google.com/presentation/d/1JgnVySCUP6uiH4VqiEE2zdFZ5dCnfMiBbF_r66pkAQw/edit?usp=sharing">Presentation : Google Slides</a>
+
 
 ### Built With
 
@@ -129,8 +133,34 @@ elif [ "$SENSE_SITE" = "saclay" ]; then
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Roadmap
-<a href="https://lucid.app/documents/embedded/a633abe1-4224-4045-9147-177685a1603f?invitationId=inv_e597e54b-fb08-4f05-bf6e-cfac77241e66#"> Chart </a>
+
+## Dataprocessing
+
+### Sensor layer
+
+Matlab simulink to simulate SMA (simple moving window averaging)
+
+<img src="images/matlab_simulink_model.png" alt="Archhitecture" width="500">
+
+
+Full pipeline inside the nodes
+
+<img src="images/data_prep_in_nodes.png" alt="Archhitecture" width="500">
+
+- calculate SMA and standard deviation for the window
+- Remove outliers based on deviation factor `2.0`
+- Use the cleanup window again to calculte more correct average
+- Use new corrected window data to discard outliers from future sensor reading
+- continue for each moving window
+
+
+### Cloud and Edge
+
+
+
+## Architecture
+
+<img src="images/architecture.png" alt="Archhitecture" width="500">
 
 - More than one sensor 
 - Temporal consistency checks 

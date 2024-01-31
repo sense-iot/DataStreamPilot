@@ -26,6 +26,15 @@
     <a href="https://github.com/sense-iot/DataStreamPilot/issues">Request Feature</a>
   </p>
 </div>
+<br>
+<div align="center">
+
+ <a href="https://youtu.be/tnPCq7kCpds">
+    <img src="images/3_sites.png" alt="Sites demo output" width="500">
+    </a>
+</div>
+
+<br>
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -86,6 +95,33 @@
 
 #### IoT Test Bed setup
 
+- Clone the repository to the testbed. 
+- Setup variables `SENSE_SITE` and `COAP_SERVER_IP` in `scripts\setup_env.sh`
+```bash
+# grenoble, paris, lille, saclay, strasbourg
+export SENSE_SITE=grenoble
+```
+- System already setup for `grenoble`, `strasbourg` and `saclay`
+  - If needed for each site you may have to change `BORDER_ROUTER_IP` assignment in the same script
+  ```bash
+  if [ "$SENSE_SITE" = "grenoble" ]; then
+    # 2001:660:5307:3100::/64	2001:660:5307:317f::/64
+    export BORDER_ROUTER_IP=2001:660:5307:313f::1/64
+  elif [ "$SENSE_SITE" = "paris" ]; then
+  ...
+  ```
+- Also in `scripts\mini_project2.sh` nodes are manually selected for the above same sites. If the nodes are not working now you have to select them in the script
+```bash
+if [ "$SENSE_SITE" = "grenoble" ]; then
+    export BORDER_ROUTER_NODE=219
+    export COMPUTE_ENGINE_NODE_1=220
+    export COMPUTE_ENGINE_NODE_2=221
+    export COMPUTE_ENGINE_NODE_3=222
+elif [ "$SENSE_SITE" = "saclay" ]; then
+    export BORDER_ROUTER_NODE=5
+    export COMPUTE_ENGINE_NODE_1=7
+```
+- execute command `make run_mini_project_2` 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

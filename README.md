@@ -266,7 +266,9 @@ Matlab simulink to simulate SMA (simple moving window averaging)
 
 ### Cloud and Edge Layer
 
-We have three sensor almost at the same location in the sensor layer. Therefore we assume that these three temperature sensors to provide us same temperature value.
+We have three sensor almost at the same location in the sensor layer. Therefore we assume that these three temperature sensors to provide us same temperature value in the location.
+
+We calcualte the mean and standard deviation from three sensor values. Then we caclulate the z-scores of each sensor reading. We use a z-score threshold choose good sensor reading values. Using selected good sensor readings we take the average of them to get the final output. This final output is the data we save in the database.
 
 <img src="images/server_side_data_processing.png" alt="Archhitecture" width="500">
 

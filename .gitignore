@@ -421,3 +421,4 @@ bin
 
 stopper.sh
 scripts/stoppers/*_stopper.sh
+iot-keypair_1.pem
